@@ -1,0 +1,8 @@
+# Local engine binaries / evaluation files
+.local-engine/
+engine/bin/
+engine/eval/
+*.nn.bin
+
+# OS/editor
+.DS_Store
