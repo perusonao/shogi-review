@@ -1,0 +1,16 @@
+{
+  "schemaVersion": 1,
+  "games": [
+    {
+      "id": "akane_20260910",
+      "date": "2026/09/10",
+      "title": "あかね vs ぺるそなお",
+      "side": "後手",
+      "result": "後手・ぺるそなお 敗戦",
+      "moves": 143,
+      "gameData": "data.json",
+      "analysisData": "analysis/akane_20260910.json",
+      "analyzed": true
+    }
+  ]
+}
