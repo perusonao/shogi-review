@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "gameId": "akane_20260910",
+  "date": "2026-09-10",
+  "sente": "あかね",
+  "gote": "ぺるそなお",
+  "userSide": "gote",
+  "result": "先手勝ち",
+  "moves": 143,
+  "engine": {
+    "name": "YaneuraOu + Suisho5",
+    "nodesPerPosition": 30000,
+    "scorePerspective": "sente",
+    "note": "既存の30k解析から保存した実測ポイント。未解析の手は補間値ではなく未保存。"
+  },
+  "evaluations": [
+    {"ply":0,"cp":206},{"ply":16,"cp":558},{"ply":25,"cp":1041},{"ply":30,"cp":2025},
+    {"ply":56,"cp":1545},{"ply":64,"cp":2293},{"ply":82,"cp":2643},{"ply":84,"cp":3097},
+    {"ply":86,"cp":2904},{"ply":92,"cp":3180},{"ply":96,"cp":3636},{"ply":100,"cp":3780},
+    {"ply":104,"cp":3540},{"ply":118,"cp":5515},{"ply":128,"cp":7614},{"ply":143,"cp":6836}
+  ],
+  "verifiedIssues": [
+    {"ply":30,"played":"2d2c","best":"7a7b","lossCp":683,"bestJa":"△72銀"},
+    {"ply":82,"played":"5b5a","best":"3d3e","lossCp":639,"bestJa":"△35歩"},
+    {"ply":86,"played":"7c7d","best":"2d1c","lossCp":680,"bestJa":"△13銀"},
+    {"ply":118,"played":"S*5h","best":"S*6d","lossCp":1449,"bestJa":"△64銀"}
+  ]
+}
