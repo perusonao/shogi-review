@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "gameId": "20260910_aochikenmin",
+  "date": "2026-09-10",
+  "sente": "AochiKenmin",
+  "gote": "sonao81",
+  "userSide": "gote",
+  "result": "後手勝ち",
+  "moves": 76,
+  "source": "games/20260910_aochikenmin.kif",
+  "engine": {
+    "status": "pending",
+    "name": "YaneuraOu + Suisho5",
+    "nodesPerPosition": 30000,
+    "scorePerspective": "sente",
+    "note": "水匠5実測は未実施。評価値・最善手・評価値損失は推測で保存しない。"
+  },
+  "evaluations": [],
+  "verifiedIssues": [],
+  "manualReview": {
+    "opening": "ゴキゲン中飛車",
+    "resultCheck": "77手目に先手AochiKenminが投了。後手sonao81の勝ち。",
+    "observations": [
+      "58△35歩以降、3筋から攻めを継続した。",
+      "68△57歩、70△57銀成、72△46歩と攻めをつないだ。",
+      "74△24角、76△24飛の流れで先手が投了した。"
+    ],
+    "provisionalRatings": {
+      "attackContinuation": "○",
+      "pieceCoordination": "○"
+    }
+  }
+}
