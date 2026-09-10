@@ -1,0 +1,29 @@
+{
+  "schemaVersion": 1,
+  "gameId": "20260910_taatoru_cat",
+  "date": "2026-09-10",
+  "sente": "sonao81",
+  "gote": "taatoru_cat",
+  "userSide": "sente",
+  "result": "先手勝ち",
+  "moves": 119,
+  "termination": {
+    "recordLine": 120,
+    "type": "resignation",
+    "resignedSide": "gote"
+  },
+  "engine": {
+    "name": "YaneuraOu + Suisho5",
+    "status": "not_analyzed",
+    "scorePerspective": "sente",
+    "note": "水匠5未実施。評価値・最善手・悪手判定は保存していない。"
+  },
+  "evaluations": [],
+  "verifiedIssues": [],
+  "manualReview": {
+    "focus": ["危険察知","受け","攻守切替","反撃開始のタイミング"],
+    "candidateRange": "48△36桂〜98△35桂の自玉防衛と、99▲73歩成以降の反撃を要エンジン比較",
+    "lateAttack": "99▲73歩成、105▲72と、107▲31飛から反撃し、109▲41飛成〜115▲36龍で攻撃駒も処理",
+    "note": "手動所見であり最善手・評価値の断定ではない"
+  }
+}
