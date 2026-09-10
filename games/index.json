@@ -9,10 +9,10 @@
       "result": "先手・sonao81 勝利",
       "moves": 119,
       "kif": "games/20260910_taatoru_cat.kif",
-      "gameData": null,
+      "gameData": "games/20260910_taatoru_cat.json",
       "analysisData": "analysis/20260910_taatoru_cat.json",
-      "analyzed": false,
-      "status": "KIF保存済み・水匠5解析待ち"
+      "analyzed": true,
+      "status": "YaneuraOu V9.00 + 水匠5解析済み"
     },
     {
       "id": "20260910_yogra",
@@ -22,10 +22,10 @@
       "result": "後手・sonao81 敗戦",
       "moves": 67,
       "kif": "games/20260910_yogra.kif",
-      "gameData": null,
+      "gameData": "games/20260910_yogra.json",
       "analysisData": "analysis/20260910_yogra.json",
-      "analyzed": false,
-      "status": "KIF保存済み・水匠5解析待ち"
+      "analyzed": true,
+      "status": "YaneuraOu V9.00 + 水匠5解析済み"
     },
     {
       "id": "20260910_aochikenmin",
@@ -35,10 +35,10 @@
       "result": "後手・sonao81 勝利",
       "moves": 76,
       "kif": "games/20260910_aochikenmin.kif",
-      "gameData": null,
+      "gameData": "games/20260910_aochikenmin.json",
       "analysisData": "analysis/20260910_aochikenmin.json",
-      "analyzed": false,
-      "status": "KIF保存済み・水匠5解析待ち"
+      "analyzed": true,
+      "status": "YaneuraOu V9.00 + 水匠5解析済み"
     },
     {
       "id": "akane_20260910",

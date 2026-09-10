@@ -19,9 +19,8 @@ For each --games <id> it expects games/<id>.kif to exist, and it writes/overwrit
   analysis/<id>.json   full per-ply evaluations (sente perspective) + verifiedIssues
   games/<id>.json      PWA game JSON (game/positions/issues) matching data.json's schema
 
-It does NOT modify games/index.json (an analyzed run) so the caller can review the
-diff first; use --update-index to also flip analyzed:true and fill in gameData once
-the output has been checked.
+It does NOT modify games/index.json, so the caller can review the generated data
+before manually flipping analyzed:true and filling in gameData.
 """
 from __future__ import annotations
 
@@ -246,16 +245,20 @@ def analyze_game(engine: UsiEngine, kif_path: Path, game_id: str, user: str,
             continue
         before_mover = per_ply[ply]["cp_sente"] if mover == "sente" else -per_ply[ply]["cp_sente"]
         after_mover = per_ply[ply + 1]["cp_sente"] if mover == "sente" else -per_ply[ply + 1]["cp_sente"]
-        loss = max(0, before_mover - after_mover)
         best_usi = per_ply[ply]["bestmove"]
         if not best_usi or best_usi == "resign" or best_usi == "win":
             continue
+        # Scores from two independent fixed-node searches can fluctuate slightly.
+        # A move the engine itself selected must never be reported as a mistake.
+        loss = 0 if played_usi == best_usi else max(0, before_mover - after_mover)
         board_before = shogi.Board(positions[ply]["sfen"])
         legal_ushi = {m.usi() for m in board_before.legal_moves}
         if best_usi not in legal_ushi:
             raise ValueError(f"{game_id} ply {ply}: engine bestmove {best_usi} is not legal")
         candidates.append({
-            "ply": ply,
+            # PWA issue.ply denotes the move number (the resulting position),
+            # while `ply` here denotes the position immediately before the move.
+            "ply": ply + 1,
             "played_usi": played_usi,
             "best_usi": best_usi,
             "before_cp": per_ply[ply]["cp_sente"],
