@@ -1,91 +1,60 @@
 # 新しい対局を追加する手順
 
-このリポジトリでは、対局ごとのデータをカタログから参照する。
+Windowsでは次の操作だけでよい。
 
-## 1. 対局ID
+1. 将棋ウォーズ公式画面から自分の対局をKIF形式で保存する。
+2. KIFを`games/inbox/`へ入れる。
+3. リポジトリ直下の`analyze-new-games.bat`をダブルクリックする。
+4. GitHubへ公開する場合だけ確認に`y`を入力し、完了表示を待つ。
+5. GitHub Pages反映後、iPhoneのPWAを開き直す。
 
-`YYYYMMDD_opponent` を基本形にする。
+GitHub公開を選ばない場合、生成物はローカルに残る。内容を確認して手動でcommit/pushできる。
 
-例: `20260910_akane`
+## 棋譜取得方針
 
-同日に同じ相手と複数局ある場合は末尾に `_01`, `_02` を付ける。
+HEROZは2026年5月8日の告知で、将棋ウォーズ棋譜・対局データのスクレイピング取得を控えるよう案内している。このため、将棋ウォーズや第三者検索サイトのHTMLを自動巡回しない。
 
-## 2. 保存するファイル
+- 正式方式: 将棋ウォーズ公式画面からユーザー自身が保存したKIFのinbox投入
+- 未対応: CSA（KIF形式で保存し直す）
+- 認証情報、Cookie、CAPTCHA回避は使用しない
+- GitHub公開は明示的に`y`を選んだ場合のみ行う。公開権限とリポジトリの公開範囲を事前に確認する
 
-```text
-games/<game-id>.kif              元棋譜（取得できる場合）
-games/<game-id>.json             PWA用の局面・課題データ
-analysis/<game-id>.json          エンジン解析結果
-games/index.json                 対局カタログ
-```
+参考:
 
-元棋譜を取得できない場合は推測でKIFを再生成しない。
+- 将棋ウォーズ「棋譜・対局データのお取扱いについて」: <https://shogiwars.heroz.jp/topics/69fd8cd95c5ebbf0d981199b>
+- 候補として調査した棋譜検索サイト: <https://shogiwars.hibinotatsuya.com/>
 
-## 3. game JSON
+## 自動処理
 
-既存 `data.json` と同じ形式を使用する。
+`analyze-new-games.bat`は`tools/import_new_games.py`を起動し、次を順に行う。
 
-必須項目:
-- `game.title`
-- `game.result`
-- `game.moves`
-- `game.date`
-- `game.side`
-- `positions[]`
-- `issues[]`
+1. repository root、Python、YaneuraOu、水匠5 `nn.bin`を確認
+2. `games/inbox/*.kif`をUTF-8またはCP932で読み、合法手を検証
+3. 棋譜内容のSHA-256 fingerprintで既存棋譜と照合
+4. `YYYYMMDD_opponent`（衝突時はfingerprint suffix）でgame IDを決定
+5. `tools/analyze_with_suisho5.py`を使い30,000 nodes/局面で解析
+6. game JSON、analysis JSON、課題局面、`games/index.json`を検証して反映
+7. 正常処理済みKIFを`games/<game-id>.kif`へ保存し、inboxから除去
+8. 公開を選んだ場合のみ、今回の生成物だけをcommitして`origin/main`へpush
 
-## 4. analysis JSON
+同じ棋譜を再投入しても、指し手列・対局者・日付から作るfingerprintが同じなら再解析・重複登録しない。
 
-最低限:
+## 解析設定
 
-```json
-{
-  "schemaVersion": 1,
-  "gameId": "20260910_akane",
-  "engine": {
-    "name": "YaneuraOu + Suisho5",
-    "nodesPerPosition": 30000,
-    "scorePerspective": "sente"
-  },
-  "evaluations": [
-    {"ply": 0, "cp": 0}
-  ]
-}
-```
-
-エンジン未解析の値を推測で埋めない。実測していない手は未保存とする。
-
-## 5. カタログ登録
-
-`games/index.json` の `games` に追加する。
-
-```json
-{
-  "id": "20260910_akane",
-  "date": "2026/09/10",
-  "title": "相手 vs ぺるそなお",
-  "side": "後手",
-  "result": "後手・ぺるそなお 敗戦",
-  "moves": 143,
-  "gameData": "games/20260910_akane.json",
-  "analysisData": "analysis/20260910_akane.json",
-  "analyzed": true
-}
-```
-
-PWAは `games/index.json` を読み、棋譜タブへ自動的に一覧表示する。
-
-## 6. 解析設定
-
-標準設定:
-- YaneuraOu + 水匠5
+- YaneuraOu V9.00 NNUE halfKP256 AVX2
+- 水匠5: `C:\shogi-engine\suisho5\nn.bin`
 - `USI_OwnBook=false`
 - 30,000 nodes / position
-- 水匠5推奨設定に合わせられる環境では `FV_SCALE=24`
-- 評価値は先手視点で保存
+- 評価値は先手視点
+- 解析ロジックのSSOT: `tools/analyze_with_suisho5.py`
 
-解析条件が異なる場合は `analysis/*.json` の `engine` に必ず記録する。
+## 保存対象
 
-## 原則
+```text
+games/<game-id>.kif
+games/<game-id>.json
+analysis/<game-id>.json
+games/index.json
+```
 
-GitをSSOTとする。KIF・PWA用局面データ・解析済み評価値・課題局面を永続化し、`nn.bin` とコンパイル済みエンジン本体はGitへ入れない。
+YaneuraOuのexe、`nn.bin`、7z/zip、`.partial`などの一時ファイルは保存・commitしない。

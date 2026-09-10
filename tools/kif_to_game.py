@@ -21,6 +21,9 @@ except ImportError as exc:
 FW = "１２３４５６７８９"
 RK = "一二三四五六七八九"
 PIECE = {"歩":"P","香":"L","桂":"N","銀":"S","金":"G","角":"B","飛":"R","玉":"K","王":"K"}
+LOSS_TERMINALS = {"投了", "時間切れ", "切れ負け", "反則負け", "詰み"}
+WIN_TERMINALS = {"反則勝ち", "入玉勝ち", "宣言勝ち"}
+DRAW_TERMINALS = {"中断", "千日手", "持将棋"}
 
 
 def digit(ch: str) -> int:
@@ -34,13 +37,18 @@ def rank(ch: str) -> int:
 def parse_move(text: str, board: "shogi.Board") -> str:
     body = text.strip()
     m = re.match(r"([1-9１-９])([一二三四五六七八九1-9])(.+)$", body)
+    if not m and body.startswith("同") and board.move_stack:
+        previous_to = board.peek().usi().replace("+", "")[-2:]
+        m = re.match(r"同[　 ]*(.+)$", body)
+        if m:
+            tf, tr, rest = int(previous_to[0]), ord(previous_to[1]) - 96, m.group(1)
+    elif m:
+        tf, tr, rest = digit(m.group(1)), rank(m.group(2)), m.group(3)
     if not m:
         raise ValueError(f"unsupported move: {text}")
-    tf, tr = digit(m.group(1)), rank(m.group(2))
-    rest = m.group(3)
     src = re.search(r"\(([1-9])([1-9])\)", rest)
     drop = "打" in rest and not src
-    promote = "成" in rest and not rest.startswith(("成銀","成桂","成香"))
+    promote = "成" in rest and "不成" not in rest and not rest.startswith(("成銀","成桂","成香"))
     if drop:
         name = rest.split("打", 1)[0]
         key = next((PIECE[k] for k in PIECE if name.startswith(k)), None)
@@ -53,8 +61,19 @@ def parse_move(text: str, board: "shogi.Board") -> str:
     return f"{sf}{chr(96+sr)}{tf}{chr(96+tr)}" + ("+" if promote else "")
 
 
+def read_kif_text(path: Path) -> str:
+    """Read the encodings commonly produced by Japanese KIF exporters."""
+    raw = path.read_bytes()
+    for encoding in ("utf-8-sig", "cp932"):
+        try:
+            return raw.decode(encoding)
+        except UnicodeDecodeError:
+            pass
+    raise ValueError(f"unsupported KIF encoding (expected UTF-8 or CP932): {path}")
+
+
 def parse(path: Path, game_id: str, user: str) -> dict:
-    lines = path.read_text(encoding="utf-8-sig").splitlines()
+    lines = read_kif_text(path).splitlines()
     meta = {}
     for line in lines:
         for key in ("開始日時","終了日時","場所","持ち時間","先手","後手","先手段級","後手段級"):
@@ -63,14 +82,23 @@ def parse(path: Path, game_id: str, user: str) -> dict:
     board = shogi.Board()
     positions = [{"ply":0,"sfen":board.sfen(),"last":"開始局面"}]
     last_ply = 0
-    resignation_side = None
+    loser_side = None
+    winner_side = None
+    draw_reason = None
     for line in lines:
         mm = re.match(r"\s*(\d+)\s+(.+?)(?:\s+\(|$)", line)
         if not mm:
             continue
         n, move_text = int(mm.group(1)), mm.group(2).strip()
-        if move_text == "投了":
-            resignation_side = "先手" if n % 2 == 1 else "後手"
+        terminal_side = "先手" if n % 2 == 1 else "後手"
+        if move_text in LOSS_TERMINALS:
+            loser_side = terminal_side
+            break
+        if move_text in WIN_TERMINALS:
+            winner_side = terminal_side
+            break
+        if move_text in DRAW_TERMINALS:
+            draw_reason = move_text
             break
         usi = parse_move(move_text, board)
         move = shogi.Move.from_usi(usi)
@@ -81,9 +109,14 @@ def parse(path: Path, game_id: str, user: str) -> dict:
         positions.append({"ply":n,"sfen":board.sfen(),"last":move_text,"usi":usi})
     sente, gote = meta.get("先手","先手"), meta.get("後手","後手")
     user_side = "先手" if sente == user else "後手" if gote == user else "不明"
-    if resignation_side:
-        winner = "後手" if resignation_side == "先手" else "先手"
+    if loser_side:
+        winner = "後手" if loser_side == "先手" else "先手"
         result = f"{winner}・{sente if winner=='先手' else gote} 勝利"
+    elif winner_side:
+        winner = winner_side
+        result = f"{winner}・{sente if winner=='先手' else gote} 勝利"
+    elif draw_reason:
+        result = draw_reason
     else:
         result = "結果不明"
     return {

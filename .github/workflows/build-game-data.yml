@@ -7,14 +7,9 @@ on:
         description: 'Game ID (example: 20260910_taatoru_cat)'
         required: true
         type: string
-  push:
-    paths:
-      - 'games/*.kif'
-      - 'tools/kif_to_game.py'
-      - 'requirements.txt'
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   convert:
@@ -33,23 +28,12 @@ jobs:
       - name: Install dependencies
         run: pip install -r requirements.txt
 
-      - name: Convert requested game
-        if: github.event_name == 'workflow_dispatch'
+      - name: Convert requested game (artifact check only)
         env:
           GAME_ID: ${{ inputs.game_id }}
         run: |
           test -f "games/${GAME_ID}.kif"
           python tools/kif_to_game.py "games/${GAME_ID}.kif" --id "${GAME_ID}" --user sonao81 --out "games/${GAME_ID}.json"
-
-      - name: Convert all archived games
-        if: github.event_name == 'push'
-        run: |
-          set -e
-          for kif in games/*.kif; do
-            [ -e "$kif" ] || continue
-            id="$(basename "$kif" .kif)"
-            python tools/kif_to_game.py "$kif" --id "$id" --user sonao81 --out "games/${id}.json"
-          done
 
       - name: Validate generated JSON
         run: |
@@ -66,14 +50,5 @@ jobs:
               print(path, len(data['positions'])-1, 'moves OK')
           PY
 
-      - name: Commit generated game JSON
-        run: |
-          if git diff --quiet -- games/*.json; then
-            echo 'No generated changes.'
-            exit 0
-          fi
-          git config user.name 'github-actions[bot]'
-          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
-          git add games/*.json
-          git commit -m 'data: generate PWA game positions from KIF'
-          git push
+      - name: Explain output
+        run: echo 'Validation only. Use analyze-new-games.bat for production data and Suisho5 analysis.'

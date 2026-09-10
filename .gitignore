@@ -3,6 +3,18 @@
 engine/bin/
 engine/eval/
 *.nn.bin
+nn.bin
+*.exe
+*.7z
+*.zip
+
+# Local import inbox (only the placeholder is tracked)
+games/inbox/*
+!games/inbox/.gitkeep
+
+# Import/analyzer temporary files
+*.tmp
+*.partial
 
 # OS/editor
 .DS_Store
