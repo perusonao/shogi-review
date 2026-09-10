@@ -2,6 +2,19 @@
   "schemaVersion": 1,
   "games": [
     {
+      "id": "20260910_taatoru_cat",
+      "date": "2026/09/10",
+      "title": "sonao81 vs taatoru_cat",
+      "side": "先手",
+      "result": "先手・sonao81 勝利",
+      "moves": 119,
+      "kif": "games/20260910_taatoru_cat.kif",
+      "gameData": null,
+      "analysisData": "analysis/20260910_taatoru_cat.json",
+      "analyzed": false,
+      "status": "KIF保存済み・水匠5解析待ち"
+    },
+    {
       "id": "20260910_yogra",
       "date": "2026/09/10",
       "title": "yogra vs sonao81",
