@@ -11,7 +11,9 @@ Windows PCへ公式配布のYaneuraOu V9.00と水匠5を構築し、対象3局�
 - 作業開始時の `origin/main`: `dc38c6bad21708e11470be94e199120bde54e6fa`
 - branch: `claude/shogi-review-3games-analysis-9axe5t`
 - 解析データcommit SHA: `0d176ac356258a2e7f73e30a72bbb210a04b44bd`
-- push先: `origin/claude/shogi-review-3games-analysis-9axe5t`
+- 解析結果レポートcommit SHA: `ca73154a8b4d2024c6c5416990e9d7cd870b2c9c`
+- main merge commit SHA: `f48bc3791102a7debd1dd4043622ea9cb1141b45`
+- push先: `origin/main`（PR #1経由）
 
 ## YaneuraOu
 
@@ -97,8 +99,11 @@ Windows PCへ公式配布のYaneuraOu V9.00と水匠5を構築し、対象3局�
   「次の課題局面へ」、赤い実戦手、緑の推奨手、評価値、損失、コメントを確認。
 - 既存あかね戦の読み込み・評価グラフ・課題送りが維持されていることを確認。
 - リポジトリ内に `.exe`、`nn.bin`、`.7z`、10MB超の新規巨大ファイルなし。
+- GitHub Pages buildはmain merge commit `f48bc3791102a7debd1dd4043622ea9cb1141b45`で成功。
+- 公開URL <https://perusonao.github.io/shogi-review/> から3局のcatalog、game JSON、
+  analysis JSONを再取得し、手数・局面数・課題数・30,000 nodesを確認。
 
 ## PWA反映状態
 
 対象3局は `games/index.json` で `analyzed: true` となり、各game JSONとanalysis JSONを
-読み込む。ローカルPWAで反映済み。push後は公開側のデプロイ完了確認が必要。
+読み込む。ローカルPWAと公開PWAの両方で反映済み。
