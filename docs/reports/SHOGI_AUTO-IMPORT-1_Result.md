@@ -3,7 +3,7 @@
 - 実施日: 2026-09-10
 - base SHA: `98f1378a67b60a03db7064f959b2b26986c18766`
 - push先: `origin/main` (`https://github.com/perusonao/shogi-review.git`)
-- commit SHA: 本レポートを含むcommit（最終回答に記載）
+- 実装commit SHA: `7036c4cbb1fa37b59f0d06a7eae2221f52c4418b`
 
 ## 採用した棋譜取得方式
 
@@ -90,7 +90,7 @@
 
 ## PWA反映可否
 
-可能。公開を選んだ実行では生成物を`origin/main`へpushし、「GitHub Pagesの反映待ち」と日本語表示する。PWAは毎回`games/index.json`をno-cacheで取得するため、新規カタログを再オープン時に取得する。
+可能。実装commitのGitHub Pages build/deployは成功し、公開PWAでno-cache版コードと既存4局の表示を確認した。公開を選んだ実行では生成物を`origin/main`へpushし、「GitHub Pagesの反映待ち」と日本語表示する。PWAは毎回`games/index.json`をno-cacheで取得するため、新規カタログを再オープン時に取得する。
 
 ## 今後ユーザーが行う操作
 
