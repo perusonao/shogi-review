@@ -2,6 +2,19 @@
   "schemaVersion": 1,
   "games": [
     {
+      "id": "20260910_ariake",
+      "date": "2026/09/10",
+      "title": "ありあけ vs ぺるそなお",
+      "side": "後手",
+      "result": "後手・ぺるそなお 勝利",
+      "moves": 102,
+      "kif": "games/20260910_ariake.kif",
+      "gameData": "games/20260910_ariake.json",
+      "analysisData": "analysis/20260910_ariake.json",
+      "analyzed": true,
+      "status": "YaneuraOu V9.00 + 水匠5解析済み"
+    },
+    {
       "id": "20260910_taatoru_cat",
       "date": "2026/09/10",
       "title": "sonao81 vs taatoru_cat",
