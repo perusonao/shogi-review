@@ -131,7 +131,11 @@ dc38c6bad21708e11470be94e199120bde54e6fa   (origin/main HEAD, このセッショ
 
 ## commit SHA / push先
 
-コミット後に追記（下記参照）。push先: `origin/claude/shogi-review-3games-analysis-9axe5t`
+```
+6d433e2ad1512f86f429faa9fb4f753997af4592
+```
+
+push先: `origin/claude/shogi-review-3games-analysis-9axe5t`
 （mainへの直接pushは行っていない。指示書に「安全でなければ作業branchまでに留める」と
 あり、かつハーネス側の運用ルールで本セッションの開発ブランチが
 `claude/shogi-review-3games-analysis-9axe5t`に固定されているため）。
