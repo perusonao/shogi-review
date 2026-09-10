@@ -2,6 +2,19 @@
   "schemaVersion": 1,
   "games": [
     {
+      "id": "20260911_大山_貴一郎",
+      "date": "2026/09/11",
+      "title": "ぺるそなお vs 大山　貴一郎",
+      "side": "先手",
+      "result": "先手・ぺるそなお 敗戦",
+      "moves": 126,
+      "kif": "games/20260911_大山_貴一郎.kif",
+      "gameData": "games/20260911_大山_貴一郎.json",
+      "analysisData": "analysis/20260911_大山_貴一郎.json",
+      "analyzed": true,
+      "status": "YaneuraOu V9.00 + 水匠5解析済み"
+    },
+    {
       "id": "20260910_ぽっぷ",
       "date": "2026/09/10",
       "title": "ぺるそなお vs ぽっぷ",
