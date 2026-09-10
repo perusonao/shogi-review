@@ -2,6 +2,32 @@
   "schemaVersion": 1,
   "games": [
     {
+      "id": "20260910_ぽっぷ",
+      "date": "2026/09/10",
+      "title": "ぺるそなお vs ぽっぷ",
+      "side": "先手",
+      "result": "先手・ぺるそなお 勝利",
+      "moves": 107,
+      "kif": "games/20260910_ぽっぷ.kif",
+      "gameData": "games/20260910_ぽっぷ.json",
+      "analysisData": "analysis/20260910_ぽっぷ.json",
+      "analyzed": true,
+      "status": "YaneuraOu V9.00 + 水匠5解析済み"
+    },
+    {
+      "id": "20260910_ぱいなぽー",
+      "date": "2026/09/10",
+      "title": "ぱいなぽー vs ぺるそなお",
+      "side": "後手",
+      "result": "後手・ぺるそなお 敗戦",
+      "moves": 115,
+      "kif": "games/20260910_ぱいなぽー.kif",
+      "gameData": "games/20260910_ぱいなぽー.json",
+      "analysisData": "analysis/20260910_ぱいなぽー.json",
+      "analyzed": true,
+      "status": "YaneuraOu V9.00 + 水匠5解析済み"
+    },
+    {
       "id": "20260910_ひぐれ",
       "date": "2026/09/10",
       "title": "ひぐれ vs ぺるそなお",
