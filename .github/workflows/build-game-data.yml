@@ -1,0 +1,79 @@
+name: Build game data
+
+on:
+  workflow_dispatch:
+    inputs:
+      game_id:
+        description: 'Game ID (example: 20260910_taatoru_cat)'
+        required: true
+        type: string
+  push:
+    paths:
+      - 'games/*.kif'
+      - 'tools/kif_to_game.py'
+      - 'requirements.txt'
+
+permissions:
+  contents: write
+
+jobs:
+  convert:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Convert requested game
+        if: github.event_name == 'workflow_dispatch'
+        env:
+          GAME_ID: ${{ inputs.game_id }}
+        run: |
+          test -f "games/${GAME_ID}.kif"
+          python tools/kif_to_game.py "games/${GAME_ID}.kif" --id "${GAME_ID}" --user sonao81 --out "games/${GAME_ID}.json"
+
+      - name: Convert all archived games
+        if: github.event_name == 'push'
+        run: |
+          set -e
+          for kif in games/*.kif; do
+            [ -e "$kif" ] || continue
+            id="$(basename "$kif" .kif)"
+            python tools/kif_to_game.py "$kif" --id "$id" --user sonao81 --out "games/${id}.json"
+          done
+
+      - name: Validate generated JSON
+        run: |
+          python - <<'PY'
+          import glob, json
+          for path in glob.glob('games/*.json'):
+              if path.endswith('/index.json'):
+                  continue
+              with open(path, encoding='utf-8') as f:
+                  data=json.load(f)
+              assert data.get('positions'), f'{path}: positions missing'
+              assert data['positions'][0]['ply'] == 0, f'{path}: initial position missing'
+              assert data.get('game',{}).get('id'), f'{path}: game id missing'
+              print(path, len(data['positions'])-1, 'moves OK')
+          PY
+
+      - name: Commit generated game JSON
+        run: |
+          if git diff --quiet -- games/*.json; then
+            echo 'No generated changes.'
+            exit 0
+          fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add games/*.json
+          git commit -m 'data: generate PWA game positions from KIF'
+          git push
