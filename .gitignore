@@ -6,3 +6,5 @@ engine/eval/
 
 # OS/editor
 .DS_Store
+tools/__pycache__/
+*.pyc
