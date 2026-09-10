@@ -2,6 +2,19 @@
   "schemaVersion": 1,
   "games": [
     {
+      "id": "20260910_ひぐれ",
+      "date": "2026/09/10",
+      "title": "ひぐれ vs ぺるそなお",
+      "side": "後手",
+      "result": "後手・ぺるそなお 勝利",
+      "moves": 58,
+      "kif": "games/20260910_ひぐれ.kif",
+      "gameData": "games/20260910_ひぐれ.json",
+      "analysisData": "analysis/20260910_ひぐれ.json",
+      "analyzed": true,
+      "status": "YaneuraOu V9.00 + 水匠5解析済み"
+    },
+    {
       "id": "20260910_ariake",
       "date": "2026/09/10",
       "title": "ありあけ vs ぺるそなお",
