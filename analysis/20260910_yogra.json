@@ -1,0 +1,33 @@
+{
+  "schemaVersion": 1,
+  "gameId": "20260910_yogra",
+  "date": "2026-09-10",
+  "sente": "yogra",
+  "gote": "sonao81",
+  "userSide": "gote",
+  "result": "先手勝ち",
+  "moves": 67,
+  "termination": {
+    "recordLine": 68,
+    "type": "resignation",
+    "resignedSide": "gote"
+  },
+  "engine": {
+    "name": "YaneuraOu + Suisho5",
+    "status": "not_analyzed",
+    "scorePerspective": "sente",
+    "note": "水匠5未実施。評価値・最善手・悪手判定は保存していない。"
+  },
+  "evaluations": [],
+  "verifiedIssues": [],
+  "manualReview": {
+    "focus": [
+      "形勢を苦しくした局面",
+      "危険を察知すべき局面",
+      "受けても間に合わなくなった局面"
+    ],
+    "candidateRange": "34△26歩〜42△24角付近から要エンジン検証",
+    "lateAttack": "43▲53歩成以降、先手の中央攻撃が連続し後手玉への包囲が進行",
+    "note": "手動所見であり最善手・評価値の断定ではない"
+  }
+}
