@@ -80,4 +80,10 @@ summary選択品質の後日監査用に、同じpure functionから次の専用
 - ブラウザconsoleにerror/warningなし
 - `git diff --check`: 成功
 
-公開結果とcommitはPages反映後に追記する。
+## 公開確認
+
+- 機能commit: `4dcaf8247b8e3fe8363f0e3c3621c3ae5ba5fd70`
+- GitHub Pages deployment: 成功
+- 公開URL: `https://perusonao.github.io/shogi-review/`
+- 公開PWAの390×844表示でNAGATA2532戦の学び3件を確認
+- 28手目タップ後、28/62手、赤/緑矢印、後手視点+706→+241、課題カードを確認
