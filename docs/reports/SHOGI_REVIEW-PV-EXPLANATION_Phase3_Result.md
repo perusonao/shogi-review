@@ -94,4 +94,11 @@ short PV率の分母は課題局面の2枝（推奨・実戦）、追加探索�
 - 実エンジン出力に対するimport metrics検証
 - NAGATA2532日本語PV回帰
 
-公開結果とcommitはPages反映後に追記する。
+## 公開確認
+
+- 機能commit: `92f31ab56888bd071a490e9b7338dbad3be3d095`
+- GitHub Pages deployment: 成功
+- 公開URL: `https://perusonao.github.io/shogi-review/`
+- 390×844表示でNAGATA2532戦28手目を確認
+- 赤=実戦、緑=推奨、課題カードの折りたたみ、日本語PV各6手が正常
+- 開発用metricsは通常の感想戦画面に表示されない
