@@ -45,7 +45,8 @@ NAGATA2532戦を全63局面（開始局面+62手）で再解析した。28手目
 
 ## 公開確認
 
-commit/pushおよびGitHub Pages反映後に最終確認する。
+- GitHub Pages deploymentはcommit `82d700f76dfc7c3a2b8c17f5ac0f7992b6b6d8e0`で成功した。
+- 公開URL `https://perusonao.github.io/shogi-review/` を390×844pxで再確認し、NAGATA2532戦28手目の日本語PV、後手視点評価、根拠付きポイント、赤/緑矢印を確認した。
 
 ## 残課題
 
