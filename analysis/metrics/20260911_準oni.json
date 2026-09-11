@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "gameId": "20260911_準oni",
+  "analyzedAt": "2026-09-11T13:17:44.052632Z",
+  "positions": 86,
+  "problemPositions": 6,
+  "baseAnalysisSeconds": 3.207,
+  "extraPvSearchSeconds": 0.478,
+  "totalAnalysisSeconds": 3.685,
+  "shortPvCandidates": 1,
+  "extraSearchExecuted": 1,
+  "pvLengthBeforeAverage": 2.0,
+  "pvLengthAfterAverage": 2.0,
+  "pvLengthsBefore": [
+    2
+  ],
+  "pvLengthsAfter": [
+    2
+  ],
+  "improvedPvCount": 0,
+  "unchangedPvCount": 1
+}
