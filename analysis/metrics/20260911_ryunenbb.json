@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "gameId": "20260911_ryunenbb",
+  "analyzedAt": "2026-09-11T12:19:49.421149Z",
+  "positions": 84,
+  "problemPositions": 6,
+  "baseAnalysisSeconds": 3.702,
+  "extraPvSearchSeconds": 0.784,
+  "totalAnalysisSeconds": 4.486,
+  "shortPvCandidates": 3,
+  "extraSearchExecuted": 3,
+  "pvLengthBeforeAverage": 2.0,
+  "pvLengthAfterAverage": 8.333,
+  "pvLengthsBefore": [
+    2,
+    3,
+    1
+  ],
+  "pvLengthsAfter": [
+    20,
+    3,
+    2
+  ],
+  "improvedPvCount": 2,
+  "unchangedPvCount": 1
+}

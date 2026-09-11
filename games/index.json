@@ -2,6 +2,19 @@
   "schemaVersion": 1,
   "games": [
     {
+      "id": "20260911_ryunenbb",
+      "date": "2026/09/11",
+      "title": "ryunenbb vs sonao81",
+      "side": "後手",
+      "result": "先手・ryunenbb 勝利",
+      "moves": 83,
+      "kif": "games/20260911_ryunenbb.kif",
+      "gameData": "games/20260911_ryunenbb.json",
+      "analysisData": "analysis/20260911_ryunenbb.json",
+      "analyzed": true,
+      "status": "YaneuraOu V9.00 + 水匠5解析済み"
+    },
+    {
       "id": "20260911_ak69boy",
       "date": "2026/09/11",
       "title": "sonao81 vs ak69Boy",
