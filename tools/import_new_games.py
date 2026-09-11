@@ -212,6 +212,8 @@ def validate_outputs(output: Path, candidates: list[Candidate]) -> None:
             raise ImportFailure(f"game JSON局面数不整合: {candidate.game_id}")
         if len(analysis.get("evaluations", [])) != moves + 1:
             raise ImportFailure(f"analysis JSON局面数不整合: {candidate.game_id}")
+        if analysis.get("schemaVersion", 1) >= 2 and len(analysis.get("moveAnalyses", [])) != moves:
+            raise ImportFailure(f"analysis JSON指し手解析数不整合: {candidate.game_id}")
         if analysis.get("engine", {}).get("nodesPerPosition") != 30000:
             raise ImportFailure(f"解析nodes不整合: {candidate.game_id}")
         if len(game.get("issues", [])) != len(analysis.get("verifiedIssues", [])):

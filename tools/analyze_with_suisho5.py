@@ -105,17 +105,25 @@ class UsiEngine:
             line = self._readline()
             if line.startswith("info "):
                 tokens = line.split()
+                line_score = None
+                line_pv: list[str] = []
                 i = 0
                 while i < len(tokens):
                     if tokens[i] == "score" and i + 2 < len(tokens):
                         kind, val = tokens[i + 1], int(tokens[i + 2])
-                        last_score = (kind, val)
+                        line_score = (kind, val)
                         i += 3
                         continue
                     if tokens[i] == "pv":
-                        last_pv = tokens[i + 1:]
+                        line_pv = tokens[i + 1:]
                         break
                     i += 1
+                if line_score is not None:
+                    last_score = line_score
+                # Some engines emit a short final info line. Preserve the
+                # longest principal variation actually reported by the engine.
+                if line_pv and len(line_pv) >= len(last_pv):
+                    last_pv = line_pv
             elif line.startswith("bestmove"):
                 parts = line.split()
                 bestmove = parts[1] if len(parts) > 1 else None
@@ -141,6 +149,18 @@ def score_to_cp(score: tuple[str, int] | None) -> int:
     return sign * (MATE_CP - min(abs(val), MATE_CP - 1))
 
 
+def score_json(score: tuple[str, int] | None, sign: int = 1) -> dict:
+    """Keep the engine score kind; sign converts side-to-move to a named perspective."""
+    if score is None:
+        return {"type": "cp", "value": 0}
+    kind, value = score
+    return {"type": "mate" if kind == "mate" else "cp", "value": sign * value}
+
+
+def score_json_to_cp(score: dict) -> int:
+    return score_to_cp((score.get("type", "cp"), int(score.get("value", 0))))
+
+
 # ---------------------------------------------------------------------------
 # Move display (matches the "△23歩" / "▲34歩打" style already used in data.json)
 # ---------------------------------------------------------------------------
@@ -149,42 +169,134 @@ def square_index(file_: int, rank_: int) -> int:
     return (rank_ - 1) * 9 + (9 - file_)
 
 
-def move_display_ja(usi: str, board_before: "shogi.Board", mover: str) -> str:
+RANK_JA = "一二三四五六七八九"
+
+
+def square_coords(square: int) -> tuple[int, int]:
+    return 9 - square % 9, square // 9 + 1
+
+
+def move_qualifier(move: "shogi.Move", board: "shogi.Board", piece_type: int, mover: str) -> str:
+    if move.from_square is None:
+        return ""
+    candidates = {
+        candidate.from_square
+        for candidate in board.legal_moves
+        if candidate.from_square is not None
+        and candidate.to_square == move.to_square
+        and board.piece_type_at(candidate.from_square) == piece_type
+    }
+    if len(candidates) < 2:
+        return ""
+    to_file, to_rank = square_coords(move.to_square)
+    source_file, source_rank = square_coords(move.from_square)
+
+    def horizontal(square: int) -> str:
+        file_, _ = square_coords(square)
+        if file_ == to_file:
+            return "直"
+        if mover == "sente":
+            return "右" if file_ < to_file else "左"
+        return "右" if file_ > to_file else "左"
+
+    def vertical(square: int) -> str:
+        _, rank_ = square_coords(square)
+        if rank_ == to_rank:
+            return "寄"
+        if mover == "sente":
+            return "上" if rank_ > to_rank else "引"
+        return "上" if rank_ < to_rank else "引"
+
+    h = horizontal(move.from_square)
+    v = vertical(move.from_square)
+    if sum(horizontal(square) == h for square in candidates) == 1:
+        return h
+    if sum(vertical(square) == v for square in candidates) == 1:
+        return v
+    return h + v
+
+
+def can_decline_promotion(piece_type: int, move: "shogi.Move", mover: str) -> bool:
+    if move.from_square is None or move.promotion or piece_type not in PROMOTE:
+        return False
+    _, from_rank = square_coords(move.from_square)
+    _, to_rank = square_coords(move.to_square)
+    in_zone = (lambda rank_: rank_ <= 3) if mover == "sente" else (lambda rank_: rank_ >= 7)
+    if piece_type in (shogi.PAWN, shogi.LANCE) and to_rank == (1 if mover == "sente" else 9):
+        return False
+    if piece_type == shogi.KNIGHT and (to_rank <= 2 if mover == "sente" else to_rank >= 8):
+        return False
+    return in_zone(from_rank) or in_zone(to_rank)
+
+
+def move_display_ja(usi: str, board_before: "shogi.Board", mover: str,
+                    previous_to: int | None = None) -> str:
     side_mark = "▲" if mover == "sente" else "△"
+    move = shogi.Move.from_usi(usi)
+    to_file, to_rank = square_coords(move.to_square)
+    destination = "同" if previous_to == move.to_square else f"{to_file}{RANK_JA[to_rank - 1]}"
     if "*" in usi:
-        letter, dest = usi.split("*")
-        file_, rank_ = int(dest[0]), ord(dest[1]) - 96
+        letter, _ = usi.split("*")
         name = JP[LETTER_TO_TYPE[letter]]
-        return f"{side_mark}{file_}{rank_}{name}打"
-    from_file, from_rank = int(usi[0]), ord(usi[1]) - 96
-    to_file, to_rank = int(usi[2]), ord(usi[3]) - 96
-    promote = usi.endswith("+")
-    piece_type = board_before.piece_type_at(square_index(from_file, from_rank))
+        return f"{side_mark}{destination}{name}打"
+    assert move.from_square is not None
+    piece_type = board_before.piece_type_at(move.from_square)
     if piece_type is None:
         raise ValueError(f"no piece at source square for move {usi}")
-    if promote:
-        piece_type = PROMOTE.get(piece_type, piece_type)
-    return f"{side_mark}{to_file}{to_rank}{JP[piece_type]}"
+    qualifier = move_qualifier(move, board_before, piece_type, mover)
+    ending = "成" if move.promotion else "不成" if can_decline_promotion(piece_type, move, mover) else ""
+    return f"{side_mark}{destination}{JP[piece_type]}{qualifier}{ending}"
 
 
-# ---------------------------------------------------------------------------
-# Comment generation (short, non-committal, grounded only in phase + loss size)
-# ---------------------------------------------------------------------------
+def pv_display_ja(sfen: str, pv: list[str], previous_to: int | None = None,
+                  limit: int | None = None) -> list[str]:
+    """Format only legal, engine-returned PV moves while applying each in sequence."""
+    board = shogi.Board(sfen)
+    formatted: list[str] = []
+    for usi in pv[:limit]:
+        try:
+            move = shogi.Move.from_usi(usi)
+        except ValueError:
+            break
+        if move not in board.legal_moves:
+            break
+        mover = "sente" if board.turn == shogi.BLACK else "gote"
+        formatted.append(move_display_ja(usi, board, mover, previous_to))
+        board.push(move)
+        previous_to = move.to_square
+    return formatted
 
-PHASE_TEMPLATES = {
-    "序盤": [
-        "攻めを急ぐより、まず玉形を整えると安定します。",
-        "序盤で大駒を早く動かした直後は、一度自陣を確認したい場面です。",
-    ],
-    "中盤": [
-        "この交換は駒得でも玉が薄くなるなら、応じる前に危険度を確認したい局面です。",
-        "攻め合うより受けに回った方が、形勢を損ねずに済む場面です。",
-    ],
-    "終盤": [
-        "攻め合いの速度計算が必要な局面。相手玉と自玉、どちらが早いか数えたい場面です。",
-        "受けに手を戻すべきか、攻め合うべきかの速度判断が分かれ目になった局面です。",
-    ],
-}
+
+def grounded_points(sfen: str, pv: list[str], score: dict) -> list[str]:
+    """Describe at most two facts that are mechanically verifiable on board/PV."""
+    if not pv:
+        return []
+    board = shogi.Board(sfen)
+    points: list[str] = []
+    for index, usi in enumerate(pv):
+        try:
+            move = shogi.Move.from_usi(usi)
+        except ValueError:
+            break
+        if move not in board.legal_moves:
+            break
+        captured = board.piece_at(move.to_square)
+        mover = "sente" if board.turn == shogi.BLACK else "gote"
+        if index == 0 and move.promotion and move.from_square is not None:
+            piece_type = board.piece_type_at(move.from_square)
+            if piece_type is not None:
+                points.append(f"推奨手は{JP[piece_type]}を成る手です。")
+        if captured is not None and len(points) < 2:
+            prefix = "推奨手は" if index == 0 else f"読み筋の{index + 1}手目は"
+            points.append(f"{prefix}{JP[captured.piece_type]}を取る手です。")
+        board.push(move)
+        if index == 0 and board.is_check() and len(points) < 2:
+            points.append("推奨手は王手です。")
+        if len(points) >= 2:
+            break
+    if score.get("type") == "mate" and int(score.get("value", 0)) > 0 and len(points) < 2:
+        points.append("水匠5はこの局面を詰みありと評価しています。")
+    return points[:2]
 
 
 def phase_of(ply: int, moves: int) -> str:
@@ -198,12 +310,8 @@ def phase_of(ply: int, moves: int) -> str:
     return "終盤"
 
 
-def make_comment(ply: int, moves: int, loss: int) -> str:
-    phase = phase_of(ply, moves)
-    templates = PHASE_TEMPLATES[phase]
-    idx = 0 if loss < 800 else 1 % len(templates)
-    base = templates[idx % len(templates)]
-    return f"評価値が約{loss}点悪化した場面（{phase}）。{base}"
+def make_comment(best_ja: str) -> str:
+    return f"水匠5は実戦手より{best_ja}を高く評価しています。まず読み筋を比較してみましょう。"
 
 
 def category_of(ply: int, moves: int) -> str:
@@ -225,15 +333,48 @@ def analyze_game(engine: UsiEngine, kif_path: Path, game_id: str, user: str,
         raise ValueError(f"{game_id}: could not determine {user}'s side from KIF headers")
 
     evaluations: list[dict] = []
-    per_ply: dict[int, dict] = {}  # ply -> {score_sente, bestmove, pv}
+    per_ply: dict[int, dict] = {}  # ply -> raw/normalized score, bestmove, PV
     for ply in range(0, moves + 1):
         sfen = positions[ply]["sfen"]
         side_to_move = "sente" if ply % 2 == 0 else "gote"
         result = engine.analyze(sfen, nodes)
-        cp_stm = score_to_cp(result["score"])
-        cp_sente = cp_stm if side_to_move == "sente" else -cp_stm
-        evaluations.append({"ply": ply, "cp": cp_sente})
-        per_ply[ply] = {"cp_sente": cp_sente, "bestmove": result["bestmove"], "pv": result["pv"]}
+        sente_sign = 1 if side_to_move == "sente" else -1
+        normalized = score_json(result["score"], sente_sign)
+        cp_sente = score_json_to_cp(normalized)
+        evaluations.append({"ply": ply, "cp": cp_sente, "score": normalized})
+        per_ply[ply] = {
+            "raw_score": result["score"], "score_sente": normalized,
+            "cp_sente": cp_sente, "bestmove": result["bestmove"], "pv": result["pv"],
+        }
+
+    move_analyses: list[dict] = []
+    for ply in range(0, moves):
+        played_usi = positions[ply + 1].get("usi")
+        if not played_usi:
+            continue
+        board_before = shogi.Board(positions[ply]["sfen"])
+        previous_usi = positions[ply].get("usi")
+        previous_to = shogi.Move.from_usi(previous_usi).to_square if previous_usi else None
+        best_usi = per_ply[ply]["bestmove"]
+        best_pv = list(per_ply[ply]["pv"])
+        if best_usi and best_usi not in ("resign", "win") and (not best_pv or best_pv[0] != best_usi):
+            best_pv.insert(0, best_usi)
+        actual_pv = [played_usi, *per_ply[ply + 1]["pv"]]
+        score_before = score_json(per_ply[ply]["raw_score"], 1)
+        score_after = score_json(per_ply[ply + 1]["raw_score"], -1)
+        move_analyses.append({
+            "ply": ply + 1,
+            "scorePerspective": "mover",
+            "scoreBefore": score_before,
+            "actualMove": played_usi,
+            "scoreAfterActual": score_after,
+            "bestMove": best_usi,
+            "bestScore": score_before,
+            "pv": best_pv,
+            "pvJa": pv_display_ja(positions[ply]["sfen"], best_pv, previous_to),
+            "actualPv": actual_pv,
+            "actualPvJa": pv_display_ja(positions[ply]["sfen"], actual_pv, previous_to),
+        })
 
     candidates = []
     for ply in range(0, moves):
@@ -243,8 +384,9 @@ def analyze_game(engine: UsiEngine, kif_path: Path, game_id: str, user: str,
         played_usi = positions[ply + 1].get("usi")
         if not played_usi:
             continue
-        before_mover = per_ply[ply]["cp_sente"] if mover == "sente" else -per_ply[ply]["cp_sente"]
-        after_mover = per_ply[ply + 1]["cp_sente"] if mover == "sente" else -per_ply[ply + 1]["cp_sente"]
+        move_analysis = move_analyses[ply]
+        before_mover = score_json_to_cp(move_analysis["scoreBefore"])
+        after_mover = score_json_to_cp(move_analysis["scoreAfterActual"])
         best_usi = per_ply[ply]["bestmove"]
         if not best_usi or best_usi == "resign" or best_usi == "win":
             continue
@@ -264,8 +406,15 @@ def analyze_game(engine: UsiEngine, kif_path: Path, game_id: str, user: str,
             "before_cp": per_ply[ply]["cp_sente"],
             "after_cp": per_ply[ply + 1]["cp_sente"],
             "loss": loss,
-            "pv": per_ply[ply]["pv"],
+            "score_before": move_analysis["scoreBefore"],
+            "score_after": move_analysis["scoreAfterActual"],
+            "best_score": move_analysis["bestScore"],
+            "pv": move_analysis["pv"],
+            "pv_ja": move_analysis["pvJa"],
+            "actual_pv": move_analysis["actualPv"],
+            "actual_pv_ja": move_analysis["actualPvJa"],
             "board_before": board_before,
+            "previous_to": shogi.Move.from_usi(positions[ply].get("usi")).to_square if positions[ply].get("usi") else None,
         })
 
     flagged = [c for c in candidates if c["loss"] >= loss_threshold]
@@ -279,8 +428,9 @@ def analyze_game(engine: UsiEngine, kif_path: Path, game_id: str, user: str,
     game_issues = []
     for c in flagged:
         mover = user_side
-        played_ja = move_display_ja(c["played_usi"], c["board_before"], mover)
-        best_ja = move_display_ja(c["best_usi"], c["board_before"], mover)
+        played_ja = move_display_ja(c["played_usi"], c["board_before"], mover, c["previous_to"])
+        best_ja = move_display_ja(c["best_usi"], c["board_before"], mover, c["previous_to"])
+        points = grounded_points(positions[c["ply"] - 1]["sfen"], c["pv"], c["best_score"])
         verified_issues.append({
             "ply": c["ply"],
             "played": c["played_usi"],
@@ -288,8 +438,17 @@ def analyze_game(engine: UsiEngine, kif_path: Path, game_id: str, user: str,
             "beforeCp": c["before_cp"],
             "afterCp": c["after_cp"],
             "lossCp": c["loss"],
+            "scorePerspective": "mover",
+            "scoreBefore": c["score_before"],
+            "scoreAfterActual": c["score_after"],
+            "bestScore": c["best_score"],
+            "playedJa": played_ja,
             "bestJa": best_ja,
             "pv": c["pv"],
+            "pvJa": c["pv_ja"],
+            "actualPv": c["actual_pv"],
+            "actualPvJa": c["actual_pv_ja"],
+            "points": points,
         })
         game_issues.append({
             "ply": c["ply"],
@@ -297,12 +456,12 @@ def analyze_game(engine: UsiEngine, kif_path: Path, game_id: str, user: str,
             "best": c["best_usi"],
             "loss": c["loss"],
             "category": category_of(c["ply"], moves),
-            "comment": make_comment(c["ply"], moves, c["loss"]),
+            "comment": make_comment(best_ja),
         })
 
     sente_name, gote_name = game["sente"], game["gote"]
     analysis_json = {
-        "schemaVersion": 1,
+        "schemaVersion": 2,
         "gameId": game_id,
         "date": game["date"].replace("/", "-"),
         "sente": sente_name,
@@ -317,6 +476,7 @@ def analyze_game(engine: UsiEngine, kif_path: Path, game_id: str, user: str,
             "scorePerspective": "sente",
         },
         "evaluations": evaluations,
+        "moveAnalyses": move_analyses,
         "verifiedIssues": verified_issues,
     }
     game_json = {
