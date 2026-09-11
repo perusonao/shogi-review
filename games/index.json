@@ -2,6 +2,19 @@
   "schemaVersion": 1,
   "games": [
     {
+      "id": "20260912_クロロ",
+      "date": "2026/09/12",
+      "title": "ぺるそなお vs クロロ",
+      "side": "先手",
+      "result": "後手・クロロ 勝利",
+      "moves": 114,
+      "kif": "games/20260912_クロロ.kif",
+      "gameData": "games/20260912_クロロ.json",
+      "analysisData": "analysis/20260912_クロロ.json",
+      "analyzed": true,
+      "status": "YaneuraOu V9.00 + 水匠5解析済み"
+    },
+    {
       "id": "20260912_ひこな",
       "date": "2026/09/12",
       "title": "ひこな vs ぺるそなお",
