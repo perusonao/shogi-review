@@ -95,8 +95,9 @@ production表示:
 ## Commit / Pages
 
 - 実装基準main: `126b78d7e855686e0d030e6ae81a7290bff26351`
-- implementation commit: commit後に確定
-- Pages: push後にproduction URLを390×844で再確認する
+- implementation commit: `37365365379b8796201b1515f65f49cbbc042e54`
+- Pages: [deployment run 34616218945](https://github.com/perusonao/shogi-review/actions/runs/34616218945) 成功
+- production: `https://perusonao.github.io/shogi-review/` を390×844 / 375×844で再実行し、localと同じ寸法・Reason本文・初期折りたたみを確認
 
 ## 残課題 / 次Phase
 
