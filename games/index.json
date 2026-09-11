@@ -2,6 +2,19 @@
   "schemaVersion": 1,
   "games": [
     {
+      "id": "20260911_レンレン",
+      "date": "2026/09/11",
+      "title": "ぺるそなお vs レンレン",
+      "side": "先手",
+      "result": "後手・レンレン 勝利",
+      "moves": 168,
+      "kif": "games/20260911_レンレン.kif",
+      "gameData": "games/20260911_レンレン.json",
+      "analysisData": "analysis/20260911_レンレン.json",
+      "analyzed": true,
+      "status": "YaneuraOu V9.00 + 水匠5解析済み"
+    },
+    {
       "id": "20260911_ryunenbb",
       "date": "2026/09/11",
       "title": "ryunenbb vs sonao81",

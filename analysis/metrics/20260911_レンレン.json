@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "gameId": "20260911_レンレン",
+  "analyzedAt": "2026-09-11T13:06:11.606015Z",
+  "positions": 169,
+  "problemPositions": 6,
+  "baseAnalysisSeconds": 6.753,
+  "extraPvSearchSeconds": 0.687,
+  "totalAnalysisSeconds": 7.44,
+  "shortPvCandidates": 1,
+  "extraSearchExecuted": 1,
+  "pvLengthBeforeAverage": 2.0,
+  "pvLengthAfterAverage": 24.0,
+  "pvLengthsBefore": [
+    2
+  ],
+  "pvLengthsAfter": [
+    24
+  ],
+  "improvedPvCount": 1,
+  "unchangedPvCount": 0
+}
