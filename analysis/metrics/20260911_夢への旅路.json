@@ -1,0 +1,18 @@
+{
+  "schemaVersion": 1,
+  "gameId": "20260911_夢への旅路",
+  "analyzedAt": "2026-09-11T13:40:42.397438Z",
+  "positions": 141,
+  "problemPositions": 6,
+  "baseAnalysisSeconds": 6.125,
+  "extraPvSearchSeconds": 0.557,
+  "totalAnalysisSeconds": 6.682,
+  "shortPvCandidates": 0,
+  "extraSearchExecuted": 0,
+  "pvLengthBeforeAverage": null,
+  "pvLengthAfterAverage": null,
+  "pvLengthsBefore": [],
+  "pvLengthsAfter": [],
+  "improvedPvCount": 0,
+  "unchangedPvCount": 0
+}
