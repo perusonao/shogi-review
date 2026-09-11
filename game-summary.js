@@ -198,14 +198,96 @@
     return `解析値から重要局面を${items.length}件抽出しました。${moved.ply}手目で形勢区分または評価値が大きく動いています。${plies}を重点的に確認できます。`;
   }
 
+  function hasMateChange(item) {
+    const before = item?.scoreBefore;
+    const after = item?.scoreAfter;
+    if (before?.type === "mate" || after?.type === "mate") return true;
+    return [before, after].some((score) => score?.type === "cp" && Math.abs(Number(score.value || 0)) >= 25000);
+  }
+
+  function learningTheme(item) {
+    const issue = item?.issue || {};
+    const points = Array.isArray(issue.points) ? issue.points.join(" ") : "";
+    const pv = Array.isArray(issue.pv) ? issue.pv : [];
+    if (hasMateChange(item) || /詰み/.test(points)) return { type: "mate", text: "詰み筋を確認" };
+    if (/王手/.test(points)) return { type: "check", text: "王手を含む読み筋を確認" };
+    if (/取る手/.test(points)) return { type: "capture", text: "駒を取る手を含む読み筋を確認" };
+    if (/成る手/.test(points) || pv.some((move) => typeof move === "string" && move.endsWith("+"))) {
+      return { type: "promotion", text: "成る手を含む変化を確認" };
+    }
+    if (pv.some((move) => typeof move === "string" && move.includes("*"))) {
+      return { type: "drop", text: "持ち駒を使う候補を確認" };
+    }
+    return { type: "comparison", text: "実戦手と推奨手を比較" };
+  }
+
+  function learningPriority(item) {
+    if (hasMateChange(item)) return 1;
+    if (item.labels?.includes("最大の課題")) return 2;
+    if (item.labels?.includes("最初の分岐")) return 3;
+    if (item.labels?.includes("逆転局面")) return 4;
+    return 5;
+  }
+
+  function extractLearningItems(analysis, importantPositions = null) {
+    const selected = importantPositions || selectImportantPositions(analysis);
+    const gameId = String(analysis?.gameId || "");
+    const seen = new Set();
+    return selected
+      .slice()
+      .sort((a, b) => learningPriority(a) - learningPriority(b) || b.loss - a.loss || a.ply - b.ply)
+      .filter((item) => {
+        if (seen.has(item.ply)) return false;
+        seen.add(item.ply);
+        return true;
+      })
+      .slice(0, 3)
+      .map((item) => {
+        const theme = learningTheme(item);
+        return {
+          gameId,
+          ply: item.ply,
+          type: theme.type,
+          theme: theme.text,
+          actualMove: item.issue?.played || null,
+          bestMove: item.issue?.best || null,
+          actualMoveJa: item.issue?.playedJa || null,
+          bestMoveJa: item.issue?.bestJa || null,
+          loss: item.loss,
+          mate: hasMateChange(item) ? { before: item.scoreBefore, after: item.scoreAfter } : null,
+          category: item.labels.slice(),
+          scoreChange: { before: item.scoreBefore, after: item.scoreAfter, text: item.scoreText },
+          source: item,
+        };
+      });
+  }
+
+  function buildSummaryAudit(gameId, importantPositions, recordedAt = new Date().toISOString()) {
+    return {
+      schemaVersion: 1,
+      gameId,
+      recordedAt,
+      selected: importantPositions.map((item) => ({
+        gameId,
+        ply: item.ply,
+        category: item.labels.slice(),
+        scoreChange: { before: item.scoreBefore, after: item.scoreAfter },
+      })),
+    };
+  }
+
   return {
     CLEAR_EDGE,
     DECISIVE_EDGE,
     LARGE_LOSS,
     buildOverallComment,
+    buildSummaryAudit,
     evaluationFromUser,
     evaluationLabel,
+    extractLearningItems,
+    hasMateChange,
     issueScoresFromUser,
+    learningTheme,
     numericScore,
     scoreText,
     selectImportantPositions,
@@ -214,9 +296,14 @@
 });
 
 if (typeof document !== "undefined" && typeof render === "function") {
+  const learningStyle = document.createElement("style");
+  learningStyle.textContent = ".nextGameLearning{margin:2px 0}.nextGameLearning details{background:#211a13;border:1px solid #527056;border-radius:7px;padding:4px}.nextGameLearning summary{cursor:pointer;color:#9fe0a9;font-size:10px;font-weight:700}.learningIntro{font-size:8px;color:#c8b99e;margin:4px 0}.learningItem{display:grid;grid-template-columns:64px 1fr;align-items:center;width:100%;text-align:left;border:0;border-top:1px solid #4c4438;background:transparent;color:#fff3df;padding:5px 2px;font:inherit}.learningItem b{font-size:9px;color:#c7ebc9}.learningItem span{font-size:9px}.learningItem small{grid-column:2;font-size:8px;color:#c8b99e;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}";
+  document.head.appendChild(learningStyle);
   const renderBeforeGameSummary = render;
   let summaryGameId = null;
   let summaryExpanded = true;
+  let learningExpanded = true;
+  let auditedGameId = null;
 
   function summaryContainer() {
     let container = document.getElementById("gameSummary");
@@ -226,6 +313,17 @@ if (typeof document !== "undefined" && typeof render === "function") {
       container.className = "gameSummary";
       container.setAttribute("aria-live", "polite");
       review.parentNode.insertBefore(container, review);
+    }
+    return container;
+  }
+
+  function learningContainer() {
+    let container = document.getElementById("nextGameLearning");
+    if (!container) {
+      container = document.createElement("div");
+      container.id = "nextGameLearning";
+      container.className = "nextGameLearning";
+      review.parentNode.insertBefore(container, review.nextSibling);
     }
     return container;
   }
@@ -246,8 +344,46 @@ if (typeof document !== "undefined" && typeof render === "function") {
   function jumpToSummaryPosition(targetPly) {
     ply = Math.max(0, Math.min(D.positions.length - 1, Number(targetPly)));
     summaryExpanded = false;
+    learningExpanded = false;
     render();
     requestAnimationFrame(() => review.scrollIntoView({ block: "nearest", behavior: "smooth" }));
+  }
+
+  function recordSummaryAudit(gameId, items) {
+    if (!gameId || auditedGameId === gameId) return;
+    auditedGameId = gameId;
+    try {
+      const key = "shogi-review-summary-audit-v1";
+      const current = JSON.parse(localStorage.getItem(key) || "[]");
+      const records = Array.isArray(current) ? current.filter((record) => record?.gameId !== gameId) : [];
+      records.unshift(window.ShogiGameSummary.buildSummaryAudit(gameId, items));
+      localStorage.setItem(key, JSON.stringify(records.slice(0, 10)));
+    } catch (_error) {
+      // Private browsing or storage restrictions must not block the review UI.
+    }
+  }
+
+  function renderNextGameLearning(analysis, items) {
+    const container = learningContainer();
+    const learning = window.ShogiGameSummary.extractLearningItems(analysis, items);
+    const details = document.createElement("details");
+    details.open = learningExpanded;
+    details.addEventListener("toggle", () => { learningExpanded = details.open; });
+    appendText(details, "summary", `次局への学び（${learning.length}件）`);
+    appendText(details, "div", "この対局で再確認する局面です。", "learningIntro");
+    learning.forEach((item) => {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.className = "learningItem";
+      appendText(button, "b", `□ ${item.ply}手目`);
+      appendText(button, "span", item.theme);
+      const actual = summaryJapaneseMove(item.source, "actual");
+      const best = summaryJapaneseMove(item.source, "best");
+      if (actual && best) appendText(button, "small", `${actual} → ${best}`);
+      button.addEventListener("click", () => jumpToSummaryPosition(item.ply));
+      details.appendChild(button);
+    });
+    container.replaceChildren(details);
   }
 
   function renderGameSummary() {
@@ -260,8 +396,10 @@ if (typeof document !== "undefined" && typeof render === "function") {
     if (gameId !== summaryGameId) {
       summaryGameId = gameId;
       summaryExpanded = true;
+      learningExpanded = true;
     }
     const analysis = {
+      gameId,
       userSide: userSide() === "b" ? "sente" : "gote",
       moves: D.game.moves,
       evaluations: evalSente.map(([evaluationPly, cp]) => ({ ply: evaluationPly, cp })),
@@ -291,6 +429,8 @@ if (typeof document !== "undefined" && typeof render === "function") {
     });
     details.appendChild(list);
     container.replaceChildren(details);
+    renderNextGameLearning(analysis, items);
+    recordSummaryAudit(gameId, items);
   }
 
   render = function renderWithGameSummary() {

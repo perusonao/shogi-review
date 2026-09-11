@@ -110,3 +110,97 @@ test("総評は確認不能な棋理を創作せず、iPhone向けUIは横スク
   assert.match(ui, /jumpToSummaryPosition/);
   assert.match(ui, /scrollIntoView/);
 });
+
+function important(ply, label, overrides = {}) {
+  return {
+    ply,
+    label,
+    labels: [label],
+    loss: null,
+    scoreBefore: { type: "cp", value: 100 },
+    scoreAfter: { type: "cp", value: 0 },
+    scoreText: "+100 → +0",
+    issue: null,
+    ...overrides,
+  };
+}
+
+test("学びは重複を除いて最大3件にする", () => {
+  const source = [
+    important(10, "その他"),
+    important(10, "逆転局面"),
+    important(20, "最初の分岐"),
+    important(30, "最大の課題", { loss: 900 }),
+    important(40, "勝負を決めた局面"),
+  ];
+  const result = summary.extractLearningItems({ gameId: "sample" }, source);
+  assert.equal(result.length, 3);
+  assert.equal(new Set(result.map((item) => item.ply)).size, 3);
+});
+
+test("mate、最大損失、最初の悪化の順で学びを優先する", () => {
+  const source = [
+    important(12, "最初の分岐", { loss: 400 }),
+    important(30, "最大の課題", { loss: 1200 }),
+    important(50, "勝負を決めた局面", { scoreAfter: { type: "mate", value: -5 } }),
+    important(40, "逆転局面"),
+  ];
+  assert.deepEqual(summary.extractLearningItems({ gameId: "sample" }, source).map((item) => item.ply), [50, 30, 12]);
+});
+
+test("王手・駒取り・成り・打を保存済みPV事実だけから分類する", () => {
+  const themed = (points, pv) => important(10, "最大の課題", { issue: { points, pv } });
+  assert.equal(summary.learningTheme(themed(["推奨手は王手です。"], ["7g7f"])).type, "check");
+  assert.equal(summary.learningTheme(themed(["読み筋の2手目は金を取る手です。"], ["7g7f"])).type, "capture");
+  assert.equal(summary.learningTheme(themed([], ["8h2b+"])).type, "promotion");
+  assert.equal(summary.learningTheme(themed([], ["P*5e"])).type, "drop");
+});
+
+test("根拠となる特徴がない学びは実戦手と推奨手の比較へfallbackする", () => {
+  const item = important(10, "最大の課題", { issue: { points: [], pv: ["7g7f"] } });
+  assert.deepEqual(summary.learningTheme(item), { type: "comparison", text: "実戦手と推奨手を比較" });
+});
+
+test("learning itemは将来集計用の最小構造を持つ", () => {
+  const item = important(28, "最初の分岐", {
+    loss: 465,
+    issue: { played: "5c4d", best: "1c6h+", playedJa: "△4四銀", bestJa: "△6八角成", points: [], pv: [] },
+  });
+  const result = summary.extractLearningItems({ gameId: "20260911_nagata2532" }, [item])[0];
+  assert.equal(result.gameId, "20260911_nagata2532");
+  assert.equal(result.ply, 28);
+  assert.equal(result.actualMove, "5c4d");
+  assert.equal(result.bestMove, "1c6h+");
+  assert.equal(result.loss, 465);
+  assert.ok(Object.hasOwn(result, "mate"));
+});
+
+test("NAGATA2532の学びは重要局面の優先度上位3件から選び28手目を含む", () => {
+  const analysis = JSON.parse(fs.readFileSync(path.join(ROOT, "analysis", "20260911_nagata2532.json"), "utf8"));
+  const points = summary.selectImportantPositions(analysis);
+  const learning = summary.extractLearningItems(analysis, points);
+  assert.equal(learning.length, 3);
+  assert.ok(learning.some((item) => item.ply === 28));
+  const move28 = learning.find((item) => item.ply === 28);
+  assert.equal(move28.actualMoveJa, "△4四銀");
+  assert.equal(move28.bestMoveJa, "△6八角成");
+  assert.equal(move28.scoreChange.text, "+706 → +241");
+});
+
+test("summary監査JSONは選択局面とscore changeだけを最大10局蓄積できる形にする", () => {
+  const audit = summary.buildSummaryAudit("game-a", [important(28, "最初の分岐")], "2026-09-11T00:00:00Z");
+  assert.equal(audit.schemaVersion, 1);
+  assert.equal(audit.gameId, "game-a");
+  assert.deepEqual(audit.selected[0].category, ["最初の分岐"]);
+  assert.deepEqual(audit.selected[0].scoreChange.before, { type: "cp", value: 100 });
+  const ui = fs.readFileSync(path.join(ROOT, "game-summary.js"), "utf8");
+  assert.match(ui, /records\.slice\(0, 10\)/);
+  assert.match(ui, /shogi-review-summary-audit-v1/);
+});
+
+test("次局への学びUIは局面ジャンプを再利用し棋風・心理を表示しない", () => {
+  const ui = fs.readFileSync(path.join(ROOT, "game-summary.js"), "utf8");
+  assert.match(ui, /次局への学び/);
+  assert.match(ui, /jumpToSummaryPosition\(item\.ply\)/);
+  for (const unsupported of ["苦手", "棋風", "心理", "大局観", "手厚い", "玉形"]) assert.equal(ui.includes(unsupported), false);
+});
