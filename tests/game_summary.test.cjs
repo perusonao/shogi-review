@@ -78,14 +78,16 @@ test("同一局面のカテゴリを統合し、全体を最大5局面に制限�
   assert.ok(result.length >= 1);
 });
 
-test("NAGATA2532 28手目を後手視点で保持する", () => {
+test("NAGATA2532は34手目を代表にして28/36手目を補助として保持する", () => {
   const analysis = JSON.parse(fs.readFileSync(path.join(ROOT, "analysis", "20260911_nagata2532.json"), "utf8"));
   const result = summary.selectImportantPositions(analysis);
-  const move28 = result.find((item) => item.ply === 28);
-  assert.ok(move28);
-  assert.equal(move28.played, "△4四銀");
-  assert.equal(move28.best, "△6八角成");
-  assert.equal(move28.scoreText, "+706 → +241");
+  const representative = result.find((item) => item.ply === 34);
+  assert.ok(representative);
+  assert.deepEqual(representative.auxiliaryEvents.map((item) => item.ply), [28, 36]);
+  const move28 = representative.auxiliaryEvents.find((item) => item.ply === 28);
+  assert.deepEqual(move28.category, ["最初の分岐"]);
+  assert.deepEqual(move28.scoreBefore, { type: "cp", value: 706 });
+  assert.deepEqual(move28.scoreAfter, { type: "cp", value: 241 });
   const source = analysis.verifiedIssues.find((item) => item.ply === 28);
   assert.deepEqual(source.pvJa.slice(0, 6), ["△6八角成", "▲同銀", "△7八金打", "▲7九角", "△4四銀", "▲5三歩打"]);
   assert.deepEqual(source.actualPvJa.slice(0, 6), ["△4四銀", "▲5二飛成", "△同金右", "▲6九金", "△3四歩", "▲2三飛打"]);
@@ -126,12 +128,13 @@ function important(ply, label, overrides = {}) {
 }
 
 test("学びは重複を除いて最大3件にする", () => {
+  const material = { issue: { played: "7g7f", best: "2g2f", pv: ["2g2f"] } };
   const source = [
-    important(10, "その他"),
-    important(10, "逆転局面"),
-    important(20, "最初の分岐"),
-    important(30, "最大の課題", { loss: 900 }),
-    important(40, "勝負を決めた局面"),
+    important(10, "その他", material),
+    important(10, "逆転局面", material),
+    important(20, "最初の分岐", material),
+    important(30, "最大の課題", { ...material, loss: 900 }),
+    important(40, "勝負を決めた局面", material),
   ];
   const result = summary.extractLearningItems({ gameId: "sample" }, source);
   assert.equal(result.length, 3);
@@ -139,11 +142,12 @@ test("学びは重複を除いて最大3件にする", () => {
 });
 
 test("mate、最大損失、最初の悪化の順で学びを優先する", () => {
+  const material = { issue: { played: "7g7f", best: "2g2f", pv: ["2g2f"] } };
   const source = [
-    important(12, "最初の分岐", { loss: 400 }),
-    important(30, "最大の課題", { loss: 1200 }),
-    important(50, "勝負を決めた局面", { scoreAfter: { type: "mate", value: -5 } }),
-    important(40, "逆転局面"),
+    important(12, "最初の分岐", { ...material, loss: 400 }),
+    important(30, "最大の課題", { ...material, loss: 1200 }),
+    important(50, "勝負を決めた局面", { ...material, scoreAfter: { type: "mate", value: -5 } }),
+    important(40, "逆転局面", material),
   ];
   assert.deepEqual(summary.extractLearningItems({ gameId: "sample" }, source).map((item) => item.ply), [50, 30, 12]);
 });
@@ -175,16 +179,14 @@ test("learning itemは将来集計用の最小構造を持つ", () => {
   assert.ok(Object.hasOwn(result, "mate"));
 });
 
-test("NAGATA2532の学びは重要局面の優先度上位3件から選び28手目を含む", () => {
+test("NAGATA2532の学びは代表34だけで57手目を選ばない", () => {
   const analysis = JSON.parse(fs.readFileSync(path.join(ROOT, "analysis", "20260911_nagata2532.json"), "utf8"));
   const points = summary.selectImportantPositions(analysis);
   const learning = summary.extractLearningItems(analysis, points);
-  assert.equal(learning.length, 3);
-  assert.ok(learning.some((item) => item.ply === 28));
-  const move28 = learning.find((item) => item.ply === 28);
-  assert.equal(move28.actualMoveJa, "△4四銀");
-  assert.equal(move28.bestMoveJa, "△6八角成");
-  assert.equal(move28.scoreChange.text, "+706 → +241");
+  assert.deepEqual(learning.map((item) => item.ply), [34]);
+  assert.equal(learning.some((item) => item.ply === 57), false);
+  assert.equal(learning[0].actualMoveJa, "△5四飛成");
+  assert.equal(learning[0].bestMoveJa, "△6八角成");
 });
 
 test("summary監査JSONは選択局面とscore changeだけを最大10局蓄積できる形にする", () => {
@@ -202,5 +204,136 @@ test("次局への学びUIは局面ジャンプを再利用し棋風・心理を
   const ui = fs.readFileSync(path.join(ROOT, "game-summary.js"), "utf8");
   assert.match(ui, /次局への学び/);
   assert.match(ui, /jumpToSummaryPosition\(item\.ply\)/);
+  assert.match(ui, /jumpToSummaryPosition\(event\.ply\)/);
+  assert.match(ui, /auxiliaryJump/);
   for (const unsupported of ["苦手", "棋風", "心理", "大局観", "手厚い", "玉形"]) assert.equal(ui.includes(unsupported), false);
+});
+
+function loadAnalysis(gameId) {
+  return JSON.parse(fs.readFileSync(path.join(ROOT, "analysis", `${gameId}.json`), "utf8"));
+}
+
+function selected(gameId) {
+  const analysis = loadAnalysis(gameId);
+  const importantPositions = summary.selectImportantPositions(analysis);
+  return { analysis, importantPositions, learning: summary.extractLearningItems(analysis, importantPositions) };
+}
+
+test("Human Review優先5局fixtureを固定する", () => {
+  const nagata = selected("20260911_nagata2532");
+  assert.deepEqual(nagata.importantPositions.find((item) => item.ply === 34).auxiliaryEvents.map((item) => item.ply), [28, 36]);
+  assert.deepEqual(nagata.learning.map((item) => item.ply), [34]);
+
+  const ariake = selected("20260910_ariake");
+  assert.ok(ariake.importantPositions.some((item) => item.ply === 86));
+  assert.ok(ariake.importantPositions.some((item) => item.ply === 94));
+  assert.ok(ariake.learning.some((item) => item.ply === 86));
+  assert.ok(ariake.learning.some((item) => item.ply === 94));
+  assert.equal(ariake.learning.some((item) => item.ply === 71), false);
+
+  const shun = selected("20260911_しゅん");
+  assert.deepEqual(shun.importantPositions.find((item) => item.ply === 71).auxiliaryEvents.map((item) => item.ply), [68, 70]);
+
+  const junya = selected("20260911_じゅんや");
+  assert.deepEqual(junya.importantPositions.find((item) => item.ply === 44).auxiliaryEvents.map((item) => item.ply), [43]);
+
+  const omatsu = selected("20260911_おまつ");
+  assert.ok(omatsu.importantPositions.some((item) => item.ply === 126));
+  assert.ok(omatsu.importantPositions.some((item) => item.ply === 135));
+  assert.ok(omatsu.learning.some((item) => item.ply === 126));
+  assert.equal(omatsu.learning.some((item) => item.ply === 135), false);
+});
+
+test("same bestMoveとPV prefixが一致する近接候補をcluster化する", () => {
+  const candidates = [
+    important(10, "最初の分岐", { loss: 400, issue: { played: "7g7f", best: "2g2f", pv: ["2g2f", "8c8d"] } }),
+    important(16, "最大の課題", { loss: 900, issue: { played: "6g6f", best: "2g2f", pv: ["2g2f", "8c8d", "2f2e"] } }),
+  ];
+  const clustered = summary.clusterImportantPositions(candidates);
+  assert.equal(clustered.length, 1);
+  assert.equal(clustered[0].ply, 16);
+  assert.deepEqual(clustered[0].auxiliaryEvents.map((item) => item.ply), [10]);
+});
+
+test("same bestMoveでもPV prefixが異なる候補は独立させる", () => {
+  const candidates = [
+    important(10, "最初の分岐", { loss: 400, issue: { played: "7g7f", best: "2g2f", pv: ["2g2f", "8c8d"] } }),
+    important(16, "最大の課題", { loss: 900, issue: { played: "6g6f", best: "2g2f", pv: ["2g2f", "3c3d"] } }),
+  ];
+  assert.equal(summary.clusterImportantPositions(candidates).length, 2);
+});
+
+test("different PVと異なるbestMoveのmateイベントは独立issueにする", () => {
+  const candidates = [
+    important(86, "最初のmate変化", { scoreBefore: { type: "cp", value: 29999 }, scoreAfter: { type: "cp", value: 4000 }, loss: 25000, issue: { played: "B*3a", best: "B*2b", pv: ["B*2b", "1c2c"] } }),
+    important(87, "最大の課題", { scoreBefore: { type: "cp", value: 4000 }, scoreAfter: { type: "cp", value: 29999 }, loss: 25500, issue: { played: "P*1b", best: "2b2c", pv: ["2b2c", "L*2b"] } }),
+  ];
+  assert.equal(summary.clusterImportantPositions(candidates).length, 2);
+});
+
+test("比較材料のない評価境界局面はlearningから外す", () => {
+  const boundaryOnly = important(135, "勝負を決めた局面", {
+    scoreBefore: { type: "cp", value: -720 }, scoreAfter: { type: "cp", value: 29995 }, issue: null,
+  });
+  assert.equal(summary.hasLearningMaterial(boundaryOnly), false);
+  assert.deepEqual(summary.extractLearningItems({ gameId: "sample" }, [boundaryOnly]), []);
+});
+
+test("全16局で最大loss 16/16とmate保有局 9/9を保護する", () => {
+  const auditedGameIds = [
+    "20260911_ak69boy", "20260911_nagata2532", "20260911_おまつ", "20260911_じゅんや",
+    "20260911_ダルマ", "20260911_しゅん", "20260911_ぴろ", "20260911_大山_貴一郎",
+    "20260910_ぽっぷ", "20260910_ぱいなぽー", "20260910_ひぐれ", "20260910_ariake",
+    "20260910_taatoru_cat", "20260910_yogra", "20260910_aochikenmin", "akane_20260910",
+  ];
+  const files = auditedGameIds.map((gameId) => `${gameId}.json`);
+  let maxLossCaptured = 0;
+  let mateGames = 0;
+  let mateCaptured = 0;
+  for (const file of files) {
+    const analysis = JSON.parse(fs.readFileSync(path.join(ROOT, "analysis", file), "utf8"));
+    const items = summary.selectImportantPositions(analysis);
+    const issues = analysis.verifiedIssues || [];
+    const maxIssue = issues.reduce((best, candidate) => Number(candidate.lossCp || candidate.loss || 0) > Number(best?.lossCp || best?.loss || -1) ? candidate : best, null);
+    if (maxIssue && items.some((item) => item.ply === Number(maxIssue.ply))) maxLossCaptured += 1;
+    const mateIssuePlies = issues.filter((candidate) => {
+      const values = [candidate.beforeCp, candidate.afterCp, candidate.scoreBefore?.value, candidate.scoreAfterActual?.value];
+      return candidate.scoreBefore?.type === "mate" || candidate.scoreAfterActual?.type === "mate" || values.some((value) => Number.isFinite(Number(value)) && Math.abs(Number(value)) >= 25000);
+    }).map((candidate) => Number(candidate.ply));
+    if (mateIssuePlies.length) {
+      mateGames += 1;
+      if (items.some((item) => mateIssuePlies.includes(item.ply))) mateCaptured += 1;
+    }
+  }
+  assert.equal(files.length, 16);
+  assert.equal(maxLossCaptured, 16);
+  assert.equal(mateGames, 9);
+  assert.equal(mateCaptured, 9);
+});
+
+test("最新mainの現行20局でも最大lossとmateを全件保護する", () => {
+  const catalog = JSON.parse(fs.readFileSync(path.join(ROOT, "games", "index.json"), "utf8"));
+  const gameIds = catalog.games.filter((game) => game.analyzed).map((game) => game.id);
+  let maxLossCaptured = 0;
+  let mateGames = 0;
+  let mateCaptured = 0;
+  for (const gameId of gameIds) {
+    const analysis = loadAnalysis(gameId);
+    const items = summary.selectImportantPositions(analysis);
+    const issues = analysis.verifiedIssues || [];
+    const maxIssue = issues.reduce((best, candidate) => Number(candidate.lossCp || candidate.loss || 0) > Number(best?.lossCp || best?.loss || -1) ? candidate : best, null);
+    if (maxIssue && items.some((item) => item.ply === Number(maxIssue.ply))) maxLossCaptured += 1;
+    const mateIssuePlies = issues.filter((candidate) => {
+      const values = [candidate.beforeCp, candidate.afterCp, candidate.scoreBefore?.value, candidate.scoreAfterActual?.value];
+      return candidate.scoreBefore?.type === "mate" || candidate.scoreAfterActual?.type === "mate" || values.some((value) => Number.isFinite(Number(value)) && Math.abs(Number(value)) >= 25000);
+    }).map((candidate) => Number(candidate.ply));
+    if (mateIssuePlies.length) {
+      mateGames += 1;
+      if (items.some((item) => mateIssuePlies.includes(item.ply))) mateCaptured += 1;
+    }
+  }
+  assert.equal(gameIds.length, 20);
+  assert.equal(maxLossCaptured, 20);
+  assert.equal(mateGames, 12);
+  assert.equal(mateCaptured, 12);
 });

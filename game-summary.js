@@ -83,6 +83,145 @@
     return beforeValue === null || afterValue === null ? 0 : Math.max(0, beforeValue - afterValue);
   }
 
+  function mateState(score) {
+    if (!score) return "unknown";
+    if (score.type === "mate") return Number(score.value || 0) >= 0 ? "mate-for" : "mate-against";
+    const value = Number(score.value);
+    if (!Number.isFinite(value) || Math.abs(value) < 25000) return "cp";
+    return value >= 0 ? "mate-equivalent-for" : "mate-equivalent-against";
+  }
+
+  function mateTransition(before, after) {
+    const from = mateState(before);
+    const to = mateState(after);
+    const changed = from !== to && (from !== "cp" || to !== "cp") && from !== "unknown" && to !== "unknown";
+    return changed ? { from, to } : null;
+  }
+
+  function issueBestMove(issue) {
+    return issue?.best || issue?.bestmove || issue?.bestMove || null;
+  }
+
+  function issuePv(issue) {
+    return Array.isArray(issue?.pv) ? issue.pv.filter((move) => typeof move === "string") : [];
+  }
+
+  function scoreEquals(left, right) {
+    return Boolean(left && right && left.type === right.type && Number(left.value) === Number(right.value));
+  }
+
+  function pvPrefixMatches(left, right, length = 2) {
+    const a = issuePv(left);
+    const b = issuePv(right);
+    if (a.length < length || b.length < length) return false;
+    return a.slice(0, length).every((move, index) => move === b[index]);
+  }
+
+  function sameIssueIdentity(left, right) {
+    const distance = Math.abs(Number(left.ply) - Number(right.ply));
+    const leftBest = issueBestMove(left.issue);
+    const rightBest = issueBestMove(right.issue);
+    if (distance > 8 || !leftBest || leftBest !== rightBest) return false;
+    const leftPv = issuePv(left.issue);
+    const rightPv = issuePv(right.issue);
+    return !leftPv.length || !rightPv.length || pvPrefixMatches(left.issue, right.issue);
+  }
+
+  function scoreTransitionLinks(left, right) {
+    const earlier = Number(left.ply) <= Number(right.ply) ? left : right;
+    const later = earlier === left ? right : left;
+    if (earlier.issue && later.issue) {
+      const earlierBest = issueBestMove(earlier.issue);
+      const laterBest = issueBestMove(later.issue);
+      if (earlierBest && laterBest && earlierBest !== laterBest) return false;
+      if (issuePv(earlier.issue).length && issuePv(later.issue).length && !pvPrefixMatches(earlier.issue, later.issue)) return false;
+    }
+    return Number(later.ply) - Number(earlier.ply) <= 2 && scoreEquals(earlier.scoreAfter, later.scoreBefore);
+  }
+
+  function informationScore(item) {
+    const issue = item.issue || {};
+    let score = 0;
+    if ((issue.played || issue.playedJa) && (issueBestMove(issue) || issue.bestJa)) score += 4;
+    if (issuePv(issue).length) score += 2;
+    if (mateTransition(item.scoreBefore, item.scoreAfter)) score += 2;
+    if (item.scoreBefore && item.scoreAfter) score += 1;
+    return score;
+  }
+
+  function chooseRepresentative(items) {
+    return items.slice().sort((a, b) => {
+      const lossDelta = Number(b.loss || 0) - Number(a.loss || 0);
+      if (lossDelta) return lossDelta;
+      const informationDelta = informationScore(b) - informationScore(a);
+      if (informationDelta) return informationDelta;
+      const mateDelta = Number(Boolean(mateTransition(b.scoreBefore, b.scoreAfter))) - Number(Boolean(mateTransition(a.scoreBefore, a.scoreAfter)));
+      if (mateDelta) return mateDelta;
+      return b.priority - a.priority || a.ply - b.ply;
+    })[0];
+  }
+
+  function clusterImportantPositions(candidates) {
+    const parent = candidates.map((_, index) => index);
+    const find = (index) => parent[index] === index ? index : (parent[index] = find(parent[index]));
+    const union = (left, right) => {
+      const leftRoot = find(left);
+      const rightRoot = find(right);
+      if (leftRoot !== rightRoot) parent[rightRoot] = leftRoot;
+    };
+
+    for (let left = 0; left < candidates.length; left += 1) {
+      for (let right = left + 1; right < candidates.length; right += 1) {
+        if (sameIssueIdentity(candidates[left], candidates[right]) || scoreTransitionLinks(candidates[left], candidates[right])) {
+          union(left, right);
+        }
+      }
+    }
+
+    // A nearby evaluation-only marker can join an already verified score-linked
+    // episode. This preserves e.g. reversal -> decisive -> measured loss without
+    // claiming that the positions are the same chess/shogi mistake.
+    let changed = true;
+    while (changed) {
+      changed = false;
+      for (let left = 0; left < candidates.length; left += 1) {
+        if (candidates[left].issue) continue;
+        for (let right = 0; right < candidates.length; right += 1) {
+          if (left === right || candidates[right].issue || Math.abs(candidates[left].ply - candidates[right].ply) > 2) continue;
+          const componentHasIssue = candidates.some((candidate, index) => find(index) === find(right) && candidate.issue);
+          if (componentHasIssue && find(left) !== find(right)) {
+            union(left, right);
+            changed = true;
+          }
+        }
+      }
+    }
+
+    const groups = new Map();
+    candidates.forEach((candidate, index) => {
+      const root = find(index);
+      if (!groups.has(root)) groups.set(root, []);
+      groups.get(root).push(candidate);
+    });
+
+    return Array.from(groups.values()).map((group) => {
+      const representative = chooseRepresentative(group);
+      const auxiliaryEvents = group
+        .filter((item) => item !== representative)
+        .sort((a, b) => a.ply - b.ply)
+        .map((item) => ({
+          ply: item.ply,
+          category: item.labels.slice(),
+          label: item.label,
+          scoreBefore: item.scoreBefore,
+          scoreAfter: item.scoreAfter,
+          mateTransition: mateTransition(item.scoreBefore, item.scoreAfter),
+        }));
+      const labels = Array.from(new Set(group.flatMap((item) => item.labels)));
+      return { ...representative, labels, auxiliaryEvents };
+    });
+  }
+
   function selectImportantPositions(analysis, options = {}) {
     const side = analysis?.userSide || options.userSide || "sente";
     const moves = Number(analysis?.moves || options.moves || 0);
@@ -92,20 +231,22 @@
       .filter((entry) => Number.isFinite(entry.ply) && entry.score)
       .sort((a, b) => a.ply - b.ply);
     issues.sort((a, b) => Number(a.ply) - Number(b.ply));
+    const issuesByPly = new Map(issues.map((issue) => [Number(issue.ply), issue]));
 
     const selected = new Map();
     function add(ply, label, priority, issue = null, before = null, after = null) {
       if (!Number.isFinite(Number(ply)) || Number(ply) < 1) return;
       const key = Number(ply);
+      const matchedIssue = issue || issuesByPly.get(key) || null;
       const current = selected.get(key) || {
-        ply: key, label, labels: [], priority, issue, scoreBefore: before, scoreAfter: after,
+        ply: key, label, labels: [], priority, issue: matchedIssue, scoreBefore: before, scoreAfter: after,
       };
       if (!current.labels.includes(label)) current.labels.push(label);
       if (priority > current.priority) {
         current.label = label;
         current.priority = priority;
       }
-      if (!current.issue && issue) current.issue = issue;
+      if (!current.issue && matchedIssue) current.issue = matchedIssue;
       if (!current.scoreBefore && before) current.scoreBefore = before;
       if (!current.scoreAfter && after) current.scoreAfter = after;
       selected.set(key, current);
@@ -165,6 +306,15 @@
       }
     }
 
+    const firstMateIssue = issues.find((issue) => {
+      const scores = issueScoresFromUser(issue, side);
+      return Boolean(mateTransition(scores[0], scores[1]));
+    });
+    if (firstMateIssue) {
+      const scores = issueScoresFromUser(firstMateIssue, side);
+      add(Number(firstMateIssue.ply), "最初のmate変化", 4, firstMateIssue, scores[0], scores[1]);
+    }
+
     if (!selected.size && evaluations.length > 1) {
       let largestChange = null;
       for (let index = 1; index < evaluations.length; index += 1) {
@@ -176,13 +326,17 @@
       if (largestChange) add(largestChange.after.ply, "形勢が動いた局面", 1, null, largestChange.before.score, largestChange.after.score);
     }
 
-    return Array.from(selected.values())
+    const candidates = Array.from(selected.values()).map((item) => ({
+      ...item,
+      loss: item.issue ? lossForIssue(item.issue, side) : null,
+    }));
+
+    return clusterImportantPositions(candidates)
       .sort((a, b) => b.priority - a.priority || a.ply - b.ply)
       .slice(0, 5)
       .sort((a, b) => a.ply - b.ply)
       .map((item) => ({
         ...item,
-        loss: item.issue ? lossForIssue(item.issue, side) : null,
         played: item.issue?.playedJa || item.issue?.played || null,
         best: item.issue?.bestJa || item.issue?.best || null,
         scoreText: `${scoreText(item.scoreBefore)} → ${scoreText(item.scoreAfter)}`,
@@ -203,6 +357,13 @@
     const after = item?.scoreAfter;
     if (before?.type === "mate" || after?.type === "mate") return true;
     return [before, after].some((score) => score?.type === "cp" && Math.abs(Number(score.value || 0)) >= 25000);
+  }
+
+  function hasLearningMaterial(item) {
+    const issue = item?.issue;
+    if (!issue) return false;
+    const hasComparison = Boolean((issue.played || issue.playedJa) && (issueBestMove(issue) || issue.bestJa));
+    return hasComparison || issuePv(issue).length > 0 || Number(item.loss || 0) > 0 || Boolean(mateTransition(item.scoreBefore, item.scoreAfter));
   }
 
   function learningTheme(item) {
@@ -236,6 +397,7 @@
     return selected
       .slice()
       .sort((a, b) => learningPriority(a) - learningPriority(b) || b.loss - a.loss || a.ply - b.ply)
+      .filter(hasLearningMaterial)
       .filter((item) => {
         if (seen.has(item.ply)) return false;
         seen.add(item.ply);
@@ -272,6 +434,12 @@
         ply: item.ply,
         category: item.labels.slice(),
         scoreChange: { before: item.scoreBefore, after: item.scoreAfter },
+        auxiliaryEvents: (item.auxiliaryEvents || []).map((event) => ({
+          ply: event.ply,
+          category: event.category.slice(),
+          scoreChange: { before: event.scoreBefore, after: event.scoreAfter },
+          mateTransition: event.mateTransition,
+        })),
       })),
     };
   }
@@ -282,12 +450,16 @@
     LARGE_LOSS,
     buildOverallComment,
     buildSummaryAudit,
+    chooseRepresentative,
+    clusterImportantPositions,
     evaluationFromUser,
     evaluationLabel,
     extractLearningItems,
     hasMateChange,
+    hasLearningMaterial,
     issueScoresFromUser,
     learningTheme,
+    mateTransition,
     numericScore,
     scoreText,
     selectImportantPositions,
@@ -297,7 +469,7 @@
 
 if (typeof document !== "undefined" && typeof render === "function") {
   const learningStyle = document.createElement("style");
-  learningStyle.textContent = ".nextGameLearning{margin:2px 0}.nextGameLearning details{background:#211a13;border:1px solid #527056;border-radius:7px;padding:4px}.nextGameLearning summary{cursor:pointer;color:#9fe0a9;font-size:10px;font-weight:700}.learningIntro{font-size:8px;color:#c8b99e;margin:4px 0}.learningItem{display:grid;grid-template-columns:64px 1fr;align-items:center;width:100%;text-align:left;border:0;border-top:1px solid #4c4438;background:transparent;color:#fff3df;padding:5px 2px;font:inherit}.learningItem b{font-size:9px;color:#c7ebc9}.learningItem span{font-size:9px}.learningItem small{grid-column:2;font-size:8px;color:#c8b99e;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}";
+  learningStyle.textContent = ".nextGameLearning{margin:2px 0}.nextGameLearning details{background:#211a13;border:1px solid #527056;border-radius:7px;padding:4px}.nextGameLearning summary{cursor:pointer;color:#9fe0a9;font-size:10px;font-weight:700}.learningIntro{font-size:8px;color:#c8b99e;margin:4px 0}.learningItem{display:grid;grid-template-columns:64px 1fr;align-items:center;width:100%;text-align:left;border:0;border-top:1px solid #4c4438;background:transparent;color:#fff3df;padding:5px 2px;font:inherit}.learningItem b{font-size:9px;color:#c7ebc9}.learningItem span{font-size:9px}.learningItem small{grid-column:2;font-size:8px;color:#c8b99e;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.summaryItem{padding:0!important;overflow:hidden}.summaryMain{display:block;width:100%;min-height:68px;text-align:left;border:0;background:transparent;color:inherit;padding:5px;font:inherit}.summaryRelated{border-top:1px solid #5c4933;padding:3px 5px}.summaryRelatedLabel{font-size:8px;color:#c8b99e}.auxiliaryJump{display:block;width:100%;border:0;background:transparent;color:#e9c98f;text-align:left;padding:2px 0;font-size:8px;line-height:1.2}.auxiliaryJump:focus-visible,.summaryMain:focus-visible{outline:2px solid #f1c679;outline-offset:-2px}";
   document.head.appendChild(learningStyle);
   const renderBeforeGameSummary = render;
   let summaryGameId = null;
@@ -414,9 +586,11 @@ if (typeof document !== "undefined" && typeof render === "function") {
     const list = document.createElement("div");
     list.className = "summaryItems";
     items.forEach((item, index) => {
+      const card = document.createElement("div");
+      card.className = "summaryItem";
       const button = document.createElement("button");
       button.type = "button";
-      button.className = "summaryItem";
+      button.className = "summaryMain";
       button.title = item.labels.join(" / ");
       appendText(button, "b", `${"①②③④⑤"[index]} ${item.ply}手目`);
       appendText(button, "span", item.label);
@@ -425,7 +599,22 @@ if (typeof document !== "undefined" && typeof render === "function") {
       if (actual && best) appendText(button, "small", `${actual} → 推奨 ${best}`);
       appendText(button, "small", item.scoreText);
       button.addEventListener("click", () => jumpToSummaryPosition(item.ply));
-      list.appendChild(button);
+      card.appendChild(button);
+      if (item.auxiliaryEvents?.length) {
+        const related = document.createElement("div");
+        related.className = "summaryRelated";
+        appendText(related, "div", "関連:", "summaryRelatedLabel");
+        item.auxiliaryEvents.forEach((event) => {
+          const auxiliary = document.createElement("button");
+          auxiliary.type = "button";
+          auxiliary.className = "auxiliaryJump";
+          auxiliary.textContent = `${event.ply}手目 ${event.label}`;
+          auxiliary.addEventListener("click", () => jumpToSummaryPosition(event.ply));
+          related.appendChild(auxiliary);
+        });
+        card.appendChild(related);
+      }
+      list.appendChild(card);
     });
     details.appendChild(list);
     container.replaceChildren(details);
