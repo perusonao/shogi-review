@@ -2,6 +2,19 @@
   "schemaVersion": 1,
   "games": [
     {
+      "id": "20260912_しゅえい",
+      "date": "2026/09/12",
+      "title": "ぺるそなお vs しゅえい",
+      "side": "先手",
+      "result": "後手・しゅえい 勝利",
+      "moves": 164,
+      "kif": "games/20260912_しゅえい.kif",
+      "gameData": "games/20260912_しゅえい.json",
+      "analysisData": "analysis/20260912_しゅえい.json",
+      "analyzed": true,
+      "status": "YaneuraOu V9.00 + 水匠5解析済み"
+    },
+    {
       "id": "20260911_夢への旅路",
       "date": "2026/09/11",
       "title": "夢への旅路 vs ぺるそなお",
