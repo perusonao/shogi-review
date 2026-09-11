@@ -110,7 +110,7 @@ class ReviewPvTests(unittest.TestCase):
         self.assertEqual(grounded_points(sfen, ["7g7f"], {"type": "cp", "value": 20}), [])
         comment = make_comment("▲7六歩")
         self.assertIn("水匠5", comment)
-        for unsupported in ("駒得", "受け", "相手玉が危険", "玉が薄い"):
+        for unsupported in ("駒得", "受け", "相手玉が危険", "玉が薄い", "狙い", "戦略", "手厚い"):
             self.assertNotIn(unsupported, comment)
 
     def test_old_analysis_json_is_supported_by_ui_fallback(self) -> None:

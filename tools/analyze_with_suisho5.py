@@ -30,6 +30,7 @@ import re
 import subprocess
 import sys
 import time
+from datetime import datetime, timezone
 from pathlib import Path
 
 try:
@@ -176,6 +177,35 @@ def choose_longer_forced_pv(base_pv: list[str], result: dict, forced_move: str) 
     if result.get("bestmove") != forced_move or not candidate or candidate[0] != forced_move:
         return base_pv
     return candidate if len(candidate) > len(base_pv) else base_pv
+
+
+def average_length(lengths: list[int]) -> float | None:
+    return round(sum(lengths) / len(lengths), 3) if lengths else None
+
+
+def build_analysis_metrics(game_id: str, positions: int, problem_positions: int,
+                           base_seconds: float, refinement: dict,
+                           analyzed_at: str | None = None) -> dict:
+    """Build a path- and secret-free quality record for one new analysis."""
+    extra_seconds = float(refinement.get("elapsedSeconds", 0.0))
+    return {
+        "schemaVersion": 1,
+        "gameId": game_id,
+        "analyzedAt": analyzed_at or datetime.now(timezone.utc).isoformat().replace("+00:00", "Z"),
+        "positions": positions,
+        "problemPositions": problem_positions,
+        "baseAnalysisSeconds": round(base_seconds, 3),
+        "extraPvSearchSeconds": round(extra_seconds, 3),
+        "totalAnalysisSeconds": round(base_seconds + extra_seconds, 3),
+        "shortPvCandidates": int(refinement.get("shortPvCandidates", 0)),
+        "extraSearchExecuted": int(refinement.get("extraSearchExecuted", 0)),
+        "pvLengthBeforeAverage": refinement.get("pvLengthBeforeAverage"),
+        "pvLengthAfterAverage": refinement.get("pvLengthAfterAverage"),
+        "pvLengthsBefore": list(refinement.get("pvLengthsBefore", [])),
+        "pvLengthsAfter": list(refinement.get("pvLengthsAfter", [])),
+        "improvedPvCount": int(refinement.get("improvedPvCount", 0)),
+        "unchangedPvCount": int(refinement.get("unchangedPvCount", 0)),
+    }
 
 
 # ---------------------------------------------------------------------------
@@ -346,8 +376,18 @@ def refine_problem_lines(engine: UsiEngine, positions: list[dict], flagged: list
         "issuesConsidered": len(flagged),
         "bestSearches": 0,
         "actualSearches": 0,
+        "shortPvCandidates": 0,
+        "extraSearchExecuted": 0,
+        "pvLengthBeforeAverage": None,
+        "pvLengthAfterAverage": None,
+        "pvLengthsBefore": [],
+        "pvLengthsAfter": [],
+        "improvedPvCount": 0,
+        "unchangedPvCount": 0,
         "elapsedSeconds": 0.0,
     }
+    lengths_before: list[int] = []
+    lengths_after: list[int] = []
     started = time.perf_counter()
     for candidate in flagged:
         position_index = candidate["ply"] - 1
@@ -358,26 +398,34 @@ def refine_problem_lines(engine: UsiEngine, positions: list[dict], flagged: list
             "actualAttempted": False,
             "actualImproved": False,
         }
+        best_length_before = len(candidate["pv_ja"])
+        actual_length_before = len(candidate["actual_pv_ja"])
         if is_short_problem_pv(candidate["pv_ja"], minimum_plies):
             detail["bestAttempted"] = True
             summary["bestSearches"] += 1
-            original_length = len(candidate["pv"])
+            lengths_before.append(best_length_before)
             result = engine.analyze(sfen, nodes, searchmoves=[candidate["best_usi"]])
             candidate["pv"] = choose_longer_forced_pv(
                 candidate["pv"], result, candidate["best_usi"])
-            detail["bestImproved"] = len(candidate["pv"]) > original_length
         if is_short_problem_pv(candidate["actual_pv_ja"], minimum_plies):
             detail["actualAttempted"] = True
             summary["actualSearches"] += 1
-            original_length = len(candidate["actual_pv"])
+            lengths_before.append(actual_length_before)
             result = engine.analyze(sfen, nodes, searchmoves=[candidate["played_usi"]])
             candidate["actual_pv"] = choose_longer_forced_pv(
                 candidate["actual_pv"], result, candidate["played_usi"])
-            detail["actualImproved"] = len(candidate["actual_pv"]) > original_length
 
         candidate["pv_ja"] = pv_display_ja(sfen, candidate["pv"], candidate["previous_to"])
         candidate["actual_pv_ja"] = pv_display_ja(
             sfen, candidate["actual_pv"], candidate["previous_to"])
+        if detail["bestAttempted"]:
+            best_length_after = len(candidate["pv_ja"])
+            lengths_after.append(best_length_after)
+            detail["bestImproved"] = best_length_after > best_length_before
+        if detail["actualAttempted"]:
+            actual_length_after = len(candidate["actual_pv_ja"])
+            lengths_after.append(actual_length_after)
+            detail["actualImproved"] = actual_length_after > actual_length_before
         candidate["pv_refinement"] = detail
         move_analysis = move_analyses[position_index]
         move_analysis.update({
@@ -387,6 +435,17 @@ def refine_problem_lines(engine: UsiEngine, positions: list[dict], flagged: list
             "actualPvJa": candidate["actual_pv_ja"],
             "pvRefinement": detail,
         })
+    summary["shortPvCandidates"] = len(lengths_before)
+    summary["extraSearchExecuted"] = summary["bestSearches"] + summary["actualSearches"]
+    summary["pvLengthBeforeAverage"] = average_length(lengths_before)
+    summary["pvLengthAfterAverage"] = average_length(lengths_after)
+    summary["pvLengthsBefore"] = lengths_before
+    summary["pvLengthsAfter"] = lengths_after
+    summary["improvedPvCount"] = sum(
+        int(candidate["pv_refinement"][key])
+        for candidate in flagged for key in ("bestImproved", "actualImproved")
+    )
+    summary["unchangedPvCount"] = summary["extraSearchExecuted"] - summary["improvedPvCount"]
     summary["elapsedSeconds"] = round(time.perf_counter() - started, 3)
     return summary
 
@@ -398,7 +457,7 @@ def refine_problem_lines(engine: UsiEngine, positions: list[dict], flagged: list
 def analyze_game(engine: UsiEngine, kif_path: Path, game_id: str, user: str,
                   nodes: int, loss_threshold: int, max_issues: int,
                   problem_pv_nodes: int = 60000, minimum_problem_pv_plies: int = 4,
-                  refine_short_problem_pvs: bool = True) -> tuple[dict, dict]:
+                  refine_short_problem_pvs: bool = True) -> tuple[dict, dict, dict]:
     parsed = parse_kif(kif_path, game_id, user)
     positions = parsed["positions"]
     game = parsed["game"]
@@ -409,6 +468,7 @@ def analyze_game(engine: UsiEngine, kif_path: Path, game_id: str, user: str,
 
     evaluations: list[dict] = []
     per_ply: dict[int, dict] = {}  # ply -> raw/normalized score, bestmove, PV
+    base_started = time.perf_counter()
     for ply in range(0, moves + 1):
         sfen = positions[ply]["sfen"]
         side_to_move = "sente" if ply % 2 == 0 else "gote"
@@ -421,6 +481,7 @@ def analyze_game(engine: UsiEngine, kif_path: Path, game_id: str, user: str,
             "raw_score": result["score"], "score_sente": normalized,
             "cp_sente": cp_sente, "bestmove": result["bestmove"], "pv": result["pv"],
         }
+    base_analysis_seconds = time.perf_counter() - base_started
 
     move_analyses: list[dict] = []
     for ply in range(0, moves):
@@ -505,6 +566,12 @@ def analyze_game(engine: UsiEngine, kif_path: Path, game_id: str, user: str,
             problem_pv_nodes, minimum_problem_pv_plies,
         )
     else:
+        short_lengths = [
+            length
+            for candidate in flagged
+            for length in (len(candidate["pv_ja"]), len(candidate["actual_pv_ja"]))
+            if length < minimum_problem_pv_plies
+        ]
         refinement_summary = {
             "enabled": False,
             "nodesPerSearch": problem_pv_nodes,
@@ -512,6 +579,14 @@ def analyze_game(engine: UsiEngine, kif_path: Path, game_id: str, user: str,
             "issuesConsidered": len(flagged),
             "bestSearches": 0,
             "actualSearches": 0,
+            "shortPvCandidates": len(short_lengths),
+            "extraSearchExecuted": 0,
+            "pvLengthBeforeAverage": average_length(short_lengths),
+            "pvLengthAfterAverage": average_length(short_lengths),
+            "pvLengthsBefore": short_lengths,
+            "pvLengthsAfter": short_lengths,
+            "improvedPvCount": 0,
+            "unchangedPvCount": 0,
             "elapsedSeconds": 0.0,
         }
 
@@ -588,7 +663,11 @@ def analyze_game(engine: UsiEngine, kif_path: Path, game_id: str, user: str,
         "positions": positions,
         "issues": game_issues,
     }
-    return analysis_json, game_json
+    metrics_json = build_analysis_metrics(
+        game_id, len(evaluations), len(verified_issues),
+        base_analysis_seconds, refinement_summary,
+    )
+    return analysis_json, game_json, metrics_json
 
 
 def refresh_existing_problem_pvs(engine: UsiEngine, kif_path: Path, game_id: str,
@@ -683,8 +762,10 @@ def main() -> None:
     engine = UsiEngine(args.engine, args.eval_dir, extra_options, args.threads, args.hash_mb)
     games_out = args.dry_run_out / "games" if args.dry_run_out else args.games_dir
     analysis_out = args.dry_run_out / "analysis" if args.dry_run_out else args.analysis_dir
+    metrics_out = analysis_out / "metrics"
     games_out.mkdir(parents=True, exist_ok=True)
     analysis_out.mkdir(parents=True, exist_ok=True)
+    metrics_out.mkdir(parents=True, exist_ok=True)
 
     summary = []
     try:
@@ -704,8 +785,9 @@ def main() -> None:
                     args.problem_pv_nodes, args.min_problem_pv_plies,
                 )
                 game_json = json.loads(game_path.read_text(encoding="utf-8"))
+                metrics_json = None
             else:
-                analysis_json, game_json = analyze_game(
+                analysis_json, game_json, metrics_json = analyze_game(
                     engine, kif_path, game_id, args.user,
                     args.nodes, args.loss_threshold, args.max_issues,
                     args.problem_pv_nodes, args.min_problem_pv_plies,
@@ -715,6 +797,9 @@ def main() -> None:
                 json.dumps(analysis_json, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
             (games_out / f"{game_id}.json").write_text(
                 json.dumps(game_json, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+            if metrics_json is not None:
+                (metrics_out / f"{game_id}.json").write_text(
+                    json.dumps(metrics_json, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
             summary.append({
                 "gameId": game_id,
                 "moves": analysis_json["moves"],
@@ -722,6 +807,7 @@ def main() -> None:
                 "issuesFound": len(analysis_json["verifiedIssues"]),
                 "maxLossCp": max((i["lossCp"] for i in analysis_json["verifiedIssues"]), default=0),
                 "problemPvRefinement": analysis_json.get("engine", {}).get("problemPvRefinement"),
+                "metricsRecorded": metrics_json is not None,
             })
             print(f"   done: {summary[-1]}", file=sys.stderr)
     finally:

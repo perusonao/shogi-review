@@ -203,8 +203,10 @@ def validate_outputs(output: Path, candidates: list[Candidate]) -> None:
     for candidate in candidates:
         game_path = output / "games" / f"{candidate.game_id}.json"
         analysis_path = output / "analysis" / f"{candidate.game_id}.json"
+        metrics_path = output / "analysis" / "metrics" / f"{candidate.game_id}.json"
         game = load_json(game_path)
         analysis = load_json(analysis_path)
+        metrics = load_json(metrics_path)
         moves = game.get("game", {}).get("moves")
         if game.get("game", {}).get("id") != candidate.game_id:
             raise ImportFailure(f"game ID不整合: {candidate.game_id}")
@@ -223,6 +225,35 @@ def validate_outputs(output: Path, candidates: list[Candidate]) -> None:
             raise ImportFailure(f"課題PV追加探索閾値不整合: {candidate.game_id}")
         if len(game.get("issues", [])) != len(analysis.get("verifiedIssues", [])):
             raise ImportFailure(f"課題局面数不整合: {candidate.game_id}")
+        if metrics.get("gameId") != candidate.game_id or metrics.get("positions") != moves + 1:
+            raise ImportFailure(f"解析metrics基本情報不整合: {candidate.game_id}")
+        if metrics.get("problemPositions") != len(analysis.get("verifiedIssues", [])):
+            raise ImportFailure(f"解析metrics課題局面数不整合: {candidate.game_id}")
+        executed = metrics.get("extraSearchExecuted")
+        improved = metrics.get("improvedPvCount")
+        unchanged = metrics.get("unchangedPvCount")
+        if not all(isinstance(value, int) and value >= 0 for value in (executed, improved, unchanged)):
+            raise ImportFailure(f"解析metrics追加探索値不整合: {candidate.game_id}")
+        if improved + unchanged != executed:
+            raise ImportFailure(f"解析metrics改善件数不整合: {candidate.game_id}")
+        if metrics.get("shortPvCandidates") != executed:
+            raise ImportFailure(f"解析metrics短PV件数不整合: {candidate.game_id}")
+        before_lengths = metrics.get("pvLengthsBefore")
+        after_lengths = metrics.get("pvLengthsAfter")
+        if not isinstance(before_lengths, list) or not isinstance(after_lengths, list):
+            raise ImportFailure(f"解析metrics PV長不整合: {candidate.game_id}")
+        if len(before_lengths) != executed or len(after_lengths) != executed:
+            raise ImportFailure(f"解析metrics PV長件数不整合: {candidate.game_id}")
+        base_seconds = metrics.get("baseAnalysisSeconds")
+        extra_seconds = metrics.get("extraPvSearchSeconds")
+        total_seconds = metrics.get("totalAnalysisSeconds")
+        if not all(isinstance(value, (int, float)) and value >= 0
+                   for value in (base_seconds, extra_seconds, total_seconds)):
+            raise ImportFailure(f"解析metrics時間不整合: {candidate.game_id}")
+        if abs(total_seconds - base_seconds - extra_seconds) > 0.002:
+            raise ImportFailure(f"解析metrics合計時間不整合: {candidate.game_id}")
+        if any(key in metrics for key in ("workerUrl", "secret", "enginePath", "evalDir", "localPath")):
+            raise ImportFailure(f"解析metricsに禁止情報があります: {candidate.game_id}")
 
 
 def make_entry(game: dict, game_id: str) -> dict:
@@ -250,12 +281,14 @@ def install_results(root: Path, output: Path, candidates: list[Candidate], catal
         kif_target = root / "games" / f"{candidate.game_id}.kif"
         game_target = root / "games" / f"{candidate.game_id}.json"
         analysis_target = root / "analysis" / f"{candidate.game_id}.json"
+        metrics_target = root / "analysis" / "metrics" / f"{candidate.game_id}.json"
         if not kif_target.exists():
             atomic_copy(candidate.inbox_path, kif_target)
             changed.append(kif_target)
         atomic_copy(output / "games" / game_target.name, game_target)
         atomic_copy(output / "analysis" / analysis_target.name, analysis_target)
-        changed.extend([game_target, analysis_target])
+        atomic_copy(output / "analysis" / "metrics" / metrics_target.name, metrics_target)
+        changed.extend([game_target, analysis_target, metrics_target])
         entries[candidate.game_id] = make_entry(load_json(game_target), candidate.game_id)
     original_order = [g["id"] for g in catalog.get("games", [])]
     new_ids = [c.game_id for c in candidates if c.game_id not in original_order]
