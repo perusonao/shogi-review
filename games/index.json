@@ -2,6 +2,19 @@
   "schemaVersion": 1,
   "games": [
     {
+      "id": "20260911_じゅんや",
+      "date": "2026/09/11",
+      "title": "じゅんや vs ぺるそなお",
+      "side": "後手",
+      "result": "後手・ぺるそなお 勝利",
+      "moves": 136,
+      "kif": "games/20260911_じゅんや.kif",
+      "gameData": "games/20260911_じゅんや.json",
+      "analysisData": "analysis/20260911_じゅんや.json",
+      "analyzed": true,
+      "status": "YaneuraOu V9.00 + 水匠5解析済み"
+    },
+    {
       "id": "20260911_ダルマ",
       "date": "2026/09/11",
       "title": "ぺるそなお vs ダルマ",
