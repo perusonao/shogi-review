@@ -29,6 +29,7 @@ import json
 import re
 import subprocess
 import sys
+import time
 from pathlib import Path
 
 try:
@@ -95,9 +96,12 @@ class UsiEngine:
             if line == token:
                 return
 
-    def analyze(self, sfen: str, nodes: int) -> dict:
+    def analyze(self, sfen: str, nodes: int, searchmoves: list[str] | None = None) -> dict:
         self._send(f"position sfen {sfen}")
-        self._send(f"go nodes {nodes}")
+        command = f"go nodes {nodes}"
+        if searchmoves:
+            command += " searchmoves " + " ".join(searchmoves)
+        self._send(command)
         last_score = None
         last_pv: list[str] = []
         bestmove = None
@@ -159,6 +163,19 @@ def score_json(score: tuple[str, int] | None, sign: int = 1) -> dict:
 
 def score_json_to_cp(score: dict) -> int:
     return score_to_cp((score.get("type", "cp"), int(score.get("value", 0))))
+
+
+def is_short_problem_pv(pv: list[str] | None, minimum_plies: int = 4) -> bool:
+    """Only problem PVs below the configured target receive one extra search."""
+    return len(pv or []) < minimum_plies
+
+
+def choose_longer_forced_pv(base_pv: list[str], result: dict, forced_move: str) -> list[str]:
+    """Accept only a longer, engine-measured line rooted at the requested move."""
+    candidate = list(result.get("pv") or [])
+    if result.get("bestmove") != forced_move or not candidate or candidate[0] != forced_move:
+        return base_pv
+    return candidate if len(candidate) > len(base_pv) else base_pv
 
 
 # ---------------------------------------------------------------------------
@@ -318,12 +335,70 @@ def category_of(ply: int, moves: int) -> str:
     return phase_of(ply, moves)
 
 
+def refine_problem_lines(engine: UsiEngine, positions: list[dict], flagged: list[dict],
+                         move_analyses: list[dict], nodes: int,
+                         minimum_plies: int) -> dict:
+    """Run at most one forced-move search for each short problem PV branch."""
+    summary = {
+        "enabled": True,
+        "nodesPerSearch": nodes,
+        "triggerBelowPlies": minimum_plies,
+        "issuesConsidered": len(flagged),
+        "bestSearches": 0,
+        "actualSearches": 0,
+        "elapsedSeconds": 0.0,
+    }
+    started = time.perf_counter()
+    for candidate in flagged:
+        position_index = candidate["ply"] - 1
+        sfen = positions[position_index]["sfen"]
+        detail = {
+            "bestAttempted": False,
+            "bestImproved": False,
+            "actualAttempted": False,
+            "actualImproved": False,
+        }
+        if is_short_problem_pv(candidate["pv_ja"], minimum_plies):
+            detail["bestAttempted"] = True
+            summary["bestSearches"] += 1
+            original_length = len(candidate["pv"])
+            result = engine.analyze(sfen, nodes, searchmoves=[candidate["best_usi"]])
+            candidate["pv"] = choose_longer_forced_pv(
+                candidate["pv"], result, candidate["best_usi"])
+            detail["bestImproved"] = len(candidate["pv"]) > original_length
+        if is_short_problem_pv(candidate["actual_pv_ja"], minimum_plies):
+            detail["actualAttempted"] = True
+            summary["actualSearches"] += 1
+            original_length = len(candidate["actual_pv"])
+            result = engine.analyze(sfen, nodes, searchmoves=[candidate["played_usi"]])
+            candidate["actual_pv"] = choose_longer_forced_pv(
+                candidate["actual_pv"], result, candidate["played_usi"])
+            detail["actualImproved"] = len(candidate["actual_pv"]) > original_length
+
+        candidate["pv_ja"] = pv_display_ja(sfen, candidate["pv"], candidate["previous_to"])
+        candidate["actual_pv_ja"] = pv_display_ja(
+            sfen, candidate["actual_pv"], candidate["previous_to"])
+        candidate["pv_refinement"] = detail
+        move_analysis = move_analyses[position_index]
+        move_analysis.update({
+            "pv": candidate["pv"],
+            "pvJa": candidate["pv_ja"],
+            "actualPv": candidate["actual_pv"],
+            "actualPvJa": candidate["actual_pv_ja"],
+            "pvRefinement": detail,
+        })
+    summary["elapsedSeconds"] = round(time.perf_counter() - started, 3)
+    return summary
+
+
 # ---------------------------------------------------------------------------
 # Per-game analysis
 # ---------------------------------------------------------------------------
 
 def analyze_game(engine: UsiEngine, kif_path: Path, game_id: str, user: str,
-                  nodes: int, loss_threshold: int, max_issues: int) -> tuple[dict, dict]:
+                  nodes: int, loss_threshold: int, max_issues: int,
+                  problem_pv_nodes: int = 60000, minimum_problem_pv_plies: int = 4,
+                  refine_short_problem_pvs: bool = True) -> tuple[dict, dict]:
     parsed = parse_kif(kif_path, game_id, user)
     positions = parsed["positions"]
     game = parsed["game"]
@@ -424,6 +499,22 @@ def analyze_game(engine: UsiEngine, kif_path: Path, game_id: str, user: str,
     flagged = flagged[:max_issues]
     flagged.sort(key=lambda c: c["ply"])
 
+    if refine_short_problem_pvs:
+        refinement_summary = refine_problem_lines(
+            engine, positions, flagged, move_analyses,
+            problem_pv_nodes, minimum_problem_pv_plies,
+        )
+    else:
+        refinement_summary = {
+            "enabled": False,
+            "nodesPerSearch": problem_pv_nodes,
+            "triggerBelowPlies": minimum_problem_pv_plies,
+            "issuesConsidered": len(flagged),
+            "bestSearches": 0,
+            "actualSearches": 0,
+            "elapsedSeconds": 0.0,
+        }
+
     verified_issues = []
     game_issues = []
     for c in flagged:
@@ -448,6 +539,10 @@ def analyze_game(engine: UsiEngine, kif_path: Path, game_id: str, user: str,
             "pvJa": c["pv_ja"],
             "actualPv": c["actual_pv"],
             "actualPvJa": c["actual_pv_ja"],
+            "pvRefinement": c.get("pv_refinement", {
+                "bestAttempted": False, "bestImproved": False,
+                "actualAttempted": False, "actualImproved": False,
+            }),
             "points": points,
         })
         game_issues.append({
@@ -474,6 +569,7 @@ def analyze_game(engine: UsiEngine, kif_path: Path, game_id: str, user: str,
             "status": "analyzed",
             "nodesPerPosition": nodes,
             "scorePerspective": "sente",
+            "problemPvRefinement": refinement_summary,
         },
         "evaluations": evaluations,
         "moveAnalyses": move_analyses,
@@ -495,6 +591,53 @@ def analyze_game(engine: UsiEngine, kif_path: Path, game_id: str, user: str,
     return analysis_json, game_json
 
 
+def refresh_existing_problem_pvs(engine: UsiEngine, kif_path: Path, game_id: str,
+                                 user: str, analysis_json: dict, nodes: int,
+                                 minimum_plies: int) -> dict:
+    """Refresh only short PVs in an existing schema-v2 analysis; never rerun all positions."""
+    if analysis_json.get("schemaVersion") != 2:
+        raise ValueError(f"{game_id}: --refresh-problem-pv requires schemaVersion 2")
+    parsed = parse_kif(kif_path, game_id, user)
+    positions = parsed["positions"]
+    move_analyses = analysis_json.get("moveAnalyses", [])
+    if len(move_analyses) != parsed["game"]["moves"]:
+        raise ValueError(f"{game_id}: moveAnalyses count mismatch")
+
+    candidates = []
+    issue_by_ply = {issue["ply"]: issue for issue in analysis_json.get("verifiedIssues", [])}
+    for ply, issue in sorted(issue_by_ply.items()):
+        move_analysis = move_analyses[ply - 1]
+        previous_usi = positions[ply - 1].get("usi")
+        candidates.append({
+            "ply": ply,
+            "played_usi": issue["played"],
+            "best_usi": issue["best"],
+            "best_score": issue.get("bestScore", move_analysis.get("bestScore", {"type": "cp", "value": 0})),
+            "pv": list(issue.get("pv") or []),
+            "pv_ja": list(issue.get("pvJa") or []),
+            "actual_pv": list(issue.get("actualPv") or []),
+            "actual_pv_ja": list(issue.get("actualPvJa") or []),
+            "previous_to": shogi.Move.from_usi(previous_usi).to_square if previous_usi else None,
+        })
+    summary = refine_problem_lines(
+        engine, positions, candidates, move_analyses, nodes, minimum_plies)
+    for candidate in candidates:
+        issue = issue_by_ply[candidate["ply"]]
+        issue.update({
+            "pv": candidate["pv"],
+            "pvJa": candidate["pv_ja"],
+            "actualPv": candidate["actual_pv"],
+            "actualPvJa": candidate["actual_pv_ja"],
+            "pvRefinement": candidate["pv_refinement"],
+            "points": grounded_points(
+                positions[candidate["ply"] - 1]["sfen"],
+                candidate["pv"], candidate["best_score"],
+            ),
+        })
+    analysis_json.setdefault("engine", {})["problemPvRefinement"] = summary
+    return analysis_json
+
+
 # ---------------------------------------------------------------------------
 # CLI
 # ---------------------------------------------------------------------------
@@ -506,6 +649,14 @@ def main() -> None:
     ap.add_argument("--games", nargs="+", required=True, help="game ids, e.g. 20260910_taatoru_cat (expects games/<id>.kif)")
     ap.add_argument("--user", default="sonao81")
     ap.add_argument("--nodes", type=int, default=30000, help="nodes per position (default matches docs/ADDING_GAMES.md)")
+    ap.add_argument("--problem-pv-nodes", type=int, default=60000,
+                    help="one extra forced-move search for short problem PVs")
+    ap.add_argument("--min-problem-pv-plies", type=int, default=4,
+                    help="refine problem PV branches shorter than this many plies")
+    ap.add_argument("--no-problem-pv-refinement", action="store_true",
+                    help="disable the short-PV refinement pass (benchmarking)")
+    ap.add_argument("--refresh-problem-pv", action="store_true",
+                    help="refresh only short PVs in existing schema-v2 analysis JSON")
     ap.add_argument("--loss-threshold", type=int, default=300, help="cp loss to flag as a 課題局面 candidate")
     ap.add_argument("--max-issues", type=int, default=6, help="cap on flagged issues per game")
     ap.add_argument("--threads", type=int, default=1)
@@ -517,6 +668,10 @@ def main() -> None:
     ap.add_argument("--dry-run-out", type=Path, default=None,
                      help="write output under this directory instead of games/ and analysis/ (for testing)")
     args = ap.parse_args()
+    if args.problem_pv_nodes <= 0 or args.min_problem_pv_plies <= 0:
+        raise SystemExit("problem PV nodes and minimum plies must be positive")
+    if args.refresh_problem_pv and args.no_problem_pv_refinement:
+        raise SystemExit("--refresh-problem-pv cannot be combined with --no-problem-pv-refinement")
 
     extra_options = {}
     for item in args.option:
@@ -538,10 +693,24 @@ def main() -> None:
             if not kif_path.exists():
                 raise SystemExit(f"missing KIF: {kif_path}")
             print(f"== analyzing {game_id} ({kif_path}) ==", file=sys.stderr)
-            analysis_json, game_json = analyze_game(
-                engine, kif_path, game_id, args.user,
-                args.nodes, args.loss_threshold, args.max_issues,
-            )
+            if args.refresh_problem_pv:
+                analysis_path = args.analysis_dir / f"{game_id}.json"
+                game_path = args.games_dir / f"{game_id}.json"
+                if not analysis_path.exists() or not game_path.exists():
+                    raise SystemExit(f"missing existing JSON for PV refresh: {game_id}")
+                analysis_json = refresh_existing_problem_pvs(
+                    engine, kif_path, game_id, args.user,
+                    json.loads(analysis_path.read_text(encoding="utf-8")),
+                    args.problem_pv_nodes, args.min_problem_pv_plies,
+                )
+                game_json = json.loads(game_path.read_text(encoding="utf-8"))
+            else:
+                analysis_json, game_json = analyze_game(
+                    engine, kif_path, game_id, args.user,
+                    args.nodes, args.loss_threshold, args.max_issues,
+                    args.problem_pv_nodes, args.min_problem_pv_plies,
+                    not args.no_problem_pv_refinement,
+                )
             (analysis_out / f"{game_id}.json").write_text(
                 json.dumps(analysis_json, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
             (games_out / f"{game_id}.json").write_text(
@@ -552,6 +721,7 @@ def main() -> None:
                 "positionsAnalyzed": len(analysis_json["evaluations"]),
                 "issuesFound": len(analysis_json["verifiedIssues"]),
                 "maxLossCp": max((i["lossCp"] for i in analysis_json["verifiedIssues"]), default=0),
+                "problemPvRefinement": analysis_json.get("engine", {}).get("problemPvRefinement"),
             })
             print(f"   done: {summary[-1]}", file=sys.stderr)
     finally:

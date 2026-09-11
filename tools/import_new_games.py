@@ -216,6 +216,11 @@ def validate_outputs(output: Path, candidates: list[Candidate]) -> None:
             raise ImportFailure(f"analysis JSON指し手解析数不整合: {candidate.game_id}")
         if analysis.get("engine", {}).get("nodesPerPosition") != 30000:
             raise ImportFailure(f"解析nodes不整合: {candidate.game_id}")
+        refinement = analysis.get("engine", {}).get("problemPvRefinement", {})
+        if not refinement.get("enabled") or refinement.get("nodesPerSearch") != 60000:
+            raise ImportFailure(f"課題PV追加探索条件不整合: {candidate.game_id}")
+        if refinement.get("triggerBelowPlies") != 4:
+            raise ImportFailure(f"課題PV追加探索閾値不整合: {candidate.game_id}")
         if len(game.get("issues", [])) != len(analysis.get("verifiedIssues", [])):
             raise ImportFailure(f"課題局面数不整合: {candidate.game_id}")
 

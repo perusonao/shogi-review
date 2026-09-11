@@ -11,7 +11,16 @@
     "name": "YaneuraOu + Suisho5",
     "status": "analyzed",
     "nodesPerPosition": 30000,
-    "scorePerspective": "sente"
+    "scorePerspective": "sente",
+    "problemPvRefinement": {
+      "enabled": true,
+      "nodesPerSearch": 60000,
+      "triggerBelowPlies": 4,
+      "issuesConsidered": 6,
+      "bestSearches": 5,
+      "actualSearches": 1,
+      "elapsedSeconds": 0.925
+    }
   },
   "evaluations": [
     {
@@ -1811,11 +1820,29 @@
       },
       "pv": [
         "1c6h+",
-        "7i6h"
+        "7i6h",
+        "G*7h",
+        "8h7i",
+        "5c4d",
+        "P*5c",
+        "5b2b",
+        "5f8f",
+        "7h7i",
+        "6h7i",
+        "4d5c"
       ],
       "pvJa": [
         "△6八角成",
-        "▲同銀"
+        "▲同銀",
+        "△7八金打",
+        "▲7九角",
+        "△4四銀",
+        "▲5三歩打",
+        "△2二飛",
+        "▲8六飛",
+        "△7九金",
+        "▲同銀",
+        "△5三銀"
       ],
       "actualPv": [
         "5c4d",
@@ -1836,7 +1863,13 @@
         "▲2三飛打",
         "△3三桂",
         "▲2一飛成"
-      ]
+      ],
+      "pvRefinement": {
+        "bestAttempted": true,
+        "bestImproved": true,
+        "actualAttempted": false,
+        "actualImproved": false
+      }
     },
     {
       "ply": 29,
@@ -2088,10 +2121,38 @@
         "value": 2001
       },
       "pv": [
-        "1c6h+"
+        "1c6h+",
+        "7i6h",
+        "5i8i+",
+        "8h7i",
+        "8i9h",
+        "2c2a+",
+        "G*7h",
+        "N*7e",
+        "L*5a",
+        "B*5f",
+        "7c7d",
+        "5f7d",
+        "6b7c",
+        "7e8c+",
+        "7c8c"
       ],
       "pvJa": [
-        "△6八角成"
+        "△6八角成",
+        "▲同銀",
+        "△8九飛成",
+        "▲7九角",
+        "△9八龍",
+        "▲2一飛成",
+        "△7八金打",
+        "▲7五桂打",
+        "△5一香打",
+        "▲5六角打",
+        "△7四歩",
+        "▲同角",
+        "△7三金",
+        "▲8三桂成",
+        "△同金"
       ],
       "actualPv": [
         "5i5d+",
@@ -2128,7 +2189,13 @@
         "▲6六金打",
         "△5七歩打",
         "▲同金"
-      ]
+      ],
+      "pvRefinement": {
+        "bestAttempted": true,
+        "bestImproved": true,
+        "actualAttempted": false,
+        "actualImproved": false
+      }
     },
     {
       "ply": 35,
@@ -2259,14 +2326,32 @@
       ],
       "actualPv": [
         "2e2f",
-        "2a1a",
-        "1c6h+"
+        "2g2f",
+        "1c6h+",
+        "7i6h",
+        "G*7h",
+        "8h7i",
+        "1a1c",
+        "P*5h",
+        "3c3d"
       ],
       "actualPvJa": [
         "△2六歩",
-        "▲1一龍",
-        "△6八角成"
-      ]
+        "▲同歩",
+        "△6八角成",
+        "▲同銀",
+        "△7八金打",
+        "▲7九角",
+        "△1三香",
+        "▲5八歩打",
+        "△3四歩"
+      ],
+      "pvRefinement": {
+        "bestAttempted": false,
+        "bestImproved": false,
+        "actualAttempted": true,
+        "actualImproved": true
+      }
     },
     {
       "ply": 37,
@@ -2748,10 +2833,26 @@
         "value": 148
       },
       "pv": [
-        "5d5f"
+        "5d5f",
+        "N*3i",
+        "5f6g",
+        "P*6d",
+        "6c6d",
+        "3h2g",
+        "7b8b",
+        "B*2c",
+        "6g6i"
       ],
       "pvJa": [
-        "△5六龍"
+        "△5六龍",
+        "▲3九桂打",
+        "△6七龍",
+        "▲6四歩打",
+        "△同歩",
+        "▲2七玉",
+        "△8二玉",
+        "▲2三角打",
+        "△6九龍"
       ],
       "actualPv": [
         "G*5h",
@@ -2786,7 +2887,13 @@
         "△5三龍",
         "▲同龍",
         "△同銀"
-      ]
+      ],
+      "pvRefinement": {
+        "bestAttempted": true,
+        "bestImproved": true,
+        "actualAttempted": false,
+        "actualImproved": false
+      }
     },
     {
       "ply": 45,
@@ -2904,7 +3011,13 @@
         "▲9七角",
         "△3五桂打",
         "▲6四歩打"
-      ]
+      ],
+      "pvRefinement": {
+        "bestAttempted": true,
+        "bestImproved": false,
+        "actualAttempted": false,
+        "actualImproved": false
+      }
     },
     {
       "ply": 47,
@@ -3214,7 +3327,13 @@
         "△同玉",
         "▲7一龍",
         "△4六銀"
-      ]
+      ],
+      "pvRefinement": {
+        "bestAttempted": true,
+        "bestImproved": false,
+        "actualAttempted": false,
+        "actualImproved": false
+      }
     },
     {
       "ply": 53,
@@ -3851,11 +3970,29 @@
       "bestJa": "△6八角成",
       "pv": [
         "1c6h+",
-        "7i6h"
+        "7i6h",
+        "G*7h",
+        "8h7i",
+        "5c4d",
+        "P*5c",
+        "5b2b",
+        "5f8f",
+        "7h7i",
+        "6h7i",
+        "4d5c"
       ],
       "pvJa": [
         "△6八角成",
-        "▲同銀"
+        "▲同銀",
+        "△7八金打",
+        "▲7九角",
+        "△4四銀",
+        "▲5三歩打",
+        "△2二飛",
+        "▲8六飛",
+        "△7九金",
+        "▲同銀",
+        "△5三銀"
       ],
       "actualPv": [
         "5c4d",
@@ -3877,6 +4014,12 @@
         "△3三桂",
         "▲2一飛成"
       ],
+      "pvRefinement": {
+        "bestAttempted": true,
+        "bestImproved": true,
+        "actualAttempted": false,
+        "actualImproved": false
+      },
       "points": [
         "推奨手は角を成る手です。",
         "推奨手は金を取る手です。"
@@ -3905,10 +4048,38 @@
       "playedJa": "△5四飛成",
       "bestJa": "△6八角成",
       "pv": [
-        "1c6h+"
+        "1c6h+",
+        "7i6h",
+        "5i8i+",
+        "8h7i",
+        "8i9h",
+        "2c2a+",
+        "G*7h",
+        "N*7e",
+        "L*5a",
+        "B*5f",
+        "7c7d",
+        "5f7d",
+        "6b7c",
+        "7e8c+",
+        "7c8c"
       ],
       "pvJa": [
-        "△6八角成"
+        "△6八角成",
+        "▲同銀",
+        "△8九飛成",
+        "▲7九角",
+        "△9八龍",
+        "▲2一飛成",
+        "△7八金打",
+        "▲7五桂打",
+        "△5一香打",
+        "▲5六角打",
+        "△7四歩",
+        "▲同角",
+        "△7三金",
+        "▲8三桂成",
+        "△同金"
       ],
       "actualPv": [
         "5i5d+",
@@ -3946,6 +4117,12 @@
         "△5七歩打",
         "▲同金"
       ],
+      "pvRefinement": {
+        "bestAttempted": true,
+        "bestImproved": true,
+        "actualAttempted": false,
+        "actualImproved": false
+      },
       "points": [
         "推奨手は角を成る手です。",
         "推奨手は金を取る手です。"
@@ -4003,14 +4180,32 @@
       ],
       "actualPv": [
         "2e2f",
-        "2a1a",
-        "1c6h+"
+        "2g2f",
+        "1c6h+",
+        "7i6h",
+        "G*7h",
+        "8h7i",
+        "1a1c",
+        "P*5h",
+        "3c3d"
       ],
       "actualPvJa": [
         "△2六歩",
-        "▲1一龍",
-        "△6八角成"
+        "▲同歩",
+        "△6八角成",
+        "▲同銀",
+        "△7八金打",
+        "▲7九角",
+        "△1三香",
+        "▲5八歩打",
+        "△3四歩"
       ],
+      "pvRefinement": {
+        "bestAttempted": false,
+        "bestImproved": false,
+        "actualAttempted": true,
+        "actualImproved": true
+      },
       "points": [
         "推奨手は角を成る手です。",
         "推奨手は金を取る手です。"
@@ -4039,10 +4234,26 @@
       "playedJa": "△5八金打",
       "bestJa": "△5六龍",
       "pv": [
-        "5d5f"
+        "5d5f",
+        "N*3i",
+        "5f6g",
+        "P*6d",
+        "6c6d",
+        "3h2g",
+        "7b8b",
+        "B*2c",
+        "6g6i"
       ],
       "pvJa": [
-        "△5六龍"
+        "△5六龍",
+        "▲3九桂打",
+        "△6七龍",
+        "▲6四歩打",
+        "△同歩",
+        "▲2七玉",
+        "△8二玉",
+        "▲2三角打",
+        "△6九龍"
       ],
       "actualPv": [
         "G*5h",
@@ -4078,7 +4289,16 @@
         "▲同龍",
         "△同銀"
       ],
-      "points": []
+      "pvRefinement": {
+        "bestAttempted": true,
+        "bestImproved": true,
+        "actualAttempted": false,
+        "actualImproved": false
+      },
+      "points": [
+        "読み筋の3手目は歩を取る手です。",
+        "読み筋の5手目は歩を取る手です。"
+      ]
     },
     {
       "ply": 46,
@@ -4142,6 +4362,12 @@
         "△3五桂打",
         "▲6四歩打"
       ],
+      "pvRefinement": {
+        "bestAttempted": true,
+        "bestImproved": false,
+        "actualAttempted": false,
+        "actualImproved": false
+      },
       "points": []
     },
     {
@@ -4208,6 +4434,12 @@
         "▲7一龍",
         "△4六銀"
       ],
+      "pvRefinement": {
+        "bestAttempted": true,
+        "bestImproved": false,
+        "actualAttempted": false,
+        "actualImproved": false
+      },
       "points": [
         "推奨手は桂を取る手です。"
       ]

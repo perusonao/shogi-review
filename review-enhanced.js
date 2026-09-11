@@ -90,8 +90,8 @@ function renderVerifiedIssue(issue) {
     appendText(card, "div", `水匠5は実戦手より${best}を高く評価しています。まず読み筋を比較してみましょう。`, "comment");
   }
 
-  const bestPv = (analysis?.pvJa || []).slice(0, 7);
-  const actualPv = (analysis?.actualPvJa || []).slice(0, 7);
+  const bestPv = (analysis?.pvJa || []).slice(0, 6);
+  const actualPv = (analysis?.actualPvJa || []).slice(0, 6);
   if (bestPv.length || actualPv.length) {
     const details = document.createElement("details");
     appendText(details, "summary", "読み筋を見る");

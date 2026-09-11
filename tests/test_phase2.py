@@ -1,20 +1,34 @@
 from __future__ import annotations
 
 import json
+import subprocess
 import sys
+import tempfile
 import unittest
 import uuid
 from pathlib import Path
+from unittest.mock import patch
 
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "tools"))
 
-from analysis_worker import find_existing_game_id, validate_claim  # noqa: E402
+from analysis_worker import find_existing_game_id, process_claim, validate_claim  # noqa: E402
 from kif_to_game import parse as parse_kif  # noqa: E402
 from queue_common import MAX_KIF_BYTES, canonical_fingerprint, validate_kif_text  # noqa: E402
 
 
 class Phase2Tests(unittest.TestCase):
+    class FakeQueueClient:
+        def __init__(self) -> None:
+            self.completed: tuple[str, str, str] | None = None
+            self.failed = False
+
+        def complete(self, request_id: str, claim_token: str, game_id: str) -> None:
+            self.completed = (request_id, claim_token, game_id)
+
+        def fail(self, _request_id: str, _claim_token: str) -> None:
+            self.failed = True
+
     @classmethod
     def setUpClass(cls) -> None:
         cls.higure_text = (ROOT / "games" / "20260910_ひぐれ.kif").read_text(encoding="utf-8")
@@ -74,6 +88,30 @@ class Phase2Tests(unittest.TestCase):
         source = (ROOT / "tools" / "analysis_worker.py").read_text(encoding="utf-8")
         self.assertNotIn("shell=True", source)
         self.assertIn("shell=False", source)
+
+    def test_worker_e2e_invokes_automatic_import_pipeline(self) -> None:
+        request_id = str(uuid.uuid4())
+        claim = {
+            "requestId": request_id,
+            "claimToken": "opaque-claim-token",
+            "fingerprint": self.fingerprint,
+            "kif": self.higure_text,
+        }
+        client = self.FakeQueueClient()
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            with (
+                patch("analysis_worker.find_existing_game_id", side_effect=[None, "generated-game"]),
+                patch("analysis_worker.ensure_published"),
+                patch("analysis_worker.run_checked", return_value=subprocess.CompletedProcess([], 0)) as run_import,
+            ):
+                game_id = process_claim(client, claim, root, ("ぺるそなお", "sonao81"))
+        self.assertEqual(game_id, "generated-game")
+        self.assertFalse(client.failed)
+        self.assertEqual(client.completed, (request_id, "opaque-claim-token", "generated-game"))
+        command = run_import.call_args.args[0]
+        self.assertIn("import_new_games.py", " ".join(command))
+        self.assertEqual(command[command.index("--nodes") + 1], "30000")
 
 
 if __name__ == "__main__":
