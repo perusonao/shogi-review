@@ -39,7 +39,7 @@ NAGATA2532戦を全63局面（開始局面+62手）で再解析した。28手目
 
 - Python unittest: 18件（PV順次適用、▲/△、同、成、打、不成、方向修飾、通常score、mate score、根拠なしコメント、旧schema、NAGATA2532 fixture、全カタログ）
 - Cloudflare/Nodeテスト: 5件
-- 全15対局について、game JSONの全局面数、analysis参照、schemaVersion 1/2の互換条件を検証した。
+- 全16対局について、game JSONの全局面数、analysis参照、schemaVersion 1/2の互換条件を検証した（作業中にWindows workerが新規依頼`20260911_ak69boy`を新schemaで処理した後も再検証）。
 - ローカルPWAを390×844pxで開き、28手目の日本語PV、後手視点評価、根拠付きポイント、赤/緑の盤面矢印、折りたたみ表示を目視確認した。
 - `git diff --check`: 合格
 
