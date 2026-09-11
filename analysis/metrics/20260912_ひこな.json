@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "gameId": "20260912_ひこな",
+  "analyzedAt": "2026-09-11T17:09:05.572522Z",
+  "positions": 172,
+  "problemPositions": 6,
+  "baseAnalysisSeconds": 7.005,
+  "extraPvSearchSeconds": 0.9,
+  "totalAnalysisSeconds": 7.905,
+  "shortPvCandidates": 1,
+  "extraSearchExecuted": 1,
+  "pvLengthBeforeAverage": 2.0,
+  "pvLengthAfterAverage": 3.0,
+  "pvLengthsBefore": [
+    2
+  ],
+  "pvLengthsAfter": [
+    3
+  ],
+  "improvedPvCount": 1,
+  "unchangedPvCount": 0
+}

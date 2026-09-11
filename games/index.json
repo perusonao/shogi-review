@@ -2,6 +2,19 @@
   "schemaVersion": 1,
   "games": [
     {
+      "id": "20260912_ひこな",
+      "date": "2026/09/12",
+      "title": "ひこな vs ぺるそなお",
+      "side": "後手",
+      "result": "先手・ひこな 勝利",
+      "moves": 171,
+      "kif": "games/20260912_ひこな.kif",
+      "gameData": "games/20260912_ひこな.json",
+      "analysisData": "analysis/20260912_ひこな.json",
+      "analyzed": true,
+      "status": "YaneuraOu V9.00 + 水匠5解析済み"
+    },
+    {
       "id": "20260912_しゅえい",
       "date": "2026/09/12",
       "title": "ぺるそなお vs しゅえい",
