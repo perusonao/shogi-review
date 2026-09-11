@@ -72,4 +72,10 @@ NAGATA2532 vs sonao81では4局面を抽出した。
 - 390×844ローカルPWAで初期表示、横スクロール、28手目ジャンプ、日本語PV導線を確認
 - `git diff --check`: 成功
 
-公開結果とcommitはPages反映後に追記する。
+## 公開確認
+
+- 機能commit: `3f4785901e34cbf063ba317db86db6785d7c6ee8`
+- GitHub Pages deployment: 成功
+- 公開URL: `https://perusonao.github.io/shogi-review/`
+- 公開PWAの390×844表示でNAGATA2532戦の4局面サマリーを確認
+- ①28手目のタップ後、28/62手、赤/緑矢印、後手視点+706→+241、課題カードを確認
