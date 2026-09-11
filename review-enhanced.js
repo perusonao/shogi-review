@@ -1,35 +1,47 @@
-/* Grounded PV review card. Relies on the existing board/USI formatter in index.html. */
-const renderBoardAndLegacyCard = render;
+/* Evidence-grounded issue card. B-strict selection and analysis data stay untouched. */
+const reviewPhase1Style = document.createElement("style");
+reviewPhase1Style.textContent = `
+:root{--actual-board:#A11222;--recommended-board:#0047AB;--actual-card:#FF6B5A;--recommended-card:#5DA9FF}
+.app{padding:2px 5px}.top{height:23px}.boardShell{width:min(100%,42dvh);margin-top:0}.hand{height:31px;padding-top:2px;padding-bottom:2px}
+.controls{grid-template-columns:36px 1fr 36px 70px;gap:3px;margin:1px 0}.controls button{height:27px}.controls .nextIssueCompact{font-size:9px;background:#765123}.move{height:27px}.move b{font-size:10px}.move small{font-size:8px}
+.evalWrap{height:49px;margin:1px 0;padding:1px 5px}.evalHead{height:11px}.evalSvg{height:34px}
+.warn{border-left-color:var(--actual-card)}.warn h2{margin-bottom:2px}.legend{font-size:8px;margin-bottom:2px}.actualSemantic,.red{color:var(--actual-card)}.recommendedSemantic,.green{color:var(--recommended-card)}
+.choice{padding:2px 4px;font-size:8px;display:grid;grid-template-columns:29px 1fr;grid-template-rows:auto auto auto;column-gap:4px}.choice .moveRole{grid-column:1/3;font-weight:700}.choicePiece{grid-row:2/4;width:27px;height:31px}.choicePiece .handPieceText{font-size:28px}.choiceAction{font-size:10px;font-weight:700}.choiceNotation{font-size:8px;color:#bfb3a3}.bad{border-color:var(--actual-card)}.good{border:1px dashed var(--recommended-card)}.bad .moveRole{color:var(--actual-card)}.good .moveRole{color:var(--recommended-card)}
+.loss{font-size:8px;margin-top:2px}.reasonBlocks{margin-top:2px}.reasonBlock{font-size:9px;line-height:1.25;margin-top:2px;color:#fff3df}.reasonBlock b{color:#f5d49c;margin-right:3px}.reasonLevel{float:right;color:#a99d8c;font-size:8px}.pvDetails{margin-top:3px;font-size:8px}.pvDetails summary{cursor:pointer;color:#d8c19a;font-weight:700}.pvBranch{margin-top:2px}.pvBranch.actual{border-left:2px solid var(--actual-card);padding-left:4px}.pvBranch.recommended{border-left:2px dashed var(--recommended-card);padding-left:4px}.jump{display:none!important}
+`;
+document.head.appendChild(reviewPhase1Style);
+
+function semanticColor(name) {
+  return getComputedStyle(document.documentElement).getPropertyValue(name).trim();
+}
+
+drawArrows = function drawSemanticArrows(issue) {
+  const svg = document.getElementById("arrows");
+  if (!issue) { svg.innerHTML = ""; return; }
+  const actualColor = semanticColor("--actual-board");
+  const recommendedColor = semanticColor("--recommended-board");
+  const actual = usiCoords(actualMove(issue));
+  const recommended = usiCoords(bestMove(issue));
+  svg.innerHTML = `<defs><marker id="actualHead" markerUnits="userSpaceOnUse" markerWidth="45" markerHeight="45" refX="38" refY="22" orient="auto"><path d="M0,0 L0,44 L42,22 z" fill="${actualColor}"/></marker><marker id="recommendedHead" markerUnits="userSpaceOnUse" markerWidth="45" markerHeight="45" refX="38" refY="22" orient="auto"><path d="M0,0 L0,44 L42,22 z" fill="${recommendedColor}"/></marker></defs>${arrowLine(actual, actualColor, "actualHead")}${target(actual, actualColor, "実")}${arrowLine(recommended, recommendedColor, "recommendedHead")}${target(recommended, recommendedColor, "推")}`;
+};
+
+const legacyRender = render;
+const reviewControls = document.querySelector(".controls");
+if (reviewControls && !reviewControls.querySelector(".nextIssueCompact")) {
+  const nextButton = document.createElement("button");
+  nextButton.type = "button";
+  nextButton.className = "nextIssueCompact";
+  nextButton.textContent = "⚠ 次課題";
+  nextButton.setAttribute("aria-label", "次の課題局面へ");
+  nextButton.addEventListener("click", nextIssue);
+  reviewControls.appendChild(nextButton);
+}
 
 function scoreLabel(score) {
-  if (!score) return "";
+  if (!score) return "評価値なし";
   const value = Number(score.value || 0);
-  if (score.type === "mate") {
-    const label = value > 0 ? "詰みあり" : value < 0 ? "相手側に詰みあり" : "詰み評価";
-    return label + (value ? `（${Math.abs(value)}手）` : "");
-  }
+  if (score.type === "mate") return `${value < 0 ? "相手に" : "自分に"}${Math.abs(value)}手の詰み`;
   return `${value >= 0 ? "+" : ""}${value}`;
-}
-
-function issueScores(analysis) {
-  if (analysis?.scoreBefore && analysis?.scoreAfterActual) {
-    return [analysis.scoreBefore, analysis.scoreAfterActual];
-  }
-  const sign = userSide() === "b" ? 1 : -1;
-  return [
-    { type: "cp", value: Number(analysis?.beforeCp || 0) * sign },
-    { type: "cp", value: Number(analysis?.afterCp || 0) * sign },
-  ];
-}
-
-function mateChangeText(before, after) {
-  if (before.type === "mate" && before.value > 0 && !(after.type === "mate" && after.value > 0)) {
-    return "詰みあり → 詰みなし（詰みを逃した）";
-  }
-  if (before.type !== "mate" && after.type === "mate" && after.value < 0) {
-    return "相手の詰み筋に入った";
-  }
-  return "詰み評価が変化した局面";
 }
 
 function appendText(parent, tag, text, className = "") {
@@ -40,6 +52,46 @@ function appendText(parent, tag, text, className = "") {
   return element;
 }
 
+function choicePieceSvg(card) {
+  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
+  svg.setAttribute("viewBox", "0 0 44 50");
+  svg.setAttribute("class", "handPieceSvg choicePiece");
+  svg.setAttribute("aria-hidden", "true");
+  const polygon = document.createElementNS(svg.namespaceURI, "polygon");
+  polygon.setAttribute("class", "handPieceShape");
+  polygon.setAttribute("points", "22,2 40,11 43,48 1,48 4,11");
+  const text = document.createElementNS(svg.namespaceURI, "text");
+  text.setAttribute("class", "handPieceText");
+  text.setAttribute("x", "22");
+  text.setAttribute("y", "29");
+  text.textContent = card.pieceJa;
+  svg.append(polygon, text);
+  return svg;
+}
+
+function appendChoice(parent, role, model, kind) {
+  const choice = document.createElement("div");
+  choice.className = `choice ${kind}`;
+  choice.setAttribute("aria-label", `${role}、${model.pieceJa}、${model.action}`);
+  appendText(choice, "span", role, "moveRole");
+  choice.appendChild(choicePieceSvg(model));
+  appendText(choice, "span", model.action, "choiceAction");
+  appendText(choice, "span", model.notation, "choiceNotation");
+  parent.appendChild(choice);
+}
+
+function reasonInput(issue, analysis, actual, best) {
+  return {
+    sfen: D.positions[Math.max(0, issue.ply - 1)].sfen,
+    actualMove: actualMove(issue), bestMove: bestMove(issue),
+    actualScore: analysis?.scoreAfterActual || null,
+    recommendedScore: analysis?.bestScore || analysis?.scoreBefore || null,
+    actualPV: analysis?.actualPv || [], recommendedPV: analysis?.pv || [],
+    actualPVJa: analysis?.actualPvJa || [], recommendedPVJa: analysis?.pvJa || [],
+    actualMoveJa: actual, bestMoveJa: best,
+  };
+}
+
 function renderVerifiedIssue(issue) {
   const analysis = issueAnalysis(issue);
   const positionIndex = Math.max(0, issue.ply - 1);
@@ -48,70 +100,69 @@ function renderVerifiedIssue(issue) {
   const previous = previousDestination(issue.ply);
   const actual = analysis?.playedJa || formatMove(actualMove(issue), position, mover, previous);
   const best = analysis?.bestJa || formatMove(bestMove(issue), position, mover, previous);
+  const evidence = window.ShogiReasonEvidence.generateReasonEvidence(reasonInput(issue, analysis, actual, best));
   const card = document.createElement("div");
   card.className = "card warn";
-  appendText(card, "h2", "⚠ 課題局面");
+  appendText(card, "span", `Level ${evidence.level}`, "reasonLevel");
+  appendText(card, "h2", "⚠ 現在の課題");
 
   const legend = document.createElement("div");
   legend.className = "legend";
-  appendText(legend, "span", "● 赤＝実戦", "red");
+  appendText(legend, "span", "実＝実戦", "actualSemantic");
   legend.appendChild(document.createTextNode("　"));
-  appendText(legend, "span", "● 緑＝推奨", "green");
+  appendText(legend, "span", "推＝推奨", "recommendedSemantic");
   card.appendChild(legend);
 
   const compare = document.createElement("div");
   compare.className = "compare";
-  for (const [label, value, kind] of [["あなたの手", actual, "bad"], ["水匠5 推奨", best, "good"]]) {
-    const choice = document.createElement("div");
-    choice.className = `choice ${kind}`;
-    appendText(choice, "small", label);
-    appendText(choice, "strong", value);
-    compare.appendChild(choice);
-  }
+  appendChoice(compare, "実戦", evidence.actualCard, "bad");
+  appendChoice(compare, "推奨", evidence.recommendedCard, "good");
   card.appendChild(compare);
 
-  const [before, after] = issueScores(analysis);
-  const legacyMate = !analysis?.scoreBefore && (
-    Math.abs(analysis?.beforeCp || 0) >= 25000 ||
-    Math.abs(analysis?.afterCp || 0) >= 25000 ||
-    issue.loss >= 25000
-  );
-  const hasMate = legacyMate || before.type === "mate" || after.type === "mate";
-  const evaluation = hasMate
-    ? mateChangeText(before, after)
-    : `評価値 ${scoreLabel(before)} → ${scoreLabel(after)}　損失 約${analysis?.lossCp ?? issue.loss}点`;
+  const before = analysis?.bestScore || analysis?.scoreBefore;
+  const after = analysis?.scoreAfterActual;
+  const evaluation = before && after ? `保存評価 ${scoreLabel(after)} / 推奨枝 ${scoreLabel(before)}` : `評価値損失 約${analysis?.lossCp ?? issue.loss}点`;
   appendText(card, "div", evaluation, "loss");
 
-  const points = (analysis?.points || []).slice(0, 2);
-  if (points.length) {
-    const box = appendText(card, "div", "【ポイント】", "comment");
-    for (const point of points) appendText(box, "div", `・${point}`);
-  } else {
-    appendText(card, "div", `水匠5は実戦手より${best}を高く評価しています。まず読み筋を比較してみましょう。`, "comment");
-  }
+  const reasonBlocks = document.createElement("div");
+  reasonBlocks.className = "reasonBlocks";
+  evidence.blocks.forEach((block) => {
+    const line = document.createElement("div");
+    line.className = "reasonBlock";
+    appendText(line, "b", `【${block.title}】`);
+    line.appendChild(document.createTextNode(block.text));
+    reasonBlocks.appendChild(line);
+  });
+  card.appendChild(reasonBlocks);
 
   const bestPv = (analysis?.pvJa || []).slice(0, 6);
   const actualPv = (analysis?.actualPvJa || []).slice(0, 6);
   if (bestPv.length || actualPv.length) {
     const details = document.createElement("details");
+    details.className = "pvDetails";
     appendText(details, "summary", "読み筋を見る");
-    if (bestPv.length) {
-      appendText(details, "b", "水匠5推奨なら");
-      appendText(details, "div", bestPv.join(" → "), "comment");
-    }
-    if (actualPv.length) {
-      appendText(details, "b", "実戦手なら");
-      appendText(details, "div", actualPv.join(" → "), "comment");
-    }
+    if (actualPv.length) appendText(details, "div", `実戦手なら　${actualPv.join(" → ")}`, "pvBranch actual");
+    if (bestPv.length) appendText(details, "div", `推奨手なら　${bestPv.join(" → ")}`, "pvBranch recommended");
     card.appendChild(details);
   }
   review.replaceChildren(card);
 }
 
-function renderEnhanced() {
-  renderBoardAndLegacyCard();
+function renderEvidenceReview() {
+  legacyRender();
   const issue = D?.issues.find((item) => item.ply === ply);
-  if (issue) renderVerifiedIssue(issue);
+  if (issue && window.ShogiReasonEvidence) renderVerifiedIssue(issue);
 }
 
-render = renderEnhanced;
+render = renderEvidenceReview;
+
+window.addEventListener("load", async () => {
+  const params = new URLSearchParams(location.search);
+  const fixtureGame = params.get("game");
+  const fixturePly = Number(params.get("ply"));
+  if (!fixtureGame || !Number.isFinite(fixturePly)) return;
+  await refreshCatalog();
+  await loadGame(fixtureGame, true);
+  ply = Math.max(0, Math.min(D.positions.length - 1, fixturePly));
+  render();
+});

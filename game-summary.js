@@ -473,8 +473,8 @@ if (typeof document !== "undefined" && typeof render === "function") {
   document.head.appendChild(learningStyle);
   const renderBeforeGameSummary = render;
   let summaryGameId = null;
-  let summaryExpanded = true;
-  let learningExpanded = true;
+  let summaryExpanded = false;
+  let learningExpanded = false;
   let auditedGameId = null;
 
   function summaryContainer() {
@@ -567,8 +567,8 @@ if (typeof document !== "undefined" && typeof render === "function") {
     const gameId = D.game?.id || currentGameId;
     if (gameId !== summaryGameId) {
       summaryGameId = gameId;
-      summaryExpanded = true;
-      learningExpanded = true;
+      summaryExpanded = false;
+      learningExpanded = false;
     }
     const analysis = {
       gameId,
