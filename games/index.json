@@ -2,6 +2,19 @@
   "schemaVersion": 1,
   "games": [
     {
+      "id": "20260911_nagata2532",
+      "date": "2026/09/11",
+      "title": "NAGATA2532 vs sonao81",
+      "side": "後手",
+      "result": "後手・sonao81 勝利",
+      "moves": 62,
+      "kif": "games/20260911_nagata2532.kif",
+      "gameData": "games/20260911_nagata2532.json",
+      "analysisData": "analysis/20260911_nagata2532.json",
+      "analyzed": true,
+      "status": "YaneuraOu V9.00 + 水匠5解析済み"
+    },
+    {
       "id": "20260911_おまつ",
       "date": "2026/09/11",
       "title": "おまつ vs ぺるそなお",
