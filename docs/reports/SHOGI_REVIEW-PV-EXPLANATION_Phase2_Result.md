@@ -98,4 +98,9 @@ YaneuraOu V9.00 NNUE + 水匠5を使用した。通常63局面を各30,000 nodes
 
 Python unittest 23件とCloudflare/Nodeテスト5件がすべて成功し、`git diff --check`も成功した。
 
-公開・commit情報はGitHub Pages反映後に追記する。
+## 公開結果
+
+- 機能commit: `badee8a1f899516a9d23edb9450c849108943966`
+- GitHub Pages deployment: 成功
+- 公開URL: `https://perusonao.github.io/shogi-review/`
+- 公開版を390×844pxで開き、NAGATA2532戦28手目で推奨PV・実戦PVがそれぞれ先頭6手だけ表示されることを確認した。
