@@ -1,0 +1,143 @@
+export const MAX_KIF_BYTES = 128 * 1024;
+export const MAX_MOVES = 512;
+
+const FULL_DIGITS = "１２３４５６７８９";
+const RANKS = "一二三四五六七八九";
+const PIECES = { 歩: "P", 香: "L", 桂: "N", 銀: "S", 金: "G", 角: "B", 飛: "R", 玉: "K", 王: "K" };
+const LOSS_TERMINALS = new Set(["投了", "時間切れ", "切れ負け", "反則負け", "詰み"]);
+const WIN_TERMINALS = new Set(["反則勝ち", "入玉勝ち", "宣言勝ち"]);
+const DRAW_TERMINALS = new Set(["中断", "千日手", "持将棋"]);
+
+function byteLength(text) {
+  return new TextEncoder().encode(text).length;
+}
+
+function digit(ch) {
+  const full = FULL_DIGITS.indexOf(ch);
+  return full >= 0 ? full + 1 : Number(ch);
+}
+
+function rank(ch) {
+  const japanese = RANKS.indexOf(ch);
+  return japanese >= 0 ? japanese + 1 : Number(ch);
+}
+
+function square(file, boardRank) {
+  return `${file}${String.fromCharCode(96 + boardRank)}`;
+}
+
+function metadata(lines, key) {
+  const prefix = `${key}：`;
+  const line = lines.find((value) => value.startsWith(prefix));
+  return line ? line.slice(prefix.length).trim() : "";
+}
+
+function canonicalMove(moveText, previousTo) {
+  let targetFile;
+  let targetRank;
+  let rest;
+  const normal = moveText.match(/^([1-9１-９])([一二三四五六七八九1-9])(.+)$/u);
+  if (normal) {
+    targetFile = digit(normal[1]);
+    targetRank = rank(normal[2]);
+    rest = normal[3];
+  } else {
+    const same = moveText.match(/^同[　 ]*(.+)$/u);
+    if (!same || !previousTo) throw new Error(`指し手を解釈できません: ${moveText}`);
+    targetFile = Number(previousTo[0]);
+    targetRank = previousTo.charCodeAt(1) - 96;
+    rest = same[1];
+  }
+  const source = rest.match(/\(([1-9])([1-9])\)/u);
+  const drop = rest.includes("打") && !source;
+  if (drop) {
+    const pieceName = rest.split("打", 1)[0];
+    const piece = Object.entries(PIECES).find(([name]) => pieceName.startsWith(name));
+    if (!piece) throw new Error(`打ち駒を解釈できません: ${moveText}`);
+    return `${piece[1]}*${square(targetFile, targetRank)}`;
+  }
+  if (!source) throw new Error(`移動元がありません: ${moveText}`);
+  const promote = rest.includes("成") && !rest.includes("不成") &&
+    !["成銀", "成桂", "成香"].some((name) => rest.startsWith(name));
+  return `${square(Number(source[1]), Number(source[2]))}${square(targetFile, targetRank)}${promote ? "+" : ""}`;
+}
+
+function resultFromTerminal(number, terminal, sente, gote) {
+  if (DRAW_TERMINALS.has(terminal)) return terminal;
+  const terminalSide = number % 2 === 1 ? "先手" : "後手";
+  let winner;
+  if (LOSS_TERMINALS.has(terminal)) winner = terminalSide === "先手" ? "後手" : "先手";
+  else if (WIN_TERMINALS.has(terminal)) winner = terminalSide;
+  else return "";
+  return `${winner}・${winner === "先手" ? sente : gote}勝利`;
+}
+
+export function parseKifForSubmit(kif) {
+  if (typeof kif !== "string") throw new Error("KIF本文がありません");
+  if (kif.includes("\0")) throw new Error("KIFに使用できない文字があります");
+  if (byteLength(kif) > MAX_KIF_BYTES) throw new Error("KIFが128KBを超えています");
+  const lines = kif.replace(/\r\n?/g, "\n").split("\n");
+  const startedAt = metadata(lines, "開始日時");
+  const sente = metadata(lines, "先手");
+  const gote = metadata(lines, "後手");
+  if (!startedAt || !sente || !gote) throw new Error("開始日時・先手・後手が必要です");
+  const dateMatch = startedAt.match(/^(\d{4})[\/-](\d{1,2})[\/-](\d{1,2})(?:\s+(\d{1,2}):(\d{2}))?/u);
+  if (!dateMatch) throw new Error("開始日時の形式が不正です");
+  const date = `${dateMatch[1]}/${dateMatch[2].padStart(2, "0")}/${dateMatch[3].padStart(2, "0")}`;
+  const displayDate = `${date}${dateMatch[4] ? ` ${dateMatch[4].padStart(2, "0")}:${dateMatch[5]}` : ""}`;
+  const moves = [];
+  let previousTo = "";
+  let terminalResult = "";
+  let expected = 1;
+  for (const line of lines) {
+    const match = line.match(/^\s*(\d+)\s+(.+?)(?:\s+\(|$)/u);
+    if (!match) continue;
+    const number = Number(match[1]);
+    const moveText = match[2].trim();
+    if (LOSS_TERMINALS.has(moveText) || WIN_TERMINALS.has(moveText) || DRAW_TERMINALS.has(moveText)) {
+      if (number !== expected) throw new Error("終局手数が連続していません");
+      terminalResult = resultFromTerminal(number, moveText, sente, gote);
+      break;
+    }
+    if (number !== expected) throw new Error("手数が1手目から連続していません");
+    const usi = canonicalMove(moveText, previousTo);
+    moves.push(usi);
+    previousTo = usi.replace("+", "").slice(-2);
+    expected += 1;
+    if (moves.length > MAX_MOVES) throw new Error("手数が上限を超えています");
+  }
+  if (!moves.length) throw new Error("指し手がありません");
+  const footer = lines.map((line) => line.trim()).find((line) => /^まで\d+手で/.test(line));
+  if (!terminalResult && footer) {
+    if (footer.includes("先手の勝ち")) terminalResult = `先手・${sente}勝利`;
+    else if (footer.includes("後手の勝ち")) terminalResult = `後手・${gote}勝利`;
+    else if (footer.includes("千日手") || footer.includes("持将棋")) terminalResult = footer.replace(/^まで\d+手で/u, "");
+  }
+  if (!terminalResult) throw new Error("終局結果がありません");
+  const footerMoves = footer && footer.match(/^まで(\d+)手で/u);
+  if (footerMoves && Number(footerMoves[1]) !== moves.length) throw new Error("終局手数が一致しません");
+  return {
+    date,
+    displayDate,
+    startedAt,
+    sente,
+    gote,
+    moves: moves.length,
+    result: terminalResult,
+    canonicalMoves: moves,
+  };
+}
+
+export function canonicalFingerprintPayload(parsed) {
+  return JSON.stringify([parsed.date, parsed.sente, parsed.gote, parsed.canonicalMoves]);
+}
+
+export async function sha256Hex(value) {
+  const digest = await crypto.subtle.digest("SHA-256", new TextEncoder().encode(value));
+  return Array.from(new Uint8Array(digest), (byte) => byte.toString(16).padStart(2, "0")).join("");
+}
+
+export async function fingerprintKif(kif) {
+  const parsed = parseKifForSubmit(kif);
+  return { parsed, fingerprint: await sha256Hex(canonicalFingerprintPayload(parsed)) };
+}

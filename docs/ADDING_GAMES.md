@@ -1,5 +1,13 @@
 # 新しい対局を追加する手順
 
+## iPhone PWAから追加（Phase 2）
+
+初回設定後は、PWAで「棋譜を追加」→KIF貼り付け→対局情報確認→「解析する」の順に操作する。依頼はCloudflare D1に保存され、Windows workerがoutbound通信だけで取得する。PCがOFFでもqueuedのまま保持され、起動後に30,000 nodes/局面で解析・公開される。
+
+セットアップは `docs/IPHONE_KIF_SUBMIT_SETUP.md`、従来の手動投入は以下を参照。
+
+## Windowsへ手動投入
+
 Windowsでは次の操作だけでよい。
 
 1. 将棋ウォーズ公式画面から自分の対局をKIF形式で保存する。

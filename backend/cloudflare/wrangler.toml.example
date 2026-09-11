@@ -1,0 +1,14 @@
+name = "shogi-review-queue"
+main = "src/index.mjs"
+compatibility_date = "2026-09-01"
+
+[vars]
+ALLOWED_ORIGINS = "https://perusonao.github.io"
+
+[[d1_databases]]
+binding = "QUEUE_DB"
+database_name = "shogi-review-queue"
+database_id = "PASTE_D1_DATABASE_ID_HERE"
+
+# SUBMIT_SECRET_HASH and WORKER_SECRET_HASH must be added with
+# `npx wrangler secret put`; never commit either value.

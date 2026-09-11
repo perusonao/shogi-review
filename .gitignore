@@ -11,6 +11,10 @@ nn.bin
 # Local import inbox (only the placeholder is tracked)
 games/inbox/*
 !games/inbox/.gitkeep
+worker-config.bat
+backend/cloudflare/wrangler.toml
+.wrangler/
+backend/cloudflare/node_modules/
 
 # Import/analyzer temporary files
 *.tmp

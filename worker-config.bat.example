@@ -1,0 +1,7 @@
+@echo off
+rem Copy this file to worker-config.bat and fill in the two secrets locally.
+rem worker-config.bat is ignored by Git.
+set "SHOGI_QUEUE_URL=https://YOUR-WORKER.YOUR-SUBDOMAIN.workers.dev"
+set "SHOGI_WORKER_SECRET=PASTE_A_LONG_RANDOM_WORKER_SECRET"
+set "SHOGI_USER_NAMES=ぺるそなお,sonao81"
+set "SHOGI_POLL_SECONDS=45"

@@ -3,7 +3,6 @@
 from __future__ import annotations
 
 import argparse
-import hashlib
 import json
 import os
 import re
@@ -18,6 +17,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
 from kif_to_game import parse as parse_kif  # noqa: E402
+from queue_common import canonical_fingerprint  # noqa: E402
 
 if os.name == "nt":
     sys.stdout.reconfigure(encoding="utf-8")
@@ -50,16 +50,6 @@ def run(command: list[str], cwd: Path, *, capture: bool = False) -> subprocess.C
         capture_output=capture, check=False,
         env={**os.environ, "PYTHONUTF8": "1"},
     )
-
-
-def canonical_fingerprint(parsed: dict) -> str:
-    game = parsed["game"]
-    moves = [p.get("usi", "") for p in parsed["positions"][1:]]
-    payload = json.dumps(
-        [game.get("date"), game.get("sente"), game.get("gote"), moves],
-        ensure_ascii=False, separators=(",", ":"),
-    ).encode("utf-8")
-    return hashlib.sha256(payload).hexdigest()
 
 
 def slug(value: str) -> str:

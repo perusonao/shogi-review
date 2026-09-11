@@ -23,7 +23,13 @@ PWAは `games/index.json` を起点に対局を読み込む。新しい対局を
 
 詳細な追加手順は `docs/ADDING_GAMES.md` をSSOTとする。
 
-## 今後の使い方（Windows）
+## iPhoneから解析を依頼する
+
+Phase 2では、PWAの「棋譜を追加」からKIFを貼り付けて解析queueへ送信できる。Windows workerはCloudflareへoutbound pollし、PC起動中に既存の水匠5解析・検証・公開フローを実行する。PCがOFFでも依頼はD1に保持される。
+
+初回だけCloudflare Worker + D1と個人用secretを設定する。手順は `docs/IPHONE_KIF_SUBMIT_SETUP.md` を参照。
+
+## 従来の使い方（Windows）
 
 1. 将棋ウォーズ公式画面から自分の対局をKIFで保存し、`games/inbox/`へ入れる。
 2. `analyze-new-games.bat`をダブルクリックする。
