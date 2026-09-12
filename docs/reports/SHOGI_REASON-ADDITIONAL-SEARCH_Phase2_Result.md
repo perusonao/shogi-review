@@ -6,7 +6,7 @@
 
 30k/60kで一致したcounterfactual differenceは69/274（25.18%）。PV内イベントの約4分の3は探索量で入れ替わり、単一探索の文章化は不安定だった。特にryunenbb 80としゅえい159は、推奨枝が30k/60kではcp、120kでは`mate -15`へ変化した。「推奨手で詰みを回避」は証拠不成立とし、production Reason候補にはしない。
 
-実装基準は `origin/main == HEAD == 766a83a6cd3d018918c95312cb5aafb4e58355c7`。開始時の未追跡Human Review文書6件は利用者の資産として変更していない。
+実装基準は、作業中に追加された最新SSOT `031fcecd608c35360c88a88a92f63ec9891b47bc`（kurochanman52取込）であり、今回commitはこれを直接の親に持つ。開始時の未追跡Human Review文書6件は利用者の資産として変更していない。
 
 ## 対象と探索条件
 
