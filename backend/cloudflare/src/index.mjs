@@ -1,4 +1,4 @@
-import { fingerprintKif, MAX_KIF_BYTES } from "../../../kif-submit-core.mjs";
+import { applyUnknownConfirmations, fingerprintKif, MAX_KIF_BYTES } from "../../../kif-submit-core.mjs";
 import { canTransition } from "./state.mjs";
 
 const JSON_HEADERS = { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" };
@@ -77,6 +77,8 @@ async function submit(request, env, origin) {
     return response({ error: error.message || "KIFが不正です" }, 400, origin);
   }
   if (input.fingerprint && input.fingerprint !== fingerprint) return response({ error: "fingerprintが一致しません" }, 400, origin);
+  const resolved = applyUnknownConfirmations(parsed.submissionMetadata, input.confirmations || {});
+  if (resolved.unresolved.length) return response({ error: "不明な対局情報の確認が不足しています" }, 400, origin);
   const existing = await env.QUEUE_DB.prepare("SELECT * FROM analysis_requests WHERE fingerprint = ?")
     .bind(fingerprint).first();
   if (existing) return response(publicRequest(existing, true), 200, origin);
@@ -89,6 +91,7 @@ async function submit(request, env, origin) {
     gote: parsed.gote,
     moves: parsed.moves,
     result: parsed.result,
+    calibration: resolved.metadata,
   };
   try {
     await env.QUEUE_DB.prepare(

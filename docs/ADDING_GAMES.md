@@ -2,7 +2,7 @@
 
 ## iPhone PWAから追加（Phase 2）
 
-初回設定後は、PWAで「棋譜を追加」→KIF貼り付け→対局情報確認→「解析する」の順に操作する。依頼はCloudflare D1に保存され、Windows workerがoutbound通信だけで取得する。PCがOFFでもqueuedのまま保持され、起動後に30,000 nodes/局面で解析・公開される。
+初回設定後は、PWAで「棋譜を追加」→KIF貼り付け→KIFにない項目だけ確認→「解析する」の順に操作する。metadataが完全なら追加操作はない。依頼はCloudflare D1に保存され、Windows workerがoutbound通信だけで取得する。PCがOFFでもqueuedのまま保持され、起動後に30,000 nodes/局面で解析・公開される。
 
 セットアップは `docs/IPHONE_KIF_SUBMIT_SETUP.md`、従来の手動投入は以下を参照。
 
@@ -46,6 +46,8 @@ HEROZは2026年5月8日の告知で、将棋ウォーズ棋譜・対局データ
 8. 公開を選んだ場合のみ、今回の生成物だけをcommitして`origin/main`へpush
 
 同じ棋譜を再投入しても、指し手列・対局者・日付から作るfingerprintが同じなら再解析・重複登録しない。
+
+解析成功後だけ `data/calibration/pwa-intake-v1.json` へD2 player-game行を登録する。rankは対局開始時刻付きのobservationであり、同一ユーザーの別対局では別rankを保存できる。providerが不明な場合はIDをprovisionalとして保存し、10分切れ負け・2級/1級/初段以外は台帳に保持するがpilot cohortには入れない。解析失敗時はintakeせず、同一fingerprintの再処理でも行は増殖しない。
 
 ## Skill Calibration datasetへ反映
 

@@ -149,8 +149,8 @@ class NestedCheckpointTests(unittest.TestCase):
     def _stage_one_rows(self):
         rows = []
         for rank_index, (rank, base) in enumerate((("2級", 55), ("1級", 70), ("初段", 85))):
-            for user_index in range(2):
-                for game_index in range(15):
+            for user_index in range(10):
+                for game_index in range(3):
                     rows.append(row(
                         f"r{rank_index}u{user_index}", f"r{rank_index}u{user_index}g{game_index}",
                         rank, base + user_index + game_index / 100,
@@ -158,6 +158,20 @@ class NestedCheckpointTests(unittest.TestCase):
                         result="win" if game_index % 2 == 0 else "loss",
                     ))
         return rows
+
+    def test_stage_one_three_conditions_are_independent(self):
+        rows = self._stage_one_rows()
+        stage = dataset_dashboard(build_dataset(rows))["pilot_cohort"]["stages"]["stage_1"]
+        self.assertEqual(stage["conditions"], {
+            "player_games_per_rank": True,
+            "unique_users_per_rank": True,
+            "single_user_ratio_per_rank": True,
+        })
+        concentrated = [item for item in rows if not (item["official_rank"] == "2級" and "u0" not in item["game_id"])]
+        failed = dataset_dashboard(build_dataset(concentrated))["pilot_cohort"]["stages"]["stage_1"]
+        self.assertFalse(failed["conditions"]["player_games_per_rank"])
+        self.assertFalse(failed["conditions"]["unique_users_per_rank"])
+        self.assertFalse(failed["conditions"]["single_user_ratio_per_rank"])
 
     def test_nested_groups_never_expose_outer_test_user_to_inner_selection(self):
         rows = self._stage_one_rows()
