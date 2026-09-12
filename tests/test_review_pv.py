@@ -116,10 +116,13 @@ class ReviewPvTests(unittest.TestCase):
     def test_old_analysis_json_is_supported_by_ui_fallback(self) -> None:
         ui = (ROOT / "review-enhanced.js").read_text(encoding="utf-8")
         evidence = (ROOT / "reason-evidence.js").read_text(encoding="utf-8")
+        html = (ROOT / "index.html").read_text(encoding="utf-8")
         self.assertIn("analysis?.lossCp ?? issue.loss", ui)
         self.assertIn("recommendedPV: analysis?.pv || []", ui)
         self.assertIn("原因を一つに特定できません", evidence)
         self.assertNotIn("legacyMate", ui)
+        self.assertIn("ShogiReasonEvidenceLayer.mergeProductionBlocks", ui)
+        self.assertLess(html.index("reason-evidence-layer.js"), html.index("review-enhanced.js"))
         self.assertEqual(ui.count(".slice(0, 6)"), 2)
         old = json.loads((ROOT / "analysis" / "20260910_ひぐれ.json").read_text(encoding="utf-8"))
         self.assertEqual(old.get("schemaVersion"), 1)

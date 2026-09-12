@@ -1,4 +1,4 @@
-/* Shadow Reason Evidence Layer. No production UI imports this module. */
+/* Validated Reason Evidence Layer with a deliberately narrow production gate. */
 (function (root, factory) {
   const api = factory();
   if (typeof module === "object" && module.exports) module.exports = api;
@@ -17,6 +17,11 @@
   const POSITION_TYPES = new Set(["LEGAL_REPLY_COUNT", "LEGAL_CAPTURE_COUNT", "ATTACK_MAP", "DEFENDER_COUNT", "KING_ESCAPE_COUNT", "MOVED_PIECE_ATTACKERS"]);
   const PROOF_LEVELS = new Set(["HIGH", "MEDIUM", "LOW"]);
   const USABILITY_LEVELS = new Set(["PRIMARY", "SUPPORTING", "NOT_USABLE"]);
+  const PRODUCTION_ALLOWLIST = Object.freeze({
+    Q1_ACTUAL_MATE_ENDPOINT: "Q1_ACTUAL_MATE_ENDPOINT",
+    Q2_RECOMMENDED_MATE_ENDPOINT: "Q2_RECOMMENDED_MATE_ENDPOINT",
+    Q2_RECOMMENDED_CHECK_SEQUENCE_WITH_CAPTURE: "Q2_RECOMMENDED_CHECK_SEQUENCE_WITH_CAPTURE",
+  });
 
   function opposite(side) { return side === "b" ? "w" : "b"; }
   function square(file, rank) { return `${file}${String.fromCharCode(96 + rank)}`; }
@@ -517,6 +522,87 @@
     };
   }
 
+  function productionReason(bundle) {
+    const rejected = (reason, safe = false) => ({
+      status: "FALLBACK",
+      safe,
+      reason,
+      q1: "×",
+      q2: "×",
+      q3: "×",
+      blocks: [],
+      accepted_types: [],
+    });
+    if (!bundle || bundle.status !== "VALID") return rejected(bundle?.status === "INVALID" ? "INVALID" : "UNRESOLVED");
+    if (!Array.isArray(bundle.evidence) || bundle.evidence.some((item) => !item.validation?.valid)) return rejected("VALIDATOR_FAILURE");
+
+    const primary = bundle.evidence.filter((item) =>
+      item.validation.valid && item.reason_usability === "PRIMARY" && ["HIGH", "MEDIUM"].includes(item.proof_confidence));
+    const actualMate = primary.find((item) => item.branch === "actual" && item.type === "MATE_ENDPOINT");
+    const recommendedMate = primary.find((item) => item.branch === "recommended" && item.type === "MATE_ENDPOINT");
+    const recommendedSequence = primary.find((item) =>
+      item.branch === "recommended" && item.type === "CHECK_SEQUENCE" &&
+      Array.isArray(item.check_plies) && item.check_plies.length >= 3 &&
+      item.check_plies[0] === 1 && item.check_plies.every((ply, index) => index === 0 || ply === item.check_plies[index - 1] + 2));
+    const recommendedCheckCapture = primary.find((item) =>
+      item.branch === "recommended" && item.type === "CHECK_AND_CAPTURE" && item.ply_distance <= 3 &&
+      recommendedSequence?.check_plies.includes(item.ply_distance));
+
+    const blocks = [];
+    const acceptedTypes = [];
+    if (actualMate) {
+      blocks.push({
+        key: "problem",
+        title: "この手の問題",
+        text: `実戦手の読み筋では、${actualMate.ply_distance}ply目の${jaMove(actualMate)}が王手で、合法な応手がありません。`,
+        confidence: "HIGH",
+        evidence_type: PRODUCTION_ALLOWLIST.Q1_ACTUAL_MATE_ENDPOINT,
+      });
+      acceptedTypes.push(PRODUCTION_ALLOWLIST.Q1_ACTUAL_MATE_ENDPOINT);
+    }
+    if (recommendedMate) {
+      blocks.push({
+        key: "recommended",
+        title: "推奨手だとどう変わる？",
+        text: `推奨手の読み筋では、${recommendedMate.ply_distance}ply目の${jaMove(recommendedMate)}が王手で、合法な応手がありません。`,
+        confidence: "HIGH",
+        evidence_type: PRODUCTION_ALLOWLIST.Q2_RECOMMENDED_MATE_ENDPOINT,
+      });
+      acceptedTypes.push(PRODUCTION_ALLOWLIST.Q2_RECOMMENDED_MATE_ENDPOINT);
+    } else if (recommendedSequence && recommendedCheckCapture) {
+      const squareJa = `${recommendedCheckCapture.target_square[0]}${RANK_JA[coords(recommendedCheckCapture.target_square).rank - 1]}`;
+      blocks.push({
+        key: "recommended",
+        title: "推奨手だとどう変わる？",
+        text: `推奨手の読み筋では、保存PVの${recommendedSequence.check_plies.join("・")}ply目に王手が続き、${recommendedCheckCapture.ply_distance}ply目の${jaMove(recommendedCheckCapture)}が${squareJa}の${PIECE_JA[recommendedCheckCapture.target_piece]}を取ります。`,
+        confidence: "HIGH",
+        evidence_type: PRODUCTION_ALLOWLIST.Q2_RECOMMENDED_CHECK_SEQUENCE_WITH_CAPTURE,
+      });
+      acceptedTypes.push(PRODUCTION_ALLOWLIST.Q2_RECOMMENDED_CHECK_SEQUENCE_WITH_CAPTURE);
+    }
+    if (!blocks.length) return rejected("SUPPORTING_ONLY", true);
+    return {
+      status: "PRODUCTION_READY",
+      safe: true,
+      reason: null,
+      q1: actualMate ? "○" : "×",
+      q2: recommendedMate || recommendedSequence && recommendedCheckCapture ? "○" : "×",
+      q3: "○",
+      blocks,
+      accepted_types: acceptedTypes,
+    };
+  }
+
+  function mergeProductionBlocks(fallbackBlocks, production) {
+    const fallback = Array.isArray(fallbackBlocks) ? fallbackBlocks.map((block) => ({ ...block })) : [];
+    if (production?.status !== "PRODUCTION_READY" || !production.safe) return fallback;
+    const replacements = new Map(production.blocks.map((block) => [block.key, { ...block }]));
+    const slot = (block) => block.key === "why" ? "problem" : block.key;
+    const merged = fallback.map((block) => replacements.has(slot(block)) ? replacements.get(slot(block)) : block);
+    for (const block of production.blocks) if (!merged.some((item) => slot(item) === block.key)) merged.push({ ...block });
+    return merged;
+  }
+
   function extractEvidence(source) {
     const input = prepareInput(source);
     const parsed = parseSfen(input.sfen);
@@ -540,6 +626,7 @@
       branches: replays,
     };
     bundle.reason_candidate = candidateReason(bundle);
+    bundle.production_reason = productionReason(bundle);
     return bundle;
   }
 
@@ -548,5 +635,5 @@
     return { valid: bundle.status !== "INVALID" && results.every((item) => item.valid), status: bundle.status, evidence: results };
   }
 
-  return { parseSfen, parseUsi, applyMove, legalMoves, replay, attackers, isInCheck, extractEvidence, validateEvidence, validateBundle, candidateReason, PIECE_JA };
+  return { parseSfen, parseUsi, applyMove, legalMoves, replay, attackers, isInCheck, extractEvidence, validateEvidence, validateBundle, candidateReason, productionReason, mergeProductionBlocks, PRODUCTION_ALLOWLIST, PIECE_JA };
 });
