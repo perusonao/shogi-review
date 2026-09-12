@@ -2,6 +2,19 @@
   "schemaVersion": 1,
   "games": [
     {
+      "id": "20260912_shuty005",
+      "date": "2026/09/12",
+      "title": "shuty005 vs sonao81",
+      "side": "後手",
+      "result": "後手・sonao81 勝利",
+      "moves": 106,
+      "kif": "games/20260912_shuty005.kif",
+      "gameData": "games/20260912_shuty005.json",
+      "analysisData": "analysis/20260912_shuty005.json",
+      "analyzed": true,
+      "status": "YaneuraOu V9.00 + 水匠5解析済み"
+    },
+    {
       "id": "20260912_boooood",
       "date": "2026/09/12",
       "title": "boooood vs sonao81",

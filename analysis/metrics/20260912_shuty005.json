@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "gameId": "20260912_shuty005",
+  "analyzedAt": "2026-09-12T06:33:45.701759Z",
+  "positions": 107,
+  "problemPositions": 6,
+  "baseAnalysisSeconds": 4.153,
+  "extraPvSearchSeconds": 1.075,
+  "totalAnalysisSeconds": 5.228,
+  "shortPvCandidates": 8,
+  "extraSearchExecuted": 8,
+  "pvLengthBeforeAverage": 2.25,
+  "pvLengthAfterAverage": 6.375,
+  "pvLengthsBefore": [
+    2,
+    2,
+    2,
+    3,
+    2,
+    3,
+    1,
+    3
+  ],
+  "pvLengthsAfter": [
+    2,
+    2,
+    2,
+    3,
+    2,
+    3,
+    15,
+    22
+  ],
+  "improvedPvCount": 2,
+  "unchangedPvCount": 6
+}
