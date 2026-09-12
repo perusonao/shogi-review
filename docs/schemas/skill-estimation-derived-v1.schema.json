@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://perusonao.github.io/shogi-review/schemas/skill-estimation-derived-v1.schema.json",
+  "title": "Shogi Review Skill Estimation Derived Layer v1",
+  "description": "Regenerable Phase A-C data. Raw Skill Score is not a dan/kyu estimate; calibration is pending.",
+  "type": "object",
+  "required": ["metadata", "moves", "player_games"],
+  "properties": {
+    "metadata": {
+      "type": "object",
+      "required": ["schema_version", "game_id", "source", "provider", "time_control", "analysis_schema_version", "players", "source_hashes"],
+      "properties": {
+        "schema_version": {"const": "skill-derived-v1"},
+        "game_id": {"type": "string", "minLength": 1},
+        "source": {"type": "object", "required": ["kind", "status"]},
+        "provider": {"type": ["string", "null"]},
+        "time_control": {"type": ["object", "null"]},
+        "analysis_schema_version": {"enum": [1, 2]},
+        "players": {
+          "type": "array", "minItems": 2, "maxItems": 2,
+          "items": {
+            "type": "object",
+            "required": ["player_id", "display_name", "official_rank_raw", "official_rank_normalized", "side", "result"],
+            "properties": {
+              "player_id": {"type": "string"},
+              "display_name": {"type": "string"},
+              "official_rank_raw": {"type": ["string", "null"]},
+              "official_rank_normalized": {"type": ["object", "null"]},
+              "side": {"enum": ["sente", "gote"]},
+              "result": {"enum": ["win", "loss", "draw", "unknown"]}
+            }
+          }
+        },
+        "source_hashes": {"type": "object", "required": ["analysis_sha256", "game_sha256"]}
+      }
+    },
+    "moves": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["game_id", "player_id", "evidence_id", "side", "ply", "phase", "score_before", "score_after", "cpl", "best_move_match", "mate_event", "evaluation_reversal", "advantage_event", "major_piece_loss", "material_event", "reason_evidence_ref", "phase_signals"]
+      }
+    },
+    "player_games": {
+      "type": "array", "minItems": 2, "maxItems": 2,
+      "items": {
+        "type": "object",
+        "required": ["schema_version", "feature_version", "phase_segmenter_version", "score_version", "calibration_status", "game_id", "player_id", "side", "result", "scores"],
+        "properties": {
+          "calibration_status": {"const": "pending"},
+          "scores": {
+            "type": "object",
+            "required": ["overall", "opening", "middlegame", "endgame"]
+          }
+        }
+      }
+    }
+  }
+}
