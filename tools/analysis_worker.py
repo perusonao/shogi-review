@@ -127,7 +127,7 @@ def ensure_published(root: Path) -> None:
         return
     if run_checked(["git", "merge-base", "--is-ancestor", "origin/main", "HEAD"], root).returncode != 0:
         raise WorkerError("local branch diverged from origin/main")
-    if run_checked(["git", "push", "origin", "main"], root).returncode != 0:
+    if run_checked(["git", "push", "origin", "HEAD:main"], root).returncode != 0:
         raise WorkerError("git push failed")
 
 
@@ -145,7 +145,7 @@ def intake_existing(root: Path, game_id: str, fingerprint: str, metadata: dict) 
         return
     if run_checked(["git", "commit", "-m", f"data: intake labeled game {game_id}", "--", registry], root).returncode != 0:
         raise WorkerError("D2 intake commit failed")
-    if run_checked(["git", "push", "origin", "main"], root).returncode != 0:
+    if run_checked(["git", "push", "origin", "HEAD:main"], root).returncode != 0:
         raise WorkerError("D2 intake push failed")
 
 
@@ -175,6 +175,10 @@ def process_claim(client: QueueClient, claim: dict, root: Path, user_names: tupl
         ], root, capture=True)
         if completed.returncode != 0:
             logging.error("import pipeline failed (exit %s)", completed.returncode)
+            if completed.stdout and completed.stdout.strip():
+                logging.error("import stdout:\n%s", completed.stdout.rstrip())
+            if completed.stderr and completed.stderr.strip():
+                logging.error("import stderr:\n%s", completed.stderr.rstrip())
             raise WorkerError("analysis pipeline failed")
         game_id = find_existing_game_id(root, fingerprint, user)
         if not game_id:

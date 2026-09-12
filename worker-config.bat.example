@@ -5,3 +5,5 @@ set "SHOGI_QUEUE_URL=https://YOUR-WORKER.YOUR-SUBDOMAIN.workers.dev"
 set "SHOGI_WORKER_SECRET=PASTE_A_LONG_RANDOM_WORKER_SECRET"
 set "SHOGI_USER_NAMES=ぺるそなお,sonao81"
 set "SHOGI_POLL_SECONDS=45"
+rem Optional: dedicated detached worktree path. Default is %LOCALAPPDATA%\shogi-review-worker.
+rem set "SHOGI_WORKER_ROOT=C:\path\to\shogi-review-worker"

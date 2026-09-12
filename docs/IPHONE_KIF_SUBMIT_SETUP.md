@@ -59,7 +59,7 @@ npx wrangler deploy
 
 リポジトリ直下の `worker-config.bat.example` を `worker-config.bat` にコピーする。ファイル内へWorker URL、worker用の平文secret、対象ユーザー名を設定する。このファイルはGit対象外である。
 
-まず `start-analysis-worker.bat` を実行してpoll開始を確認する。常駐を自動化する場合は `setup-worker-task.bat` を管理者権限なしで1回実行する。次回以降、Windowsログオン時にworkerが起動する。
+まず `start-analysis-worker.bat` を実行してpoll開始を確認する。起動時に最新 `origin/main` から専用のdetached worktree（既定: `%LOCALAPPDATA%\shogi-review-worker`）を作成・更新するため、開発用checkoutが別branchやdirty状態でも解析へ混入しない。保存先を変える場合だけ、`worker-config.bat` に `SHOGI_WORKER_ROOT` を設定する。常駐を自動化する場合は `setup-worker-task.bat` を管理者権限なしで1回実行する。次回以降、Windowsログオン時にworkerが起動する。
 
 ## 7. iPhone PWAを設定
 

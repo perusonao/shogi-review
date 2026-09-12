@@ -115,8 +115,8 @@ def publish_preflight(root: Path) -> None:
     if root.resolve() != ROOT.resolve():
         raise ImportFailure("テスト用rootではpublishできません")
     branch = run(["git", "branch", "--show-current"], root, capture=True).stdout.strip()
-    if branch != "main":
-        raise ImportFailure(f"publishはmainブランチでのみ実行できます（現在: {branch}）")
+    if branch and branch != "main":
+        raise ImportFailure(f"publishはmainまたはworker用detached HEADでのみ実行できます（現在: {branch}）")
     if run(["git", "fetch", "origin", "main"], root).returncode != 0:
         raise ImportFailure("git fetchに失敗しました。ネットワークを確認してください")
     head = run(["git", "rev-parse", "HEAD"], root, capture=True).stdout.strip()
@@ -317,7 +317,7 @@ def publish(root: Path, changed: list[Path], game_ids: list[str]) -> str:
     if run(["git", "commit", "-m", message, "--", *relative], root).returncode != 0:
         raise ImportFailure("git commitに失敗しました")
     sha = run(["git", "rev-parse", "HEAD"], root, capture=True).stdout.strip()
-    if run(["git", "push", "origin", "main"], root).returncode != 0:
+    if run(["git", "push", "origin", "HEAD:main"], root).returncode != 0:
         raise ImportFailure(f"commit {sha} は作成済みですがgit pushに失敗しました")
     return sha
 
