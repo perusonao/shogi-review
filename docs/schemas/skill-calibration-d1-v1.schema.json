@@ -1,0 +1,28 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "skill-calibration-d1-v1.schema.json",
+  "title": "Shogi Skill Calibration D1 row",
+  "description": "One privacy-conscious player-game row exported by Phase C. This schema does not define production rank thresholds.",
+  "type": "object",
+  "required": [
+    "game_id", "player_id", "provider", "time_control", "official_rank",
+    "official_rank_order", "side", "result", "feature_version", "score_version",
+    "overall_raw_score", "overall_coverage", "overall_eligible_moves",
+    "opening_raw_score", "opening_coverage", "opening_eligible_moves",
+    "middlegame_raw_score", "middlegame_coverage", "middlegame_eligible_moves",
+    "endgame_raw_score", "endgame_coverage", "endgame_eligible_moves"
+  ],
+  "properties": {
+    "game_id": {"type": "string", "minLength": 1},
+    "player_id": {"type": "string", "minLength": 1},
+    "provider": {"type": ["string", "null"]},
+    "time_control": {"type": ["string", "null"]},
+    "official_rank": {"type": ["string", "null"]},
+    "official_rank_order": {"type": ["integer", "null"]},
+    "side": {"enum": ["sente", "gote"]},
+    "result": {"enum": ["win", "loss", "draw", "unknown"]},
+    "feature_version": {"type": "string", "minLength": 1},
+    "score_version": {"type": "string", "minLength": 1}
+  },
+  "additionalProperties": true
+}
