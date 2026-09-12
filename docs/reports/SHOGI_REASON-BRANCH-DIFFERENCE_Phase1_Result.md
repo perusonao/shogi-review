@@ -119,5 +119,9 @@ Windows worker統合案は既存queue itemに `jobType: reason-branch-v1` を追
 ## 検証
 
 - Branch Differenceテスト: branch適用、capture、major capture、mate/check差、promotion/drop、material、shared/actual-only/recommended-only、confidence、旧JSON、短PV、PVなし、先後、必須fixture。
-- B-strictはselectionロジック・analysis JSONを変更していない状態で回帰。
-- Node/Python/Cloudflare、`git diff --check`、iPhone viewport、Pages deploy後確認を実施対象とした。
+- Node: 38/38成功。Reason全件監査は現行23局128problem成功。
+- Python: 28/28成功。Cloudflare: 5/5成功。
+- B-strict: 監査16局の最大loss 16/16・mate 9/9、現行23局の最大loss 23/23・mate 15/15を保持。
+- `git diff --check`: 成功。
+- 390×844 / 375×844: どちらも `initialScrollTop=0`、content bottom 764.97px < bottom navigation top 786px。マーカー「金」「桂」、`80手目`、コンパクト実戦/推奨行を確認。
+- GitHub Pages: run `34663571607` 成功。公開URLでも同じ2 viewportと表示内容を確認。
