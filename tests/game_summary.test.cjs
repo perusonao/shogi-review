@@ -311,7 +311,7 @@ test("全16局で最大loss 16/16とmate保有局 9/9を保護する", () => {
   assert.equal(mateCaptured, 9);
 });
 
-test("最新mainの現行23局でも最大lossとmateを全件保護する", () => {
+test("最新mainの現行24局でも最大lossとmateを全件保護する", () => {
   const catalog = JSON.parse(fs.readFileSync(path.join(ROOT, "games", "index.json"), "utf8"));
   const gameIds = catalog.games.filter((game) => game.analyzed).map((game) => game.id);
   let maxLossCaptured = 0;
@@ -332,8 +332,8 @@ test("最新mainの現行23局でも最大lossとmateを全件保護する", () 
       if (items.some((item) => mateIssuePlies.includes(item.ply))) mateCaptured += 1;
     }
   }
-  assert.equal(gameIds.length, 23);
-  assert.equal(maxLossCaptured, 23);
-  assert.equal(mateGames, 15);
-  assert.equal(mateCaptured, 15);
+  assert.equal(gameIds.length, 24);
+  assert.equal(maxLossCaptured, 24);
+  assert.equal(mateGames, 16);
+  assert.equal(mateCaptured, 16);
 });

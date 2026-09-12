@@ -97,6 +97,12 @@ class UsiEngine:
             if line == token:
                 return
 
+    def set_option(self, name: str, value: str | int) -> None:
+        """Change one USI option between searches and wait until it is active."""
+        self._send(f"setoption name {name} value {value}")
+        self._send("isready")
+        self._wait_for("readyok")
+
     def analyze(self, sfen: str, nodes: int, searchmoves: list[str] | None = None) -> dict:
         self._send(f"position sfen {sfen}")
         command = f"go nodes {nodes}"
@@ -106,6 +112,10 @@ class UsiEngine:
         last_score = None
         last_pv: list[str] = []
         bestmove = None
+        reported_nodes = 0
+        engine_time_ms = 0
+        nps = 0
+        started = time.perf_counter()
         while True:
             line = self._readline()
             if line.startswith("info "):
@@ -122,6 +132,19 @@ class UsiEngine:
                     if tokens[i] == "pv":
                         line_pv = tokens[i + 1:]
                         break
+                    if tokens[i] in {"nodes", "time", "nps"} and i + 1 < len(tokens):
+                        try:
+                            value = int(tokens[i + 1])
+                        except ValueError:
+                            value = 0
+                        if tokens[i] == "nodes":
+                            reported_nodes = max(reported_nodes, value)
+                        elif tokens[i] == "time":
+                            engine_time_ms = max(engine_time_ms, value)
+                        else:
+                            nps = max(nps, value)
+                        i += 2
+                        continue
                     i += 1
                 if line_score is not None:
                     last_score = line_score
@@ -133,7 +156,69 @@ class UsiEngine:
                 parts = line.split()
                 bestmove = parts[1] if len(parts) > 1 else None
                 break
-        return {"score": last_score, "pv": last_pv, "bestmove": bestmove}
+        return {
+            "score": last_score, "pv": last_pv, "bestmove": bestmove,
+            "nodes": reported_nodes, "timeMs": engine_time_ms, "nps": nps,
+            "wallTimeMs": round((time.perf_counter() - started) * 1000),
+        }
+
+    def analyze_multipv(self, sfen: str, nodes: int, multipv: int = 2,
+                        searchmoves: list[str] | None = None) -> dict:
+        """Return ranked engine lines. Used only by the separate Reason experiment."""
+        self.set_option("MultiPV", multipv)
+        try:
+            self._send(f"position sfen {sfen}")
+            command = f"go nodes {nodes}"
+            if searchmoves:
+                command += " searchmoves " + " ".join(searchmoves)
+            self._send(command)
+            lines: dict[int, dict] = {}
+            bestmove = None
+            reported_nodes = 0
+            engine_time_ms = 0
+            nps = 0
+            started = time.perf_counter()
+            while True:
+                line = self._readline()
+                if line.startswith("info "):
+                    tokens = line.split()
+                    rank = 1
+                    score = None
+                    pv: list[str] = []
+                    i = 0
+                    while i < len(tokens):
+                        token = tokens[i]
+                        if token == "multipv" and i + 1 < len(tokens):
+                            rank = int(tokens[i + 1]); i += 2; continue
+                        if token == "score" and i + 2 < len(tokens):
+                            score = (tokens[i + 1], int(tokens[i + 2])); i += 3; continue
+                        if token in {"nodes", "time", "nps"} and i + 1 < len(tokens):
+                            try:
+                                value = int(tokens[i + 1])
+                            except ValueError:
+                                value = 0
+                            if token == "nodes": reported_nodes = max(reported_nodes, value)
+                            elif token == "time": engine_time_ms = max(engine_time_ms, value)
+                            else: nps = max(nps, value)
+                            i += 2; continue
+                        if token == "pv":
+                            pv = tokens[i + 1:]; break
+                        i += 1
+                    if score is not None and pv:
+                        previous = lines.get(rank)
+                        if previous is None or len(pv) >= len(previous["pv"]):
+                            lines[rank] = {"rank": rank, "score": score, "pv": pv}
+                elif line.startswith("bestmove"):
+                    parts = line.split()
+                    bestmove = parts[1] if len(parts) > 1 else None
+                    break
+            return {
+                "bestmove": bestmove, "lines": [lines[key] for key in sorted(lines)],
+                "nodes": reported_nodes, "timeMs": engine_time_ms, "nps": nps,
+                "wallTimeMs": round((time.perf_counter() - started) * 1000),
+            }
+        finally:
+            self.set_option("MultiPV", 1)
 
     def quit(self) -> None:
         try:
