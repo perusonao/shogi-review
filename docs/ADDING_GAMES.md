@@ -47,6 +47,16 @@ HEROZは2026年5月8日の告知で、将棋ウォーズ棋譜・対局データ
 
 同じ棋譜を再投入しても、指し手列・対局者・日付から作るfingerprintが同じなら再解析・重複登録しない。
 
+## Skill Calibration datasetへ反映
+
+通常のKIF投入・解析が完了した後、次のread-only commandでPhase D2 datasetとdashboardを生成できる。既存analysis JSONを書き換えず、既存局を再解析しない。
+
+```text
+python tools/manage_skill_dataset.py --dataset-out data/calibration/dataset-v2.json --report-out data/calibration/dashboard.json --checkpoint-audit-out data/calibration/checkpoint-audit.json
+```
+
+既定では最新mainの全通常投入分を使う。過去D1との固定比較だけは `--d1-fixed` で25局/50 player-game snapshotを選べる。外部metadata batchは `--additional <CSV|JSON|JSONL>` で追加できるが、合法な入力経路と必須metadataをvalidatorで確認し、scraping由来のrouteは受け付けない。Stage 1（各rank 30 player-games）到達時はcheckpoint auditが自動生成されるが、production段級位表示は解禁されない。
+
 ## 解析設定
 
 - YaneuraOu V9.00 NNUE halfKP256 AVX2

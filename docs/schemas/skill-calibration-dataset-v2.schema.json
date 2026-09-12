@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "skill-calibration-dataset-v2.schema.json",
+  "title": "Shogi Skill Calibration Dataset v2",
+  "type": "object",
+  "required": ["dataset_schema_version", "production_rank_display", "games", "player_games"],
+  "properties": {
+    "dataset_schema_version": {"const": "skill-calibration-dataset-v2"},
+    "production_rank_display": {"const": false},
+    "games": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["provider", "game_id", "time_control", "collection_route"],
+        "properties": {
+          "provider": {"type": ["string", "null"]},
+          "game_id": {"type": "string", "minLength": 1},
+          "time_control": {"type": ["string", "null"]},
+          "collection_route": {
+            "enum": ["existing-kif", "user-provided-kif", "existing-metadata", "pwa-kif-submit"]
+          }
+        },
+        "additionalProperties": false
+      }
+    },
+    "player_games": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["provider", "game_id", "player_id", "official_rank_raw", "official_rank_normalized", "official_rank", "time_control", "side", "result", "collection_route"],
+        "properties": {
+          "provider": {"type": ["string", "null"]},
+          "game_id": {"type": "string", "minLength": 1},
+          "player_id": {"type": "string", "pattern": "^[a-z0-9-]+:user:[0-9a-f]{24,64}$"},
+          "official_rank_raw": {"type": ["string", "null"]},
+          "official_rank_normalized": {
+            "oneOf": [
+              {"type": "null"},
+              {
+                "type": "object",
+                "required": ["rank_type", "rank_number", "rank_order"],
+                "properties": {
+                  "rank_type": {"enum": ["kyu", "dan"]},
+                  "rank_number": {"type": "integer", "minimum": 1},
+                  "rank_order": {"type": "integer"}
+                },
+                "additionalProperties": false
+              }
+            ]
+          },
+          "official_rank": {"type": ["string", "null"]},
+          "time_control": {"type": ["string", "null"]},
+          "side": {"enum": ["sente", "gote"]},
+          "result": {"enum": ["win", "loss", "draw", "unknown"]},
+          "collection_route": {
+            "enum": ["existing-kif", "user-provided-kif", "existing-metadata", "pwa-kif-submit"]
+          }
+        },
+        "additionalProperties": true
+      }
+    }
+  },
+  "additionalProperties": false
+}

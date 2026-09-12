@@ -257,28 +257,92 @@ def _stratified_errors(predictions: Sequence[dict[str, Any]], field: str) -> dic
     return {key: {"n": len(values), "mae": round(statistics.fmean(values), 4)} for key, values in sorted(grouped.items())}
 
 
-def run_loou(rows: Sequence[dict[str, Any]], feature_names: Sequence[str]) -> dict[str, Any]:
+def run_loou(rows: Sequence[dict[str, Any]], feature_names: Sequence[str], *, alpha: float = 1.0) -> dict[str, Any]:
     predictions = []
     folds = leave_one_user_out(rows)
     for fold, (train_indices, test_indices) in enumerate(folds):
         train = [rows[i] for i in train_indices]
-        model = OrdinalRidge(feature_names).fit(train)
+        model = OrdinalRidge(feature_names, alpha=alpha).fit(train)
         for index in test_indices:
             predicted, latent = model.predict_one(rows[index])
             predictions.append({
                 "row_index": index, "fold": fold, "player_id": rows[index]["player_id"],
                 "actual": int(float(rows[index]["official_rank_order"])), "predicted": predicted,
                 "latent": round(latent, 4), "side": rows[index]["side"], "result": rows[index]["result"],
+                "official_rank": rows[index]["official_rank"],
+                "coverage": rows[index].get("overall_coverage"),
             })
     predictions.sort(key=lambda item: item["row_index"])
     metrics = evaluation_metrics([item["actual"] for item in predictions], [item["predicted"] for item in predictions])
     return {
-        "model_version": MODEL_VERSION, "features": list(feature_names),
+        "model_version": MODEL_VERSION, "features": list(feature_names), "alpha": alpha,
         "validation": "leave-one-user-out", "folds": len(folds),
         "user_disjoint": True, "metrics": metrics,
         "side_error": _stratified_errors(predictions, "side"),
         "result_error": _stratified_errors(predictions, "result"),
         "predictions": predictions,
+    }
+
+
+def nested_group_validation(rows: Sequence[dict[str, Any]],
+                            candidates: Sequence[dict[str, Any]] | None = None) -> dict[str, Any]:
+    """Nested LOOU: every model/parameter choice is made using outer-train users only."""
+    validate_rows(rows)
+    candidates = list(candidates or (
+        {"name": "raw-score-a0.1", "features": MODEL_FEATURES["raw_score_only"], "alpha": 0.1},
+        {"name": "raw-score-a1", "features": MODEL_FEATURES["raw_score_only"], "alpha": 1.0},
+        {"name": "raw-score-a10", "features": MODEL_FEATURES["raw_score_only"], "alpha": 10.0},
+        {"name": "basic-a1", "features": MODEL_FEATURES["raw_score_basic"], "alpha": 1.0},
+    ))
+    outer_folds = leave_one_user_out(rows)
+    predictions: list[dict[str, Any]] = []
+    audits = []
+    for fold, (outer_train_indices, outer_test_indices) in enumerate(outer_folds):
+        outer_train = [rows[index] for index in outer_train_indices]
+        outer_test = [rows[index] for index in outer_test_indices]
+        test_users = {row["player_id"] for row in outer_test}
+        training_users = {row["player_id"] for row in outer_train}
+        if training_users & test_users:
+            raise AssertionError("outer user leakage")
+        inner_folds = leave_one_user_out(outer_train)
+        inner_audit = []
+        for inner_train_indices, inner_validation_indices in inner_folds:
+            inner_train_users = {outer_train[index]["player_id"] for index in inner_train_indices}
+            inner_validation_users = {outer_train[index]["player_id"] for index in inner_validation_indices}
+            if test_users & (inner_train_users | inner_validation_users):
+                raise AssertionError("outer test user entered inner model selection")
+            if inner_train_users & inner_validation_users:
+                raise AssertionError("inner user leakage")
+            inner_audit.append({"train_users": sorted(inner_train_users),
+                                "validation_users": sorted(inner_validation_users)})
+        scored = []
+        for candidate in candidates:
+            result = run_loou(outer_train, candidate["features"], alpha=float(candidate["alpha"]))
+            scored.append({"name": candidate["name"], "rank_mae": result["metrics"]["rank_mae"],
+                           "exact_accuracy": result["metrics"]["exact_accuracy"]})
+        selected_score = min(scored, key=lambda item: (item["rank_mae"], -item["exact_accuracy"], item["name"]))
+        selected = next(candidate for candidate in candidates if candidate["name"] == selected_score["name"])
+        model = OrdinalRidge(selected["features"], alpha=float(selected["alpha"])).fit(outer_train)
+        for row in outer_test:
+            predicted, latent = model.predict_one(row)
+            predictions.append({
+                "fold": fold, "player_id": row["player_id"], "actual": int(row["official_rank_order"]),
+                "predicted": predicted, "latent": round(latent, 4), "side": row["side"],
+                "result": row["result"], "official_rank": row["official_rank"],
+                "coverage": row.get("overall_coverage"), "selected_model": selected["name"],
+            })
+        audits.append({
+            "fold": fold, "outer_train_users": sorted(training_users), "outer_test_users": sorted(test_users),
+            "selection_scope": "outer-training-only", "candidate_scores": scored,
+            "selected_model": selected["name"], "inner_folds": inner_audit,
+        })
+    metrics = evaluation_metrics([item["actual"] for item in predictions],
+                                 [item["predicted"] for item in predictions])
+    return {
+        "validation": "nested-leave-one-user-out", "outer_user_disjoint": True,
+        "inner_selection_uses_outer_training_only": True, "test_user_used_for_selection": False,
+        "metrics": metrics, "predictions": predictions, "fold_audit": audits,
+        "production_candidate": False,
     }
 
 
