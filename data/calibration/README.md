@@ -4,6 +4,8 @@ Phase D2の追加教師データ置き場。大量自動scrapingは使用しな�
 
 利用可能な入力経路は、既存KIF、ユーザーが提供したKIF、既存metadata、通常のPWA KIF投入だけである。KIFを通常経路で解析した後、`tools/manage_skill_dataset.py` は既存のderived featureをread-onlyで取り込む。既存analysis JSONは変更せず、再解析もしない。
 
+通常PWA経路の解析成功行は `pwa-intake-v1.json` に自動登録され、dataset管理CLIが自動で読み込む。queue fingerprintとsideでidempotent化し、rank observationには対局開始時刻とKIF/user-confirmedの出所を保存する。失敗した解析は登録しない。
+
 追加済みのflat CSV/JSON/JSONLまたはv2 datasetを検証・統合する例:
 
 ```text

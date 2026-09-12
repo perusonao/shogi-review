@@ -32,6 +32,7 @@
           "provider": {"type": ["string", "null"]},
           "game_id": {"type": "string", "minLength": 1},
           "player_id": {"type": "string", "pattern": "^[a-z0-9-]+:user:[0-9a-f]{24,64}$"},
+          "player_id_status": {"enum": ["stable", "provisional-provider-missing"]},
           "official_rank_raw": {"type": ["string", "null"]},
           "official_rank_normalized": {
             "oneOf": [
@@ -49,6 +50,9 @@
             ]
           },
           "official_rank": {"type": ["string", "null"]},
+          "official_rank_observed_at": {"type": "string", "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}$"},
+          "official_rank_observation_source": {"enum": ["kif", "user-confirmed", "unknown"]},
+          "queue_fingerprint": {"type": "string", "pattern": "^[0-9a-f]{64}$"},
           "time_control": {"type": ["string", "null"]},
           "side": {"enum": ["sente", "gote"]},
           "result": {"enum": ["win", "loss", "draw", "unknown"]},

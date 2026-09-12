@@ -18,7 +18,7 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
 
 from kif_to_game import parse as parse_kif  # noqa: E402
-from queue_common import canonical_fingerprint, validate_kif_text  # noqa: E402
+from queue_common import canonical_fingerprint, validate_kif_text, validate_submission_metadata  # noqa: E402
 
 SAFE_FAILURE = "解析処理に失敗しました。Windows workerのログを確認してください。"
 
@@ -75,7 +75,7 @@ def choose_user(parsed: dict, user_names: tuple[str, ...]) -> str:
     raise WorkerError("configured user is not a player")
 
 
-def validate_claim(claim: dict, user_names: tuple[str, ...]) -> tuple[dict, str, str]:
+def validate_claim(claim: dict, user_names: tuple[str, ...]) -> tuple[dict, str, str, dict]:
     try:
         uuid.UUID(str(claim.get("requestId", "")))
     except ValueError as exc:
@@ -84,7 +84,8 @@ def validate_claim(claim: dict, user_names: tuple[str, ...]) -> tuple[dict, str,
     parsed, fingerprint = validate_kif_text(kif, user_names[0])
     if fingerprint != claim.get("fingerprint"):
         raise WorkerError("fingerprint mismatch")
-    return parsed, fingerprint, choose_user(parsed, user_names)
+    metadata = validate_submission_metadata(kif, parsed, (claim.get("metadata") or {}).get("calibration"))
+    return parsed, fingerprint, choose_user(parsed, user_names), metadata
 
 
 def find_existing_game_id(root: Path, fingerprint: str, user: str) -> str | None:
@@ -130,14 +131,33 @@ def ensure_published(root: Path) -> None:
         raise WorkerError("git push failed")
 
 
+def intake_existing(root: Path, game_id: str, fingerprint: str, metadata: dict) -> None:
+    payload = json.dumps({"fingerprint": fingerprint, "metadata": metadata}, ensure_ascii=False)
+    completed = run_checked([sys.executable, str(root / "tools" / "record_pwa_intake.py"),
+                             "--root", str(root), "--game-id", game_id, "--payload", payload], root)
+    if completed.returncode != 0:
+        raise WorkerError("D2 intake failed")
+    registry = "data/calibration/pwa-intake-v1.json"
+    if run_checked(["git", "add", "--", registry], root).returncode != 0:
+        raise WorkerError("D2 intake staging failed")
+    staged = run_checked(["git", "diff", "--cached", "--quiet", "--", registry], root)
+    if staged.returncode == 0:
+        return
+    if run_checked(["git", "commit", "-m", f"data: intake labeled game {game_id}", "--", registry], root).returncode != 0:
+        raise WorkerError("D2 intake commit failed")
+    if run_checked(["git", "push", "origin", "main"], root).returncode != 0:
+        raise WorkerError("D2 intake push failed")
+
+
 def process_claim(client: QueueClient, claim: dict, root: Path, user_names: tuple[str, ...]) -> str:
     request_id = str(claim.get("requestId", ""))
     claim_token = str(claim.get("claimToken", ""))
     inbox_path: Path | None = None
     try:
-        _, fingerprint, user = validate_claim(claim, user_names)
+        _, fingerprint, user, calibration_metadata = validate_claim(claim, user_names)
         existing = find_existing_game_id(root, fingerprint, user)
         if existing:
+            intake_existing(root, existing, fingerprint, calibration_metadata)
             ensure_published(root)
             client.complete(request_id, claim_token, existing)
             return existing
@@ -151,6 +171,7 @@ def process_claim(client: QueueClient, claim: dict, root: Path, user_names: tupl
             "--user", user,
             "--nodes", "30000",
             "--publish",
+            "--calibration-metadata", json.dumps({"fingerprint": fingerprint, "metadata": calibration_metadata}, ensure_ascii=False),
         ], root, capture=True)
         if completed.returncode != 0:
             logging.error("import pipeline failed (exit %s)", completed.returncode)

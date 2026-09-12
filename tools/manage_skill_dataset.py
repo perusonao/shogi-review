@@ -28,8 +28,15 @@ def main() -> None:
     rows, _ = collect(args.root.resolve())
     if args.d1_fixed:
         rows = [row for row in rows if row["game_id"] not in PILOT_EXCLUDED_GAME_IDS]
-    for path in args.additional:
-        rows.extend(load_rows(path.resolve()))
+    paths = list(args.additional)
+    automatic = args.root.resolve() / "data" / "calibration" / "pwa-intake-v1.json"
+    if automatic.is_file() and automatic not in [path.resolve() for path in paths]:
+        paths.append(automatic)
+    for path in paths:
+        additional = load_rows(path.resolve())
+        replacement_keys = {(row.get("game_id"), row.get("side")) for row in additional}
+        rows = [row for row in rows if (row.get("game_id"), row.get("side")) not in replacement_keys]
+        rows.extend(additional)
     dataset = build_dataset(rows, default_route="existing-kif")
     report = dataset_dashboard(dataset)
     audit = checkpoint_audit(dataset)

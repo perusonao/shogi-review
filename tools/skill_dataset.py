@@ -30,6 +30,8 @@ LEGACY_ROW_SCHEMA_VERSION = "skill-calibration-d1-v1"
 PILOT_PROVIDER = "shogi-wars"
 PILOT_TIME_CONTROL = "10m-sudden-death"
 STAGES = (30, 100, 300)
+STAGE_UNIQUE_USERS = (10, 20, 30)
+MAX_SINGLE_USER_RATIO = .20
 LEGAL_COLLECTION_ROUTES = {
     "existing-kif", "user-provided-kif", "existing-metadata", "pwa-kif-submit",
 }
@@ -125,6 +127,14 @@ def _validate_row(row: dict[str, Any], index: int, *, require_training_metadata:
         errors.append(f"player_game {index}: player_id is not a stable opaque provider-scoped ID")
     elif provider and match.group("provider") != provider:
         errors.append(f"player_game {index}: player_id provider does not match provider")
+    if row.get("player_id_status") == "stable" and not provider:
+        errors.append(f"player_game {index}: provider-missing player_id cannot be stable")
+    if row.get("collection_route") == "pwa-kif-submit":
+        observed_at = row.get("official_rank_observed_at")
+        if not isinstance(observed_at, str) or not re.fullmatch(r"\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}", observed_at):
+            errors.append(f"player_game {index}: PWA rank observation timestamp required")
+        if row.get("official_rank_observation_source") not in {"kif", "user-confirmed", "unknown"}:
+            errors.append(f"player_game {index}: invalid rank observation source")
     rank, order = _canonical_rank(row.get("official_rank"))
     if row.get("official_rank") not in (None, ""):
         if (rank is None or order is None) and require_training_metadata:
@@ -302,10 +312,31 @@ def _stage_progress(rows: Sequence[dict[str, Any]]) -> dict[str, Any]:
     counts = {rank: sum(row["official_rank_order"] == rank for row in rows) for rank in ALLOWED_PILOT_RANKS}
     progress = {}
     for stage, target in enumerate(STAGES, 1):
+        unique_target = STAGE_UNIQUE_USERS[stage - 1]
+        rank_gates = {}
+        for rank in ALLOWED_PILOT_RANKS:
+            rank_rows = [row for row in rows if row["official_rank_order"] == rank]
+            users = Counter(row["player_id"] for row in rank_rows)
+            ratio = (max(users.values()) / len(rank_rows)) if rank_rows else None
+            rank_gates[RANK_LABELS[rank]] = {
+                "player_games": len(rank_rows), "player_games_pass": len(rank_rows) >= target,
+                "unique_users": len(users), "unique_users_pass": len(users) >= unique_target,
+                "max_single_user_ratio": round(ratio, 4) if ratio is not None else None,
+                "max_single_user_ratio_pass": ratio is not None and ratio <= MAX_SINGLE_USER_RATIO,
+            }
+        conditions = {
+            "player_games_per_rank": all(item["player_games_pass"] for item in rank_gates.values()),
+            "unique_users_per_rank": all(item["unique_users_pass"] for item in rank_gates.values()),
+            "single_user_ratio_per_rank": all(item["max_single_user_ratio_pass"] for item in rank_gates.values()),
+        }
         progress[f"stage_{stage}"] = {
             "target_per_rank": target,
             "target_total": target * len(ALLOWED_PILOT_RANKS),
-            "complete": all(counts[rank] >= target for rank in ALLOWED_PILOT_RANKS),
+            "target_unique_users_per_rank": unique_target,
+            "max_single_user_ratio": MAX_SINGLE_USER_RATIO,
+            "conditions": conditions,
+            "by_rank_gate": rank_gates,
+            "complete": all(conditions.values()),
             "shortage": {RANK_LABELS[rank]: max(0, target - counts[rank]) for rank in ALLOWED_PILOT_RANKS},
             "total_shortage": sum(max(0, target - counts[rank]) for rank in ALLOWED_PILOT_RANKS),
         }

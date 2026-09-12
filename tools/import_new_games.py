@@ -18,6 +18,7 @@ ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
 from kif_to_game import parse as parse_kif  # noqa: E402
 from queue_common import canonical_fingerprint  # noqa: E402
+from pwa_intake import intake_player_games  # noqa: E402
 
 if os.name == "nt":
     sys.stdout.reconfigure(encoding="utf-8")
@@ -341,6 +342,7 @@ def main() -> int:
     parser.add_argument("--nodes", type=int, default=30000)
     parser.add_argument("--publish", action="store_true", help="生成物だけをcommitしてorigin/mainへpush")
     parser.add_argument("--ask-publish", action="store_true", help="処理前にGitHub公開を対話確認")
+    parser.add_argument("--calibration-metadata", help="worker-generated JSON; accepted only after successful analysis")
     args = parser.parse_args()
     if args.ask_publish and not args.publish:
         answer = input("解析後にGitHubへcommit / pushしますか？ [y/N]: ").strip().lower()
@@ -374,6 +376,12 @@ def main() -> int:
             print("[9/12] 課題局面を検証")
             print("[10/12] games/index.json更新")
             changed = install_results(root, output, candidates, catalog)
+        if args.calibration_metadata:
+            payload = json.loads(args.calibration_metadata)
+            if len(candidates) != 1 or payload.get("fingerprint") != candidates[0].fingerprint:
+                raise ImportFailure("calibration metadataと解析対象が一致しません")
+            changed.append(intake_player_games(root, candidates[0].game_id,
+                                               candidates[0].fingerprint, payload["metadata"]))
         for path in [c.inbox_path for c in candidates] + duplicates:
             if path.exists():
                 path.unlink()
