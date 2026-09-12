@@ -113,6 +113,7 @@ class Phase2Tests(unittest.TestCase):
         source = (ROOT / "tools" / "analysis_worker.py").read_text(encoding="utf-8")
         self.assertNotIn("shell=True", source)
         self.assertIn("shell=False", source)
+        self.assertNotIn('["git", "push", "origin", "main"]', source)
 
     def test_worker_e2e_invokes_automatic_import_pipeline(self) -> None:
         metadata = submission_metadata(self.higure_text, self.higure)
@@ -158,6 +159,34 @@ class Phase2Tests(unittest.TestCase):
             self.assertFalse((root / "data/calibration/pwa-intake-v1.json").exists())
         self.assertTrue(client.failed)
         self.assertIsNone(client.completed)
+
+    def test_worker_logs_import_failure_details_without_claim_secret(self) -> None:
+        request_id = str(uuid.uuid4())
+        metadata = submission_metadata(self.higure_text, self.higure)
+        metadata["provider"] = "shogi-wars"
+        claim = {
+            "requestId": request_id,
+            "claimToken": "must-not-appear-in-log",
+            "fingerprint": self.fingerprint,
+            "kif": self.higure_text,
+            "metadata": {"calibration": metadata},
+        }
+        client = self.FakeQueueClient()
+        failed = subprocess.CompletedProcess([], 1, "preflight output", "publish requires main")
+        with tempfile.TemporaryDirectory() as directory:
+            with (
+                patch("analysis_worker.find_existing_game_id", return_value=None),
+                patch("analysis_worker.run_checked", return_value=failed),
+                self.assertLogs(level="ERROR") as logs,
+            ):
+                with self.assertRaisesRegex(RuntimeError, "analysis pipeline failed"):
+                    process_claim(client, claim, Path(directory), ("ぺるそなお", "sonao81"))
+        joined = "\n".join(logs.output)
+        self.assertIn("exit 1", joined)
+        self.assertIn("preflight output", joined)
+        self.assertIn("publish requires main", joined)
+        self.assertNotIn(claim["claimToken"], joined)
+        self.assertTrue(client.failed)
 
 
 if __name__ == "__main__":
