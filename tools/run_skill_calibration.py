@@ -10,7 +10,7 @@ from export_skill_calibration import collect
 from skill_calibration import experiment
 
 
-PILOT_EXCLUDED_GAME_IDS = {"20260912_shuty005"}
+PILOT_EXCLUDED_GAME_IDS = {"20260912_shuty005", "20260912_もりた"}
 
 
 def main() -> None:

@@ -84,7 +84,13 @@ function renderVerifiedIssue(issue) {
   const previous = previousDestination(issue.ply);
   const actual = analysis?.playedJa || formatMove(actualMove(issue), position, mover, previous);
   const best = analysis?.bestJa || formatMove(bestMove(issue), position, mover, previous);
-  const evidence = window.ShogiReasonEvidence.generateReasonEvidence(reasonInput(issue, analysis, actual, best));
+  const input = reasonInput(issue, analysis, actual, best);
+  const evidence = window.ShogiReasonEvidence.generateReasonEvidence(input);
+  const productionBundle = window.ShogiReasonEvidenceLayer?.extractEvidence(input);
+  const production = productionBundle?.production_reason;
+  const reasonBlocksForDisplay = window.ShogiReasonEvidenceLayer
+    ? window.ShogiReasonEvidenceLayer.mergeProductionBlocks(evidence.blocks, production)
+    : evidence.blocks;
   const card = document.createElement("div");
   card.className = "card warn";
   appendText(card, "span", `Level ${evidence.level}`, "reasonLevel");
@@ -110,7 +116,7 @@ function renderVerifiedIssue(issue) {
 
   const reasonBlocks = document.createElement("div");
   reasonBlocks.className = "reasonBlocks";
-  evidence.blocks.forEach((block) => {
+  reasonBlocksForDisplay.forEach((block) => {
     const line = document.createElement("div");
     line.className = "reasonBlock";
     appendText(line, "b", `【${block.title}】`);
