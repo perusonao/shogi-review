@@ -6,7 +6,7 @@ reviewPhase1Style.textContent = `
 .controls{grid-template-columns:36px 1fr 36px 70px;gap:3px;margin:1px 0}.controls button{height:27px}.controls .nextIssueCompact{font-size:9px;background:#765123}.move{height:27px}.move b{font-size:10px}.move small{font-size:8px}
 .evalWrap{height:49px;margin:1px 0;padding:1px 5px}.evalHead{height:11px}.evalSvg{height:34px}
 .warn{border-left-color:var(--actual-card)}.warn h2{margin-bottom:2px}.legend{font-size:8px;margin-bottom:2px}.actualSemantic,.red{color:var(--actual-card)}.recommendedSemantic,.green{color:var(--recommended-card)}
-.choice{padding:2px 4px;font-size:8px;display:grid;grid-template-columns:29px 1fr;grid-template-rows:auto auto auto;column-gap:4px}.choice .moveRole{grid-column:1/3;font-weight:700}.choicePiece{grid-row:2/4;width:27px;height:31px}.choicePiece .handPieceText{font-size:28px}.choiceAction{font-size:10px;font-weight:700}.choiceNotation{font-size:8px;color:#bfb3a3}.bad{border-color:var(--actual-card)}.good{border:1px dashed var(--recommended-card)}.bad .moveRole{color:var(--actual-card)}.good .moveRole{color:var(--recommended-card)}
+.compare{display:grid;grid-template-columns:1fr!important;gap:1px!important}.choice{padding:1px 4px;font-size:10px;display:flex;align-items:center;gap:7px;min-height:20px}.choice .moveRole{font-weight:700;min-width:30px}.choiceNotation{font-size:11px;color:#fff3df;font-weight:700}.bad{border-color:var(--actual-card)}.good{border:1px dashed var(--recommended-card)}.bad .moveRole{color:var(--actual-card)}.good .moveRole{color:var(--recommended-card)}
 .loss{font-size:8px;margin-top:2px}.reasonBlocks{margin-top:2px}.reasonBlock{font-size:9px;line-height:1.25;margin-top:2px;color:#fff3df}.reasonBlock b{color:#f5d49c;margin-right:3px}.reasonLevel{float:right;color:#a99d8c;font-size:8px}.pvDetails{margin-top:3px;font-size:8px}.pvDetails summary{cursor:pointer;color:#d8c19a;font-weight:700}.pvBranch{margin-top:2px}.pvBranch.actual{border-left:2px solid var(--actual-card);padding-left:4px}.pvBranch.recommended{border-left:2px dashed var(--recommended-card);padding-left:4px}.jump{display:none!important}
 `;
 document.head.appendChild(reviewPhase1Style);
@@ -20,9 +20,12 @@ drawArrows = function drawSemanticArrows(issue) {
   if (!issue) { svg.innerHTML = ""; return; }
   const actualColor = semanticColor("--actual-board");
   const recommendedColor = semanticColor("--recommended-board");
-  const actual = usiCoords(actualMove(issue));
-  const recommended = usiCoords(bestMove(issue));
-  svg.innerHTML = `<defs><marker id="actualHead" markerUnits="userSpaceOnUse" markerWidth="45" markerHeight="45" refX="38" refY="22" orient="auto"><path d="M0,0 L0,44 L42,22 z" fill="${actualColor}"/></marker><marker id="recommendedHead" markerUnits="userSpaceOnUse" markerWidth="45" markerHeight="45" refX="38" refY="22" orient="auto"><path d="M0,0 L0,44 L42,22 z" fill="${recommendedColor}"/></marker></defs>${arrowLine(actual, actualColor, "actualHead")}${target(actual, actualColor, "実")}${arrowLine(recommended, recommendedColor, "recommendedHead")}${target(recommended, recommendedColor, "推")}`;
+  const actualUsi = actualMove(issue), recommendedUsi = bestMove(issue);
+  const actual = usiCoords(actualUsi), recommended = usiCoords(recommendedUsi);
+  const sfen = D.positions[Math.max(0, issue.ply - 1)].sfen;
+  const actualPiece = window.ShogiReasonEvidence.moveCard({ sfen, move: actualUsi }).pieceJa;
+  const recommendedPiece = window.ShogiReasonEvidence.moveCard({ sfen, move: recommendedUsi }).pieceJa;
+  svg.innerHTML = `<defs><marker id="actualHead" markerUnits="userSpaceOnUse" markerWidth="45" markerHeight="45" refX="38" refY="22" orient="auto"><path d="M0,0 L0,44 L42,22 z" fill="${actualColor}"/></marker><marker id="recommendedHead" markerUnits="userSpaceOnUse" markerWidth="45" markerHeight="45" refX="38" refY="22" orient="auto"><path d="M0,0 L0,44 L42,22 z" fill="${recommendedColor}"/></marker></defs>${arrowLine(actual, actualColor, "actualHead")}${target(actual, actualColor, actualPiece)}${arrowLine(recommended, recommendedColor, "recommendedHead")}${target(recommended, recommendedColor, recommendedPiece)}`;
 };
 
 const legacyRender = render;
@@ -52,30 +55,11 @@ function appendText(parent, tag, text, className = "") {
   return element;
 }
 
-function choicePieceSvg(card) {
-  const svg = document.createElementNS("http://www.w3.org/2000/svg", "svg");
-  svg.setAttribute("viewBox", "0 0 44 50");
-  svg.setAttribute("class", "handPieceSvg choicePiece");
-  svg.setAttribute("aria-hidden", "true");
-  const polygon = document.createElementNS(svg.namespaceURI, "polygon");
-  polygon.setAttribute("class", "handPieceShape");
-  polygon.setAttribute("points", "22,2 40,11 43,48 1,48 4,11");
-  const text = document.createElementNS(svg.namespaceURI, "text");
-  text.setAttribute("class", "handPieceText");
-  text.setAttribute("x", "22");
-  text.setAttribute("y", "29");
-  text.textContent = card.pieceJa;
-  svg.append(polygon, text);
-  return svg;
-}
-
 function appendChoice(parent, role, model, kind) {
   const choice = document.createElement("div");
   choice.className = `choice ${kind}`;
-  choice.setAttribute("aria-label", `${role}、${model.pieceJa}、${model.action}`);
+  choice.setAttribute("aria-label", `${role}、${model.notation}`);
   appendText(choice, "span", role, "moveRole");
-  choice.appendChild(choicePieceSvg(model));
-  appendText(choice, "span", model.action, "choiceAction");
   appendText(choice, "span", model.notation, "choiceNotation");
   parent.appendChild(choice);
 }
@@ -108,9 +92,9 @@ function renderVerifiedIssue(issue) {
 
   const legend = document.createElement("div");
   legend.className = "legend";
-  appendText(legend, "span", "実＝実戦", "actualSemantic");
+  appendText(legend, "span", "赤＝実戦手の駒", "actualSemantic");
   legend.appendChild(document.createTextNode("　"));
-  appendText(legend, "span", "推＝推奨", "recommendedSemantic");
+  appendText(legend, "span", "青＝推奨手の駒", "recommendedSemantic");
   card.appendChild(legend);
 
   const compare = document.createElement("div");

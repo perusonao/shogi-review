@@ -40,5 +40,5 @@ for (const entry of catalog.games.filter((game) => game.analyzed)) {
 
 const result = { games: catalog.games.filter((game) => game.analyzed).length, problems, levels, types };
 console.log(JSON.stringify(result, null, 2));
-if (result.games !== 20 || problems !== 110) process.exitCode = 1;
+if (result.games !== 23 || problems !== 128) process.exitCode = 1;
 if (levels[1] < 22 || levels[3] > 7) process.exitCode = 1;
