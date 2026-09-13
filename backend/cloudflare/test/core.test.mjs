@@ -5,6 +5,7 @@ import { fileURLToPath } from "node:url";
 import { dirname, resolve } from "node:path";
 
 import { applyUnknownConfirmations, fingerprintKif, parseKifForSubmit, MAX_KIF_BYTES } from "../../../kif-submit-core.mjs";
+import { queueStatusPresentation } from "../../../kif-submit-status.mjs";
 import { canTransition } from "../src/state.mjs";
 
 const here = dirname(fileURLToPath(import.meta.url));
@@ -50,6 +51,37 @@ test("XSS文字列はdataとして保持し、UIはtextContentを使う", async 
   const ui = await readFile(resolve(root, "kif-submit-ui.mjs"), "utf8");
   assert.match(ui, /textContent/);
   assert.doesNotMatch(ui, /innerHTML/);
+});
+
+test("PWAは原棋譜の保存と全解析状態を別々に表示する", async () => {
+  const ui = await readFile(resolve(root, "kif-submit-ui.mjs"), "utf8");
+  const status = await readFile(resolve(root, "kif-submit-status.mjs"), "utf8");
+  const sources = ui + status;
+  for (const label of ["原棋譜：保存済み", "解析：待機中", "解析：処理中", "解析：失敗", "解析：完了"]) {
+    assert.match(sources, new RegExp(label));
+  }
+  assert.match(sources, /原棋譜から再試行できます/);
+  assert.match(ui, /原棋譜を保存しました。解析待ちです/);
+});
+
+test("原棋譜欠損のfailed requestは復旧不能として再試行させない", () => {
+  const missing = queueStatusPresentation({
+    requestId: "missing-source",
+    storageStatus: "missing",
+    analysisStatus: "failed",
+    error: "legacy failure",
+  });
+  assert.equal(missing.sourceStored, false);
+  assert.equal(missing.canRetry, false);
+  assert.match(missing.sourceLabel, /保存なし/);
+  assert.match(missing.analysisLabel, /保存されていません/);
+  assert.doesNotMatch(missing.analysisLabel, /再試行できます/);
+  assert.match(missing.failureDetail, /再試行できません/);
+
+  const stored = queueStatusPresentation({ requestId: "stored-source", storageStatus: "stored", analysisStatus: "failed" });
+  assert.equal(stored.sourceStored, true);
+  assert.equal(stored.canRetry, true);
+  assert.match(stored.analysisLabel, /再試行できます/);
 });
 
 test("queue status transitionを制限する", () => {
