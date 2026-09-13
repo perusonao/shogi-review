@@ -19,6 +19,7 @@ sys.path.insert(0, str(ROOT / "tools"))
 from kif_to_game import parse as parse_kif  # noqa: E402
 from queue_common import canonical_fingerprint  # noqa: E402
 from pwa_intake import intake_player_games  # noqa: E402
+from task_results import apply_task_cycle  # noqa: E402
 
 if os.name == "nt":
     sys.stdout.reconfigure(encoding="utf-8")
@@ -200,6 +201,33 @@ def analyze(root: Path, candidates: list[Candidate], engine: Path, eval_dir: Pat
     return output
 
 
+def load_active_current_tasks(root: Path, catalog: dict) -> list[dict]:
+    """Load the newest completed game's active set; legacy JSON safely yields none."""
+    for entry in catalog.get("games", []):
+        if not entry.get("analyzed") or not isinstance(entry.get("analysisData"), str):
+            continue
+        path = root / entry["analysisData"]
+        if not path.is_file():
+            continue
+        tasks = load_json(path).get("currentTasks")
+        if isinstance(tasks, list):
+            return [task for task in tasks if isinstance(task, dict)][:3]
+    return []
+
+
+def apply_task_cycles(root: Path, output: Path, candidates: list[Candidate], catalog: dict) -> None:
+    """Carry the active set through each newly completed game in processing order."""
+    active_tasks = load_active_current_tasks(root, catalog)
+    for candidate in candidates:
+        analysis_path = output / "analysis" / f"{candidate.game_id}.json"
+        game_path = output / "games" / f"{candidate.game_id}.json"
+        analysis = load_json(analysis_path)
+        apply_task_cycle(analysis, load_json(game_path), active_tasks)
+        analysis_path.write_text(
+            json.dumps(analysis, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+        active_tasks = analysis["currentTasks"]
+
+
 def validate_outputs(output: Path, candidates: list[Candidate]) -> None:
     for candidate in candidates:
         game_path = output / "games" / f"{candidate.game_id}.json"
@@ -226,6 +254,28 @@ def validate_outputs(output: Path, candidates: list[Candidate]) -> None:
             raise ImportFailure(f"課題PV追加探索閾値不整合: {candidate.game_id}")
         if len(game.get("issues", [])) != len(analysis.get("verifiedIssues", [])):
             raise ImportFailure(f"課題局面数不整合: {candidate.game_id}")
+        current_tasks = analysis.get("currentTasks", [])
+        if not isinstance(current_tasks, list) or len(current_tasks) > 3:
+            raise ImportFailure(f"active currentTasks上限不整合: {candidate.game_id}")
+        themes = [task.get("nextCheck", {}).get("theme") for task in current_tasks if isinstance(task, dict)]
+        if len(themes) != len(set(themes)):
+            raise ImportFailure(f"active currentTasksテーマ重複: {candidate.game_id}")
+        task_results = analysis.get("taskResults", [])
+        if not isinstance(task_results, list):
+            raise ImportFailure(f"taskResults形式不整合: {candidate.game_id}")
+        if len({result.get("taskId") for result in task_results}) != len(task_results):
+            raise ImportFailure(f"taskResults重複: {candidate.game_id}")
+        for task_result in task_results:
+            status = task_result.get("status")
+            if status not in {"pass", "fail", "no_opportunity"}:
+                raise ImportFailure(f"taskResult status不整合: {candidate.game_id}")
+            if task_result.get("label") != {"pass": "○", "fail": "×", "no_opportunity": "－"}[status]:
+                raise ImportFailure(f"taskResult label不整合: {candidate.game_id}")
+            if status in {"pass", "fail"}:
+                if not isinstance(task_result.get("ply"), int):
+                    raise ImportFailure(f"taskResult局面参照不足: {candidate.game_id}")
+                if task_result.get("evidence", {}).get("verification") != "legal-move-feature":
+                    raise ImportFailure(f"taskResult evidence不足: {candidate.game_id}")
         if metrics.get("gameId") != candidate.game_id or metrics.get("positions") != moves + 1:
             raise ImportFailure(f"解析metrics基本情報不整合: {candidate.game_id}")
         if metrics.get("problemPositions") != len(analysis.get("verifiedIssues", [])):
@@ -371,6 +421,7 @@ def main() -> int:
         print("[6/12] 新規棋譜: " + ", ".join(c.game_id for c in candidates))
         with tempfile.TemporaryDirectory(prefix="shogi-review-import-") as temp:
             output = analyze(root, candidates, args.engine, args.eval_dir, args.user, args.nodes, Path(temp))
+            apply_task_cycles(root, output, candidates, catalog)
             print("[8/12] game / analysis JSON検証")
             validate_outputs(output, candidates)
             print("[9/12] 課題局面を検証")

@@ -469,7 +469,7 @@
 
 if (typeof document !== "undefined" && typeof render === "function") {
   const learningStyle = document.createElement("style");
-  learningStyle.textContent = ".nextGameLearning,.currentTasks{margin:2px 0}.nextGameLearning details,.currentTasks{background:#211a13;border:1px solid #527056;border-radius:7px;padding:4px}.nextGameLearning summary{cursor:pointer;color:#9fe0a9;font-size:10px;font-weight:700}.learningIntro,.currentTasksEmpty{font-size:8px;color:#c8b99e;margin:4px 0}.learningItem{display:grid;grid-template-columns:64px 1fr;align-items:center;width:100%;text-align:left;border:0;border-top:1px solid #4c4438;background:transparent;color:#fff3df;padding:5px 2px;font:inherit}.learningItem b{font-size:9px;color:#c7ebc9}.learningItem span{font-size:9px}.learningItem small{grid-column:2;font-size:8px;color:#c8b99e;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.currentTasks h2{margin:0 0 3px;color:#ffd590;font-size:10px}.currentTask{display:grid;grid-template-columns:20px 1fr;width:100%;text-align:left;border:0;border-top:1px solid #4c4438;background:transparent;color:#fff3df;padding:5px 2px;font:inherit}.currentTaskIndex{grid-row:1/4;color:#f1c679;font-size:12px;font-weight:700}.currentTask b{font-size:10px}.currentTask span,.currentTask small{grid-column:2;font-size:8px;line-height:1.3}.currentTask span{color:#c7ebc9}.currentTask small{color:#c8b99e}.summaryItem{padding:0!important;overflow:hidden}.summaryMain{display:block;width:100%;min-height:68px;text-align:left;border:0;background:transparent;color:inherit;padding:5px;font:inherit}.summaryRelated{border-top:1px solid #5c4933;padding:3px 5px}.summaryRelatedLabel{font-size:8px;color:#c8b99e}.auxiliaryJump{display:block;width:100%;border:0;background:transparent;color:#e9c98f;text-align:left;padding:2px 0;font-size:8px;line-height:1.2}.auxiliaryJump:focus-visible,.summaryMain:focus-visible,.currentTask:focus-visible{outline:2px solid #f1c679;outline-offset:-2px}@media(max-width:390px){.currentTask{grid-template-columns:18px minmax(0,1fr);padding:6px 2px}.currentTask b{font-size:10px}.currentTask span,.currentTask small{overflow-wrap:anywhere}}";
+  learningStyle.textContent = ".nextGameLearning,.taskResults,.currentTasks{margin:2px 0}.nextGameLearning details,.taskResults,.currentTasks{background:#211a13;border:1px solid #527056;border-radius:7px;padding:4px}.nextGameLearning summary{cursor:pointer;color:#9fe0a9;font-size:10px;font-weight:700}.learningIntro,.currentTasksEmpty{font-size:8px;color:#c8b99e;margin:4px 0}.learningItem{display:grid;grid-template-columns:64px 1fr;align-items:center;width:100%;text-align:left;border:0;border-top:1px solid #4c4438;background:transparent;color:#fff3df;padding:5px 2px;font:inherit}.learningItem b{font-size:9px;color:#c7ebc9}.learningItem span{font-size:9px}.learningItem small{grid-column:2;font-size:8px;color:#c8b99e;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.taskResults h2,.currentTasks h2{margin:0 0 3px;color:#ffd590;font-size:10px}.taskResult{display:grid;grid-template-columns:28px minmax(0,1fr);gap:1px 4px;border-top:1px solid #4c4438;padding:6px 2px}.taskResultLabel{grid-row:1/4;display:flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;font-size:15px;font-weight:800;background:#423426}.taskResult.pass .taskResultLabel{color:#a8efb3;border:1px solid #62d17d}.taskResult.fail .taskResultLabel{color:#ffb4a8;border:1px solid #e85a49}.taskResult.no_opportunity .taskResultLabel{color:#d6c8b5;border:1px solid #867a6b}.taskResult b{font-size:10px}.taskResult span{font-size:8px;line-height:1.35;color:#d7c8b2}.taskResult button{justify-self:start;border:0;background:transparent;color:#e9c98f;padding:1px 0;font:inherit;font-size:8px;font-weight:700;line-height:1.3;text-align:left}.currentTask{display:grid;grid-template-columns:20px 1fr;width:100%;text-align:left;border:0;border-top:1px solid #4c4438;background:transparent;color:#fff3df;padding:5px 2px;font:inherit}.currentTaskIndex{grid-row:1/4;color:#f1c679;font-size:12px;font-weight:700}.currentTask b{font-size:10px}.currentTask span,.currentTask small{grid-column:2;font-size:8px;line-height:1.3}.currentTask span{color:#c7ebc9}.currentTask small{color:#c8b99e}.summaryItem{padding:0!important;overflow:hidden}.summaryMain{display:block;width:100%;min-height:68px;text-align:left;border:0;background:transparent;color:inherit;padding:5px;font:inherit}.summaryRelated{border-top:1px solid #5c4933;padding:3px 5px}.summaryRelatedLabel{font-size:8px;color:#c8b99e}.auxiliaryJump{display:block;width:100%;border:0;background:transparent;color:#e9c98f;text-align:left;padding:2px 0;font-size:8px;line-height:1.2}.auxiliaryJump:focus-visible,.summaryMain:focus-visible,.taskResult button:focus-visible,.currentTask:focus-visible{outline:2px solid #f1c679;outline-offset:-2px}@media(max-width:390px){.taskResult,.currentTask{grid-template-columns:26px minmax(0,1fr);padding:7px 2px}.currentTask{grid-template-columns:18px minmax(0,1fr)}.taskResult b,.currentTask b{font-size:10px}.taskResult span,.currentTask span,.currentTask small{overflow-wrap:anywhere}}";
   document.head.appendChild(learningStyle);
   const renderBeforeGameSummary = render;
   let summaryGameId = null;
@@ -509,6 +509,19 @@ if (typeof document !== "undefined" && typeof render === "function") {
       container.setAttribute("aria-labelledby", "currentTasksTitle");
       const learning = learningContainer();
       learning.parentNode.insertBefore(container, learning.nextSibling);
+    }
+    return container;
+  }
+
+  function taskResultsContainer() {
+    let container = document.getElementById("taskResults");
+    if (!container) {
+      container = document.createElement("section");
+      container.id = "taskResults";
+      container.className = "taskResults";
+      container.setAttribute("aria-labelledby", "taskResultsTitle");
+      const tasks = currentTasksContainer();
+      tasks.parentNode.insertBefore(container, tasks);
     }
     return container;
   }
@@ -589,8 +602,41 @@ if (typeof document !== "undefined" && typeof render === "function") {
       appendText(button, "b", task.title);
       appendText(button, "span", task.nextCheck?.description || "次局の解析で○/×/－を判定します。");
       appendText(button, "small", `${task.sourcePly}手目へ戻る：${task.evidence?.fact || "verified evidence"}`);
-      button.addEventListener("click", () => jumpToSummaryPosition(task.sourcePly));
+      button.addEventListener("click", async () => {
+        if (task.sourceGame && task.sourceGame !== currentGameId) {
+          await loadGame(task.sourceGame, true);
+        }
+        jumpToSummaryPosition(task.sourcePly);
+      });
       container.appendChild(button);
+    });
+  }
+
+  function renderTaskResults(results) {
+    const container = taskResultsContainer();
+    container.hidden = !results.length;
+    if (!results.length) {
+      container.replaceChildren();
+      return;
+    }
+    const heading = document.createElement("h2");
+    heading.id = "taskResultsTitle";
+    heading.textContent = `前回の課題（${results.length}件）`;
+    container.replaceChildren(heading);
+    results.forEach((result) => {
+      const item = document.createElement("article");
+      item.className = `taskResult ${result.status || "no_opportunity"}`;
+      appendText(item, "strong", result.label || "－", "taskResultLabel");
+      appendText(item, "b", result.title || "前回の課題");
+      appendText(item, "span", result.reason?.text || "判定できる証拠が不足しています。");
+      if (Number.isInteger(result.ply)) {
+        const button = document.createElement("button");
+        button.type = "button";
+        button.textContent = `${result.ply}手目の根拠局面を見る`;
+        button.addEventListener("click", () => jumpToSummaryPosition(result.ply));
+        item.appendChild(button);
+      }
+      container.appendChild(item);
     });
   }
 
@@ -613,6 +659,7 @@ if (typeof document !== "undefined" && typeof render === "function") {
       evaluations: evalSente.map(([evaluationPly, cp]) => ({ ply: evaluationPly, cp })),
       verifiedIssues: analysisIssues,
       currentTasks,
+      taskResults,
     };
     const items = window.ShogiGameSummary.selectImportantPositions(analysis);
     const details = document.createElement("details");
@@ -656,6 +703,7 @@ if (typeof document !== "undefined" && typeof render === "function") {
     details.appendChild(list);
     container.replaceChildren(details);
     renderNextGameLearning(analysis, items);
+    renderTaskResults(Array.isArray(analysis.taskResults) ? analysis.taskResults.slice(0, 3) : []);
     renderCurrentTasks(Array.isArray(analysis.currentTasks) ? analysis.currentTasks.slice(0, 3) : []);
     recordSummaryAudit(gameId, items);
   }
