@@ -2,6 +2,19 @@
   "schemaVersion": 1,
   "games": [
     {
+      "id": "20260912_じーく___ω",
+      "date": "2026/09/12",
+      "title": "ぺるそなお vs じーく(´・ω・｀)",
+      "side": "先手",
+      "result": "先手・ぺるそなお 勝利",
+      "moves": 81,
+      "kif": "games/20260912_じーく___ω.kif",
+      "gameData": "games/20260912_じーく___ω.json",
+      "analysisData": "analysis/20260912_じーく___ω.json",
+      "analyzed": true,
+      "status": "YaneuraOu V9.00 + 水匠5解析済み"
+    },
+    {
       "id": "20260912_雪狐",
       "date": "2026/09/12",
       "title": "ぺるそなお vs 雪狐",

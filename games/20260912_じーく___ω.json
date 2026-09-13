@@ -1,0 +1,554 @@
+{
+  "schemaVersion": 1,
+  "game": {
+    "id": "20260912_じーく___ω",
+    "title": "ぺるそなお vs じーく(´・ω・｀)",
+    "result": "先手・ぺるそなお 勝利",
+    "moves": 81,
+    "date": "2026/09/12",
+    "side": "先手"
+  },
+  "positions": [
+    {
+      "ply": 0,
+      "sfen": "lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL b - 1",
+      "last": "開始局面"
+    },
+    {
+      "ply": 1,
+      "sfen": "lnsgkgsnl/1r5b1/ppppppppp/9/9/4P4/PPPP1PPPP/1B5R1/LNSGKGSNL w - 2",
+      "last": "５六歩(57)",
+      "usi": "5g5f"
+    },
+    {
+      "ply": 2,
+      "sfen": "lnsgkgsnl/1r5b1/pppppp1pp/6p2/9/4P4/PPPP1PPPP/1B5R1/LNSGKGSNL b - 3",
+      "last": "３四歩(33)",
+      "usi": "3c3d"
+    },
+    {
+      "ply": 3,
+      "sfen": "lnsgkgsnl/1r5b1/pppppp1pp/6p2/9/4P4/PPPP1PPPP/1B2R4/LNSGKGSNL w - 4",
+      "last": "５八飛(28)",
+      "usi": "2h5h"
+    },
+    {
+      "ply": 4,
+      "sfen": "lnsgkgsnl/1r5b1/pppppp1pp/9/6p2/4P4/PPPP1PPPP/1B2R4/LNSGKGSNL b - 5",
+      "last": "３五歩(34)",
+      "usi": "3d3e"
+    },
+    {
+      "ply": 5,
+      "sfen": "lnsgkgsnl/1r5b1/pppppp1pp/9/4P1p2/9/PPPP1PPPP/1B2R4/LNSGKGSNL w - 6",
+      "last": "５五歩(56)",
+      "usi": "5f5e"
+    },
+    {
+      "ply": 6,
+      "sfen": "lnsgkgsnl/6rb1/pppppp1pp/9/4P1p2/9/PPPP1PPPP/1B2R4/LNSGKGSNL b - 7",
+      "last": "３二飛(82)",
+      "usi": "8b3b"
+    },
+    {
+      "ply": 7,
+      "sfen": "lnsgkgsnl/6rb1/pppppp1pp/9/4P1p2/4R4/PPPP1PPPP/1B7/LNSGKGSNL w - 8",
+      "last": "５六飛(58)",
+      "usi": "5h5f"
+    },
+    {
+      "ply": 8,
+      "sfen": "lnsgkgsnl/6rb1/pppppp2p/7p1/4P1p2/4R4/PPPP1PPPP/1B7/LNSGKGSNL b - 9",
+      "last": "２四歩(23)",
+      "usi": "2c2d"
+    },
+    {
+      "ply": 9,
+      "sfen": "lnsgkgsnl/6rb1/pppppp2p/7p1/4P1p2/2P1R4/PP1P1PPPP/1B7/LNSGKGSNL w - 10",
+      "last": "７六歩(77)",
+      "usi": "7g7f"
+    },
+    {
+      "ply": 10,
+      "sfen": "lnsgk1snl/4g1rb1/pppppp2p/7p1/4P1p2/2P1R4/PP1P1PPPP/1B7/LNSGKGSNL b - 11",
+      "last": "５二金(41)",
+      "usi": "4a5b"
+    },
+    {
+      "ply": 11,
+      "sfen": "lnsgk1snl/4g1rb1/pppppp2p/7p1/4P1p2/2P1R4/PP1P1PPPP/1B3K3/LNSG1GSNL w - 12",
+      "last": "４八玉(59)",
+      "usi": "5i4h"
+    },
+    {
+      "ply": 12,
+      "sfen": "lnsgk1snl/4g2b1/pppppp2p/6rp1/4P1p2/2P1R4/PP1P1PPPP/1B3K3/LNSG1GSNL b - 13",
+      "last": "３四飛(32)",
+      "usi": "3b3d"
+    },
+    {
+      "ply": 13,
+      "sfen": "lnsgk1snl/4g2b1/pppppp2p/6rp1/4P1p2/2P1R4/PP1P1PPPP/1B3KS2/LNSG1G1NL w - 14",
+      "last": "３八銀(39)",
+      "usi": "3i3h"
+    },
+    {
+      "ply": 14,
+      "sfen": "lnsg2snl/3kg2b1/pppppp2p/6rp1/4P1p2/2P1R4/PP1P1PPPP/1B3KS2/LNSG1G1NL b - 15",
+      "last": "６二玉(51)",
+      "usi": "5a6b"
+    },
+    {
+      "ply": 15,
+      "sfen": "lnsg2snl/3kg2b1/pppppp2p/6rp1/4P1p2/2P1R4/PP1P1PPPP/1B4S2/LNSG1GKNL w - 16",
+      "last": "３九玉(48)",
+      "usi": "4h3i"
+    },
+    {
+      "ply": 16,
+      "sfen": "lnsg2snl/3kg2b1/pppppp3/6rpp/4P1p2/2P1R4/PP1P1PPPP/1B4S2/LNSG1GKNL b - 17",
+      "last": "１四歩(13)",
+      "usi": "1c1d"
+    },
+    {
+      "ply": 17,
+      "sfen": "lnsg2snl/3kg2b1/pppppp3/6rpp/4P1p2/2P1R4/PP1P1PPPP/1B4SK1/LNSG1G1NL w - 18",
+      "last": "２八玉(39)",
+      "usi": "3i2h"
+    },
+    {
+      "ply": 18,
+      "sfen": "lnsg2snl/3kg2b1/pppppp3/6rp1/4P1p1p/2P1R4/PP1P1PPPP/1B4SK1/LNSG1G1NL b - 19",
+      "last": "１五歩(14)",
+      "usi": "1d1e"
+    },
+    {
+      "ply": 19,
+      "sfen": "lnsg2snl/3kg2b1/pppppp3/6rp1/4P1p1p/P1P1R4/1P1P1PPPP/1B4SK1/LNSG1G1NL w - 20",
+      "last": "９六歩(97)",
+      "usi": "9g9f"
+    },
+    {
+      "ply": 20,
+      "sfen": "lnsg2s1l/3kg2b1/ppppppn2/6rp1/4P1p1p/P1P1R4/1P1P1PPPP/1B4SK1/LNSG1G1NL b - 21",
+      "last": "３三桂(21)",
+      "usi": "2a3c"
+    },
+    {
+      "ply": 21,
+      "sfen": "lnsg2s1l/3kg2b1/ppppppn2/6rp1/2P1P1p1p/P3R4/1P1P1PPPP/1B4SK1/LNSG1G1NL w - 22",
+      "last": "７五歩(76)",
+      "usi": "7f7e"
+    },
+    {
+      "ply": 22,
+      "sfen": "lnsg2s1l/3kg2b1/ppppppn2/6r2/2P1P1ppp/P3R4/1P1P1PPPP/1B4SK1/LNSG1G1NL b - 23",
+      "last": "２五歩(24)",
+      "usi": "2d2e"
+    },
+    {
+      "ply": 23,
+      "sfen": "lnsg2s1l/3kg2b1/ppppppn2/6r2/2P1P1ppp/P3R4/1P1P1PPPP/1B1S2SK1/LN1G1G1NL w - 24",
+      "last": "６八銀(79)",
+      "usi": "7i6h"
+    },
+    {
+      "ply": 24,
+      "sfen": "lnsg2s1l/2k1g2b1/ppppppn2/6r2/2P1P1ppp/P3R4/1P1P1PPPP/1B1S2SK1/LN1G1G1NL b - 25",
+      "last": "７二玉(62)",
+      "usi": "6b7b"
+    },
+    {
+      "ply": 25,
+      "sfen": "lnsg2s1l/2k1g2b1/ppppppn2/6r2/2P1P1ppp/P3R4/1P1PSPPPP/1B4SK1/LN1G1G1NL w - 26",
+      "last": "５七銀(68)",
+      "usi": "6h5g"
+    },
+    {
+      "ply": 26,
+      "sfen": "lnsg2s1l/2k1g2b1/ppppppn2/1r7/2P1P1ppp/P3R4/1P1PSPPPP/1B4SK1/LN1G1G1NL b - 27",
+      "last": "８四飛(34)",
+      "usi": "3d8d"
+    },
+    {
+      "ply": 27,
+      "sfen": "lnsg2s1l/2k1g2b1/ppppppn2/1r7/2P1P1ppp/PP2R4/3PSPPPP/1B4SK1/LN1G1G1NL w - 28",
+      "last": "８六歩(87)",
+      "usi": "8g8f"
+    },
+    {
+      "ply": 28,
+      "sfen": "lnsg2s1l/2k1g2b1/ppppppn2/3r5/2P1P1ppp/PP2R4/3PSPPPP/1B4SK1/LN1G1G1NL b - 29",
+      "last": "６四飛(84)",
+      "usi": "8d6d"
+    },
+    {
+      "ply": 29,
+      "sfen": "lnsg2s1l/2k1g2b1/ppppppn2/3r5/2P1P1ppp/PP1SR4/3P1PPPP/1B4SK1/LN1G1G1NL w - 30",
+      "last": "６六銀(57)",
+      "usi": "5g6f"
+    },
+    {
+      "ply": 30,
+      "sfen": "lnsg2s1l/2k1g2b1/1pppppn2/p2r5/2P1P1ppp/PP1SR4/3P1PPPP/1B4SK1/LN1G1G1NL b - 31",
+      "last": "９四歩(93)",
+      "usi": "9c9d"
+    },
+    {
+      "ply": 31,
+      "sfen": "lnsg2s1l/2k1g2b1/1pppppn2/p2r5/1PP1P1ppp/P2SR4/3P1PPPP/1B4SK1/LN1G1G1NL w - 32",
+      "last": "８五歩(86)",
+      "usi": "8f8e"
+    },
+    {
+      "ply": 32,
+      "sfen": "lnsg2s1l/2k1g2b1/2ppppn2/pp1r5/1PP1P1ppp/P2SR4/3P1PPPP/1B4SK1/LN1G1G1NL b - 33",
+      "last": "８四歩(83)",
+      "usi": "8c8d"
+    },
+    {
+      "ply": 33,
+      "sfen": "lnsg2s1l/2k1g2b1/2ppppn2/pp1r5/1PP1P1ppp/P2SR4/2NP1PPPP/1B4SK1/L2G1G1NL w - 34",
+      "last": "７七桂(89)",
+      "usi": "8i7g"
+    },
+    {
+      "ply": 34,
+      "sfen": "lnsg2s1l/2k1g2b1/2ppppn2/p2r5/1pP1P1ppp/P2SR4/2NP1PPPP/1B4SK1/L2G1G1NL b p 35",
+      "last": "８五歩(84)",
+      "usi": "8d8e"
+    },
+    {
+      "ply": 35,
+      "sfen": "lnsg2s1l/2k1g2b1/2ppppn2/p2r5/1NP1P1ppp/P2SR4/3P1PPPP/1B4SK1/L2G1G1NL w Pp 36",
+      "last": "同　桂(77)",
+      "usi": "7g8e"
+    },
+    {
+      "ply": 36,
+      "sfen": "lnsg2s1l/2k1g2b1/2ppppn2/pr7/1NP1P1ppp/P2SR4/3P1PPPP/1B4SK1/L2G1G1NL b Pp 37",
+      "last": "８四飛(64)",
+      "usi": "6d8d"
+    },
+    {
+      "ply": 37,
+      "sfen": "lnsg2s1l/2k1g2b1/2ppppn2/pr7/1NP1P1ppp/PP1SR4/3P1PPPP/1B4SK1/L2G1G1NL w p 38",
+      "last": "８六歩打",
+      "usi": "P*8f"
+    },
+    {
+      "ply": 38,
+      "sfen": "lns3s1l/2kgg2b1/2ppppn2/pr7/1NP1P1ppp/PP1SR4/3P1PPPP/1B4SK1/L2G1G1NL b p 39",
+      "last": "６二金(61)",
+      "usi": "6a6b"
+    },
+    {
+      "ply": 39,
+      "sfen": "lns3s1l/2kgg2b1/2ppppn2/pr7/1NPSP1ppp/PP2R4/3P1PPPP/1B4SK1/L2G1G1NL w p 40",
+      "last": "６五銀(66)",
+      "usi": "6f6e"
+    },
+    {
+      "ply": 40,
+      "sfen": "lns3s1l/2kgg4/2ppppn1b/pr7/1NPSP1ppp/PP2R4/3P1PPPP/1B4SK1/L2G1G1NL b p 41",
+      "last": "１三角(22)",
+      "usi": "2b1c"
+    },
+    {
+      "ply": 41,
+      "sfen": "lns3s1l/2kgg4/2ppppn1b/pr7/1NPSP1ppp/PP1BR4/3P1PPPP/6SK1/L2G1G1NL w p 42",
+      "last": "６六角(88)",
+      "usi": "8h6f"
+    },
+    {
+      "ply": 42,
+      "sfen": "lns3s1l/2kgg4/2ppppn1b/p5r2/1NPSP1ppp/PP1BR4/3P1PPPP/6SK1/L2G1G1NL b p 43",
+      "last": "３四飛(84)",
+      "usi": "8d3d"
+    },
+    {
+      "ply": 43,
+      "sfen": "lns3s1l/2kgg4/2ppppn1b/p3P1r2/1NPS2ppp/PP1BR4/3P1PPPP/6SK1/L2G1G1NL w p 44",
+      "last": "５四歩(55)",
+      "usi": "5e5d"
+    },
+    {
+      "ply": 44,
+      "sfen": "lns3s1l/2kgg4/2pp1pn1b/p3p1r2/1NPS2ppp/PP1BR4/3P1PPPP/6SK1/L2G1G1NL b 2p 45",
+      "last": "同　歩(53)",
+      "usi": "5c5d"
+    },
+    {
+      "ply": 45,
+      "sfen": "lns3s1l/2kgg4/2pp1pn1b/p3R1r2/1NPS2ppp/PP1B5/3P1PPPP/6SK1/L2G1G1NL w P2p 46",
+      "last": "同　飛(56)",
+      "usi": "5f5d"
+    },
+    {
+      "ply": 46,
+      "sfen": "lns3s1l/2kgg4/2pp1pn1b/p3r4/1NPS2ppp/PP1B5/3P1PPPP/6SK1/L2G1G1NL b Pr2p 47",
+      "last": "同　飛(34)",
+      "usi": "3d5d"
+    },
+    {
+      "ply": 47,
+      "sfen": "lns3s1l/2kgg4/2pp1pn1b/p3S4/1NP3ppp/PP1B5/3P1PPPP/6SK1/L2G1G1NL w RPr2p 48",
+      "last": "同　銀(65)",
+      "usi": "6e5d"
+    },
+    {
+      "ply": 48,
+      "sfen": "lns3s1l/2kgg4/2ppppn1b/p3S4/1NP3ppp/PP1B5/3P1PPPP/6SK1/L2G1G1NL b RPrp 49",
+      "last": "５三歩打",
+      "usi": "P*5c"
+    },
+    {
+      "ply": 49,
+      "sfen": "lns3s1l/2kgg4/2pppp+B1b/p3S4/1NP3ppp/PP7/3P1PPPP/6SK1/L2G1G1NL w RNPrp 50",
+      "last": "３三角成(66)",
+      "usi": "6f3c+"
+    },
+    {
+      "ply": 50,
+      "sfen": "lns3s1l/2kgg4/2pp1p+B1b/p3p4/1NP3ppp/PP7/3P1PPPP/6SK1/L2G1G1NL b RNPrsp 51",
+      "last": "５四歩(53)",
+      "usi": "5c5d"
+    },
+    {
+      "ply": 51,
+      "sfen": "lns3s1+B/2kgg4/2pp1p2b/p3p4/1NP3ppp/PP7/3P1PPPP/6SK1/L2G1G1NL w RNLPrsp 52",
+      "last": "１一馬(33)",
+      "usi": "3c1a"
+    },
+    {
+      "ply": 52,
+      "sfen": "lns3s1+B/2kgg2b1/2pp1p3/p3p4/1NP3ppp/PP7/3P1PPPP/6SK1/L2G1G1NL b RNLPrsp 53",
+      "last": "２二角(13)",
+      "usi": "1c2b"
+    },
+    {
+      "ply": 53,
+      "sfen": "lns3s2/2kgg2+B1/2pp1p3/p3p4/1NP3ppp/PP7/3P1PPPP/6SK1/L2G1G1NL w RBNLPrsp 54",
+      "last": "同　馬(11)",
+      "usi": "1a2b"
+    },
+    {
+      "ply": 54,
+      "sfen": "lns6/2kgg2s1/2pp1p3/p3p4/1NP3ppp/PP7/3P1PPPP/6SK1/L2G1G1NL b RBNLPrbsp 55",
+      "last": "同　銀(31)",
+      "usi": "3a2b"
+    },
+    {
+      "ply": 55,
+      "sfen": "lns6/2kgg2s1/2pp1p3/p1P1p4/1N4ppp/PP7/3P1PPPP/6SK1/L2G1G1NL w RBNLPrbsp 56",
+      "last": "７四歩(75)",
+      "usi": "7e7d"
+    },
+    {
+      "ply": 56,
+      "sfen": "lns6/2kgg2s1/2pp1p3/psP1p4/1N4ppp/PP7/3P1PPPP/6SK1/L2G1G1NL b RBNLPrbp 57",
+      "last": "８四銀打",
+      "usi": "S*8d"
+    },
+    {
+      "ply": 57,
+      "sfen": "lns6/2kgg2s1/2+Pp1p3/ps2p4/1N4ppp/PP7/3P1PPPP/6SK1/L2G1G1NL w RBNL2Prbp 58",
+      "last": "７三歩成(74)",
+      "usi": "7d7c+"
+    },
+    {
+      "ply": 58,
+      "sfen": "lns6/2kgg2s1/2sp1p3/p3p4/1N4ppp/PP7/3P1PPPP/6SK1/L2G1G1NL b RBNL2Prb2p 59",
+      "last": "同　銀(84)",
+      "usi": "8d7c"
+    },
+    {
+      "ply": 59,
+      "sfen": "lns6/2kgg2s1/2+Np1p3/p3p4/6ppp/PP7/3P1PPPP/6SK1/L2G1G1NL w RBSNL2Prb2p 60",
+      "last": "同　桂成(85)",
+      "usi": "8e7c+"
+    },
+    {
+      "ply": 60,
+      "sfen": "l1s6/2kgg2s1/2np1p3/p3p4/6ppp/PP7/3P1PPPP/6SK1/L2G1G1NL b RBSNL2Prbn2p 61",
+      "last": "同　桂(81)",
+      "usi": "8a7c"
+    },
+    {
+      "ply": 61,
+      "sfen": "l1s6/2kgg2s1/2np1p3/p1P1p4/6ppp/PP7/3P1PPPP/6SK1/L2G1G1NL w RBSNLPrbn2p 62",
+      "last": "７四歩打",
+      "usi": "P*7d"
+    },
+    {
+      "ply": 62,
+      "sfen": "l1s6/2kgg2s1/2np1p3/p1P1p4/6ppp/PP7/3PnPPPP/6SK1/L2G1G1NL b RBSNLPrb2p 63",
+      "last": "５七桂打",
+      "usi": "N*5g"
+    },
+    {
+      "ply": 63,
+      "sfen": "l1s6/2kgg2s1/2+Pp1p3/p3p4/6ppp/PP7/3PnPPPP/6SK1/L2G1G1NL w RBS2NLPrb2p 64",
+      "last": "７三歩成(74)",
+      "usi": "7d7c+"
+    },
+    {
+      "ply": 64,
+      "sfen": "l1s6/2k1g2s1/2gp1p3/p3p4/6ppp/PP7/3PnPPPP/6SK1/L2G1G1NL b RBS2NLPrb3p 65",
+      "last": "同　金(62)",
+      "usi": "6b7c"
+    },
+    {
+      "ply": 65,
+      "sfen": "l1s6/2k1g2s1/2gp1p3/p3p4/6ppp/PP7/3PnPPPP/6SK1/L3GG1NL w RBS2NLPrb3p 66",
+      "last": "５九金(69)",
+      "usi": "6i5i"
+    },
+    {
+      "ply": 66,
+      "sfen": "l1s6/2k1g2s1/2gp1p3/p3p4/6ppp/PP7/3P1PPPP/6SK1/L3G+n1NL b RBS2NLPrbg3p 67",
+      "last": "４九桂成(57)",
+      "usi": "5g4i+"
+    },
+    {
+      "ply": 67,
+      "sfen": "l1s6/2k1g2s1/2gp1p3/p3p4/6ppp/PP7/3P1PPPP/6SK1/L4G1NL w RBS3NLPrbg3p 68",
+      "last": "同　金(59)",
+      "usi": "5i4i"
+    },
+    {
+      "ply": 68,
+      "sfen": "l1s6/2k1g2s1/2gp1p3/p3p4/6ppp/PP7/3P1PPPP/6SK1/Lr3G1NL b RBS3NLPbg3p 69",
+      "last": "８九飛打",
+      "usi": "R*8i"
+    },
+    {
+      "ply": 69,
+      "sfen": "l1s6/2k1g2s1/2gp1p3/p3p4/6ppp/PP7/3P1PPPP/6SK1/Lr2PG1NL w RBS3NLbg3p 70",
+      "last": "５九歩打",
+      "usi": "P*5i"
+    },
+    {
+      "ply": 70,
+      "sfen": "l1s3s2/2k1g4/2gp1p3/p3p4/6ppp/PP7/3P1PPPP/6SK1/Lr2PG1NL b RBS3NLbg3p 71",
+      "last": "３一銀(22)",
+      "usi": "2b3a"
+    },
+    {
+      "ply": 71,
+      "sfen": "l1s3s2/2k1g4/2gp1p3/p3p4/1N4ppp/PP7/3P1PPPP/6SK1/Lr2PG1NL w RBS2NLbg3p 72",
+      "last": "８五桂打",
+      "usi": "N*8e"
+    },
+    {
+      "ply": 72,
+      "sfen": "l1s3s2/2k1g4/1g1p1p3/p3p4/1N4ppp/PP7/3P1PPPP/6SK1/Lr2PG1NL b RBS2NLbg3p 73",
+      "last": "８三金(73)",
+      "usi": "7c8c"
+    },
+    {
+      "ply": 73,
+      "sfen": "l1s2Rs2/2k1g4/1g1p1p3/p3p4/1N4ppp/PP7/3P1PPPP/6SK1/Lr2PG1NL w BS2NLbg3p 74",
+      "last": "４一飛打",
+      "usi": "R*4a"
+    },
+    {
+      "ply": 74,
+      "sfen": "l1s2Rs2/2k1g4/1g1p1p3/pp2p4/1N4ppp/PP7/3P1PPPP/6SK1/Lr2PG1NL b BS2NLbg2p 75",
+      "last": "８四歩打",
+      "usi": "P*8d"
+    },
+    {
+      "ply": 75,
+      "sfen": "l1sB1Rs2/2k1g4/1g1p1p3/pp2p4/1N4ppp/PP7/3P1PPPP/6SK1/Lr2PG1NL w S2NLbg2p 76",
+      "last": "６一角打",
+      "usi": "B*6a"
+    },
+    {
+      "ply": 76,
+      "sfen": "l1sB1Rs2/1k2g4/1g1p1p3/pp2p4/1N4ppp/PP7/3P1PPPP/6SK1/Lr2PG1NL b S2NLbg2p 77",
+      "last": "８二玉(72)",
+      "usi": "7b8b"
+    },
+    {
+      "ply": 77,
+      "sfen": "l1sB1Rs2/1k2g4/1g1p1p3/ppN1p4/1N4ppp/PP7/3P1PPPP/6SK1/Lr2PG1NL w SNLbg2p 78",
+      "last": "７四桂打",
+      "usi": "N*7d"
+    },
+    {
+      "ply": 78,
+      "sfen": "l1sB1Rs2/1k2g4/3p1p3/ppg1p4/1N4ppp/PP7/3P1PPPP/6SK1/Lr2PG1NL b SNLbgn2p 79",
+      "last": "同　金(83)",
+      "usi": "8c7d"
+    },
+    {
+      "ply": 79,
+      "sfen": "l1sB1Rs2/1k2g4/1S1p1p3/ppg1p4/1N4ppp/PP7/3P1PPPP/6SK1/Lr2PG1NL w NLbgn2p 80",
+      "last": "８三銀打",
+      "usi": "S*8c"
+    },
+    {
+      "ply": 80,
+      "sfen": "lksB1Rs2/4g4/1S1p1p3/ppg1p4/1N4ppp/PP7/3P1PPPP/6SK1/Lr2PG1NL b NLbgn2p 81",
+      "last": "８一玉(82)",
+      "usi": "8b8a"
+    },
+    {
+      "ply": 81,
+      "sfen": "lksB1Rs2/4g4/1SNp1p3/ppg1p4/1N4ppp/PP7/3P1PPPP/6SK1/Lr2PG1NL w Lbgn2p 82",
+      "last": "７三桂打",
+      "usi": "N*7c"
+    }
+  ],
+  "issues": [
+    {
+      "ply": 3,
+      "move": "▲5八飛",
+      "best": "3i4h",
+      "loss": 308,
+      "category": "序盤",
+      "comment": "水匠5は実戦手より▲4八銀を高く評価しています。まず読み筋を比較してみましょう。"
+    },
+    {
+      "ply": 35,
+      "move": "▲同桂",
+      "best": "6f6e",
+      "loss": 323,
+      "category": "中盤",
+      "comment": "水匠5は実戦手より▲6五銀を高く評価しています。まず読み筋を比較してみましょう。"
+    },
+    {
+      "ply": 41,
+      "move": "▲6六角",
+      "best": "5e5d",
+      "loss": 944,
+      "category": "中盤",
+      "comment": "水匠5は実戦手より▲5四歩を高く評価しています。まず読み筋を比較してみましょう。"
+    },
+    {
+      "ply": 65,
+      "move": "▲5九金左",
+      "best": "N*6e",
+      "loss": 1255,
+      "category": "終盤",
+      "comment": "水匠5は実戦手より▲6五桂打を高く評価しています。まず読み筋を比較してみましょう。"
+    },
+    {
+      "ply": 69,
+      "move": "▲5九歩打",
+      "best": "L*7g",
+      "loss": 400,
+      "category": "終盤",
+      "comment": "水匠5は実戦手より▲7七香打を高く評価しています。まず読み筋を比較してみましょう。"
+    },
+    {
+      "ply": 73,
+      "move": "▲4一飛打",
+      "best": "N*6e",
+      "loss": 712,
+      "category": "終盤",
+      "comment": "水匠5は実戦手より▲6五桂打を高く評価しています。まず読み筋を比較してみましょう。"
+    }
+  ]
+}
