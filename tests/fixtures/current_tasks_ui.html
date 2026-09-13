@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="ja">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Current Tasks 390px fixture</title>
+  <style>
+    *{box-sizing:border-box}html,body{margin:0;background:#18130d;color:#f8f2e7;font-family:-apple-system,BlinkMacSystemFont,"Hiragino Sans",sans-serif}.app{width:min(100%,430px);margin:auto;padding:5px}.reviewBox{min-height:20px}
+  </style>
+</head>
+<body>
+  <main class="app"><div id="review" class="reviewBox"></div></main>
+  <script>
+    let ply=0,currentGameId="fixture",evalSente=[],analysisIssues=[];
+    const currentTasks=[
+      {id:"ct1-a",title:"王手候補を確認する",sourcePly:45,nextCheck:{description:"次の解析で王手候補がある局面を観測し、候補確認の有無を○/×/－判定する。"},evidence:{fact:"推奨手は王手です。"}},
+      {id:"ct1-b",title:"取れる駒を確認する",sourcePly:63,nextCheck:{description:"次の解析で駒を取る候補がある局面を観測し、候補確認の有無を○/×/－判定する。"},evidence:{fact:"推奨手は角を取る手です。"}},
+      {id:"ct1-c",title:"成る手を候補に入れる",sourcePly:81,nextCheck:{description:"次の解析で成れる局面を観測し、成る候補を比較したか○/×/－判定する。"},evidence:{fact:"推奨手は飛を成る手です。"}}
+    ];
+    const D={game:{id:"fixture",moves:100,side:"先手"},issues:[],positions:[{sfen:"9/9/9/9/9/9/9/9/9 b - 1"}]};
+    function render(){} function userSide(){return "b"} function parseSFEN(){return {}} function previousDestination(){return null} function actualMove(){return null} function bestMove(){return null} function formatMove(){return null}
+    function appendText(parent,tag,text,className){const element=document.createElement(tag);if(className)element.className=className;element.textContent=text;parent.appendChild(element);return element}
+  </script>
+  <script src="../../game-summary.js"></script>
+  <script>render()</script>
+</body>
+</html>

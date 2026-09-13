@@ -214,6 +214,17 @@ test("次局への学びUIは局面ジャンプを再利用し棋風・心理を
   for (const unsupported of ["苦手", "棋風", "心理", "大局観", "手厚い", "玉形"]) assert.equal(ui.includes(unsupported), false);
 });
 
+test("次局の課題UIは最大3件・390px・元局面導線と旧JSONの0件表示を持つ", () => {
+  const html = fs.readFileSync(path.join(ROOT, "index.html"), "utf8");
+  const ui = fs.readFileSync(path.join(ROOT, "game-summary.js"), "utf8");
+  assert.match(html, /currentTasks=Array\.isArray\(a\.currentTasks\)\?a\.currentTasks\.slice\(0,3\):\[\]/);
+  assert.match(ui, /次局の課題（\$\{tasks\.length\}\/3）/);
+  assert.match(ui, /task\.sourcePly/);
+  assert.match(ui, /jumpToSummaryPosition\(task\.sourcePly\)/);
+  assert.match(ui, /max-width:390px/);
+  assert.match(ui, /課題化できる十分な根拠がありません/);
+});
+
 function loadAnalysis(gameId) {
   return JSON.parse(fs.readFileSync(path.join(ROOT, "analysis", `${gameId}.json`), "utf8"));
 }
