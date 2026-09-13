@@ -1,4 +1,5 @@
 import { applyUnknownConfirmations, fingerprintKif, UNKNOWN } from "./kif-submit-core.mjs";
+import { queueStatusPresentation } from "./kif-submit-status.mjs";
 
 const STORAGE = {
   endpoint: "shogiReviewQueueEndpoint",
@@ -141,35 +142,31 @@ function statusContent(item, endpoint, secret) {
   const heading = document.createElement("b");
   const detail = document.createElement("div");
   detail.className = "sub";
-  const analysisStatus = item.analysisStatus || item.status;
-  const sourceStored = item.storageStatus === "stored" || (!item.storageStatus && item.requestId);
-  const labels = {
-    queued: "解析：待機中",
-    processing: "解析：処理中",
-    failed: "解析：失敗（原棋譜から再試行できます）",
-    completed: "解析：完了",
-  };
-  heading.textContent = sourceStored ? "原棋譜：保存済み" : "原棋譜：保存未確認";
+  const presentation = queueStatusPresentation(item);
+  heading.textContent = presentation.sourceLabel;
   const analysis = document.createElement("div");
-  analysis.className = analysisStatus === "failed" ? "queueError" : "validation";
-  analysis.textContent = labels[analysisStatus] || `解析：${analysisStatus || "状態不明"}`;
+  analysis.className = presentation.analysisStatus === "failed" ? "queueError" : "validation";
+  analysis.textContent = presentation.analysisLabel;
   detail.textContent = item.metadata ? `${item.metadata.sente} vs ${item.metadata.gote} / ${item.metadata.moves}手` : `request: ${item.requestId}`;
   box.append(heading, analysis, detail);
-  if (analysisStatus === "completed" && item.gameId) {
+  if (presentation.analysisStatus === "completed" && item.gameId) {
     box.append(statusButton("感想戦を開く", async () => {
       await window.refreshCatalog?.();
       await window.loadGame?.(item.gameId, true);
     }));
-  } else if (analysisStatus === "failed") {
+  } else if (presentation.analysisStatus === "failed") {
     const error = document.createElement("div");
     error.className = "queueError";
-    error.textContent = item.error || "原棋譜は保存済みです。詳細はWindows workerのログで確認してください";
-    box.append(error, statusButton("再試行", async () => {
-      try {
-        const updated = await api(endpoint, secret, `/api/requests/${item.requestId}/retry`, { method: "POST", body: "{}" });
-        renderQueueStatus(updated, endpoint, secret);
-      } catch (retryError) { setText(elements.kifValidation, retryError.message); }
-    }));
+    error.textContent = presentation.failureDetail;
+    box.append(error);
+    if (presentation.canRetry) {
+      box.append(statusButton("再試行", async () => {
+        try {
+          const updated = await api(endpoint, secret, `/api/requests/${item.requestId}/retry`, { method: "POST", body: "{}" });
+          renderQueueStatus(updated, endpoint, secret);
+        } catch (retryError) { setText(elements.kifValidation, retryError.message); }
+      }));
+    }
   }
   return box;
 }
