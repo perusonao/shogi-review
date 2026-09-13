@@ -143,6 +143,47 @@ class Phase2Tests(unittest.TestCase):
         self.assertEqual(command[command.index("--nodes") + 1], "30000")
         self.assertIn("--calibration-metadata", command)
 
+    def test_legacy_request_without_calibration_metadata_is_analyzed_without_d2_intake(self) -> None:
+        request_id = str(uuid.uuid4())
+        claim = {
+            "requestId": request_id,
+            "claimToken": "opaque-claim-token",
+            "fingerprint": self.fingerprint,
+            "kif": self.higure_text,
+            "metadata": {
+                "date": "2026/09/10",
+                "sente": "ひぐれ",
+                "gote": "ぺるそなお",
+                "moves": 58,
+            },
+        }
+        client = self.FakeQueueClient()
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            with (
+                patch("analysis_worker.find_existing_game_id", side_effect=[None, "legacy-game"]),
+                patch("analysis_worker.ensure_published"),
+                patch("analysis_worker.run_checked", return_value=subprocess.CompletedProcess([], 0)) as run_import,
+                self.assertLogs(level="WARNING") as logs,
+            ):
+                game_id = process_claim(client, claim, root, ("ぺるそなお", "sonao81"))
+        self.assertEqual(game_id, "legacy-game")
+        self.assertEqual(client.completed, (request_id, "opaque-claim-token", "legacy-game"))
+        command = run_import.call_args.args[0]
+        self.assertEqual(command[command.index("--nodes") + 1], "30000")
+        self.assertNotIn("--calibration-metadata", command)
+        self.assertIn("predates calibration metadata", "\n".join(logs.output))
+
+    def test_present_but_invalid_calibration_metadata_is_still_rejected(self) -> None:
+        claim = {
+            "requestId": str(uuid.uuid4()),
+            "fingerprint": self.fingerprint,
+            "kif": self.higure_text,
+            "metadata": {"calibration": {}},
+        }
+        with self.assertRaisesRegex(ValueError, "calibration metadata is missing"):
+            validate_claim(claim, ("ぺるそなお", "sonao81"))
+
     def test_failed_analysis_has_no_intake_and_is_marked_failed(self) -> None:
         metadata = submission_metadata(self.higure_text, self.higure)
         metadata["provider"] = "shogi-wars"
