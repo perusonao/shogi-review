@@ -22,6 +22,11 @@ function issue(ply, before, after, loss = before - after) {
   };
 }
 
+function containsSelectedPly(items, ply) {
+  return items.some((item) => item.ply === ply
+    || (item.auxiliaryEvents || []).some((event) => event.ply === ply));
+}
+
 test("先手・後手ユーザーのscoreを自分視点へ正規化する", () => {
   assert.equal(summary.evaluationFromUser(cp(1, 706), "sente").value, 706);
   assert.equal(summary.evaluationFromUser(cp(1, -706), "gote").value, 706);
@@ -295,14 +300,14 @@ test("全16局で最大loss 16/16とmate保有局 9/9を保護する", () => {
     const items = summary.selectImportantPositions(analysis);
     const issues = analysis.verifiedIssues || [];
     const maxIssue = issues.reduce((best, candidate) => Number(candidate.lossCp || candidate.loss || 0) > Number(best?.lossCp || best?.loss || -1) ? candidate : best, null);
-    if (maxIssue && items.some((item) => item.ply === Number(maxIssue.ply))) maxLossCaptured += 1;
+    if (maxIssue && containsSelectedPly(items, Number(maxIssue.ply))) maxLossCaptured += 1;
     const mateIssuePlies = issues.filter((candidate) => {
       const values = [candidate.beforeCp, candidate.afterCp, candidate.scoreBefore?.value, candidate.scoreAfterActual?.value];
       return candidate.scoreBefore?.type === "mate" || candidate.scoreAfterActual?.type === "mate" || values.some((value) => Number.isFinite(Number(value)) && Math.abs(Number(value)) >= 25000);
     }).map((candidate) => Number(candidate.ply));
     if (mateIssuePlies.length) {
       mateGames += 1;
-      if (items.some((item) => mateIssuePlies.includes(item.ply))) mateCaptured += 1;
+      if (mateIssuePlies.some((ply) => containsSelectedPly(items, ply))) mateCaptured += 1;
     }
   }
   assert.equal(files.length, 16);
@@ -322,14 +327,14 @@ test("最新mainの全対局で最大lossとmateを全件保護する", () => {
     const items = summary.selectImportantPositions(analysis);
     const issues = analysis.verifiedIssues || [];
     const maxIssue = issues.reduce((best, candidate) => Number(candidate.lossCp || candidate.loss || 0) > Number(best?.lossCp || best?.loss || -1) ? candidate : best, null);
-    if (maxIssue && items.some((item) => item.ply === Number(maxIssue.ply))) maxLossCaptured += 1;
+    if (maxIssue && containsSelectedPly(items, Number(maxIssue.ply))) maxLossCaptured += 1;
     const mateIssuePlies = issues.filter((candidate) => {
       const values = [candidate.beforeCp, candidate.afterCp, candidate.scoreBefore?.value, candidate.scoreAfterActual?.value];
       return candidate.scoreBefore?.type === "mate" || candidate.scoreAfterActual?.type === "mate" || values.some((value) => Number.isFinite(Number(value)) && Math.abs(Number(value)) >= 25000);
     }).map((candidate) => Number(candidate.ply));
     if (mateIssuePlies.length) {
       mateGames += 1;
-      if (items.some((item) => mateIssuePlies.includes(item.ply))) mateCaptured += 1;
+      if (mateIssuePlies.some((ply) => containsSelectedPly(items, ply))) mateCaptured += 1;
     }
   }
   assert.ok(gameIds.length >= 24);
