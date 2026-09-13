@@ -12,6 +12,11 @@
   <main class="app"><div id="review" class="reviewBox"></div></main>
   <script>
     let ply=0,currentGameId="fixture",evalSente=[],analysisIssues=[];
+    const taskResults=[
+      {taskId:"ct1-pass",status:"pass",label:"○",title:"王手候補を確認する",ply:25,reason:{code:"opportunity_satisfied",text:"観測機会があり、実戦手でも課題の特徴を確認できました。"}},
+      {taskId:"ct1-fail",status:"fail",label:"×",title:"取れる駒を確認する",ply:47,reason:{code:"verified_repeated_issue",text:"観測機会があり、同じテーマの見落としが課題局面として確認されました。"}},
+      {taskId:"ct1-none",status:"no_opportunity",label:"－",title:"成る手を候補に入れる",ply:null,reason:{code:"no_opportunity",text:"この対局には課題を確認できる観測機会がありませんでした。"}}
+    ];
     const currentTasks=[
       {id:"ct1-a",title:"王手候補を確認する",sourcePly:45,nextCheck:{description:"次の解析で王手候補がある局面を観測し、候補確認の有無を○/×/－判定する。"},evidence:{fact:"推奨手は王手です。"}},
       {id:"ct1-b",title:"取れる駒を確認する",sourcePly:63,nextCheck:{description:"次の解析で駒を取る候補がある局面を観測し、候補確認の有無を○/×/－判定する。"},evidence:{fact:"推奨手は角を取る手です。"}},

@@ -225,6 +225,19 @@ test("次局の課題UIは最大3件・390px・元局面導線と旧JSONの0件�
   assert.match(ui, /課題化できる十分な根拠がありません/);
 });
 
+test("前回の課題UIは○×－・短い理由・根拠局面導線を390pxで表示する", () => {
+  const html = fs.readFileSync(path.join(ROOT, "index.html"), "utf8");
+  const ui = fs.readFileSync(path.join(ROOT, "game-summary.js"), "utf8");
+  assert.match(html, /taskResults=Array\.isArray\(a\.taskResults\)\?a\.taskResults\.slice\(0,3\):\[\]/);
+  assert.match(ui, /前回の課題（\$\{results\.length\}件）/);
+  assert.match(ui, /result\.label/);
+  assert.match(ui, /result\.reason\?\.text/);
+  assert.match(ui, /result\.ply/);
+  assert.match(ui, /jumpToSummaryPosition\(result\.ply\)/);
+  assert.match(ui, /max-width:390px/);
+  assert.equal(ui.includes("達成理由：評価値"), false);
+});
+
 function loadAnalysis(gameId) {
   return JSON.parse(fs.readFileSync(path.join(ROOT, "analysis", `${gameId}.json`), "utf8"));
 }
