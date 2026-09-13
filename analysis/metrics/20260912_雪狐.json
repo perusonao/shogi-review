@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "gameId": "20260912_雪狐",
+  "analyzedAt": "2026-09-13T12:29:17.907945Z",
+  "positions": 125,
+  "problemPositions": 6,
+  "baseAnalysisSeconds": 6.027,
+  "extraPvSearchSeconds": 1.279,
+  "totalAnalysisSeconds": 7.306,
+  "shortPvCandidates": 3,
+  "extraSearchExecuted": 3,
+  "pvLengthBeforeAverage": 2.0,
+  "pvLengthAfterAverage": 2.0,
+  "pvLengthsBefore": [
+    2,
+    2,
+    2
+  ],
+  "pvLengthsAfter": [
+    2,
+    2,
+    2
+  ],
+  "improvedPvCount": 0,
+  "unchangedPvCount": 3
+}
