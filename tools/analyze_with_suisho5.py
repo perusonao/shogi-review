@@ -41,6 +41,7 @@ except ImportError as exc:  # pragma: no cover
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "tools"))
 from kif_to_game import parse as parse_kif  # noqa: E402  (reuse the existing KIF reader)
+from current_tasks import build_current_tasks  # noqa: E402
 
 JP = shogi.PIECE_JAPANESE_SYMBOLS  # index by shogi piece-type constant, matches index.html's `jp`
 LETTER_TO_TYPE = {
@@ -734,6 +735,7 @@ def analyze_game(engine: UsiEngine, kif_path: Path, game_id: str, user: str,
         "evaluations": evaluations,
         "moveAnalyses": move_analyses,
         "verifiedIssues": verified_issues,
+        "currentTasks": build_current_tasks(game_id, verified_issues),
     }
     game_json = {
         "schemaVersion": 1,
