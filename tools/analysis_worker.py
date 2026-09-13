@@ -75,7 +75,7 @@ def choose_user(parsed: dict, user_names: tuple[str, ...]) -> str:
     raise WorkerError("configured user is not a player")
 
 
-def validate_claim(claim: dict, user_names: tuple[str, ...]) -> tuple[dict, str, str, dict]:
+def validate_claim(claim: dict, user_names: tuple[str, ...]) -> tuple[dict, str, str, dict | None]:
     try:
         uuid.UUID(str(claim.get("requestId", "")))
     except ValueError as exc:
@@ -84,7 +84,8 @@ def validate_claim(claim: dict, user_names: tuple[str, ...]) -> tuple[dict, str,
     parsed, fingerprint = validate_kif_text(kif, user_names[0])
     if fingerprint != claim.get("fingerprint"):
         raise WorkerError("fingerprint mismatch")
-    metadata = validate_submission_metadata(kif, parsed, (claim.get("metadata") or {}).get("calibration"))
+    supplied_metadata = (claim.get("metadata") or {}).get("calibration")
+    metadata = None if supplied_metadata is None else validate_submission_metadata(kif, parsed, supplied_metadata)
     return parsed, fingerprint, choose_user(parsed, user_names), metadata
 
 
@@ -155,9 +156,12 @@ def process_claim(client: QueueClient, claim: dict, root: Path, user_names: tupl
     inbox_path: Path | None = None
     try:
         _, fingerprint, user, calibration_metadata = validate_claim(claim, user_names)
+        if calibration_metadata is None:
+            logging.warning("request %s predates calibration metadata; D2 intake will be skipped", request_id)
         existing = find_existing_game_id(root, fingerprint, user)
         if existing:
-            intake_existing(root, existing, fingerprint, calibration_metadata)
+            if calibration_metadata is not None:
+                intake_existing(root, existing, fingerprint, calibration_metadata)
             ensure_published(root)
             client.complete(request_id, claim_token, existing)
             return existing
@@ -165,14 +169,17 @@ def process_claim(client: QueueClient, claim: dict, root: Path, user_names: tupl
         inbox_path.parent.mkdir(parents=True, exist_ok=True)
         with inbox_path.open("x", encoding="utf-8", newline="\n") as handle:
             handle.write(claim["kif"])
-        completed = run_checked([
+        command = [
             sys.executable,
             str(root / "tools" / "import_new_games.py"),
             "--user", user,
             "--nodes", "30000",
             "--publish",
-            "--calibration-metadata", json.dumps({"fingerprint": fingerprint, "metadata": calibration_metadata}, ensure_ascii=False),
-        ], root, capture=True)
+        ]
+        if calibration_metadata is not None:
+            command.extend(["--calibration-metadata", json.dumps(
+                {"fingerprint": fingerprint, "metadata": calibration_metadata}, ensure_ascii=False)])
+        completed = run_checked(command, root, capture=True)
         if completed.returncode != 0:
             logging.error("import pipeline failed (exit %s)", completed.returncode)
             if completed.stdout and completed.stdout.strip():
