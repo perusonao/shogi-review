@@ -2,7 +2,7 @@ import { applyUnknownConfirmations, fingerprintKif, MAX_KIF_BYTES } from "../../
 import { canTransition } from "./state.mjs";
 
 const JSON_HEADERS = { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" };
-const SAFE_ERROR = "解析処理に失敗しました。Windows workerのログを確認してください。";
+const SAFE_ERROR = "原棋譜は保存済みです。解析処理に失敗しました。再試行できます。";
 
 function response(body, status = 200, origin = "") {
   const headers = { ...JSON_HEADERS };
@@ -47,11 +47,28 @@ async function bodyJson(request) {
   return request.json();
 }
 
+function hasStoredSource(row) {
+  return typeof row?.kif === "string" && row.kif.length > 0;
+}
+
+function missingSourceResponse(row, origin) {
+  return response({
+    error: "保存済みの原棋譜がないため処理できません",
+    storageStatus: "missing",
+    analysisStatus: row?.status || null,
+  }, 409, origin);
+}
+
 function publicRequest(row, duplicate = false) {
+  const sourceStored = hasStoredSource(row);
   return {
     requestId: row.request_id,
     fingerprint: row.fingerprint,
     createdAt: row.created_at,
+    storageStatus: sourceStored ? "stored" : "missing",
+    sourceSavedAt: sourceStored ? row.created_at : null,
+    analysisStatus: row.status,
+    // Keep the original field while deployed clients migrate to analysisStatus.
     status: row.status,
     metadata: JSON.parse(row.metadata_json),
     gameId: row.game_id || null,
@@ -81,7 +98,9 @@ async function submit(request, env, origin) {
   if (resolved.unresolved.length) return response({ error: "不明な対局情報の確認が不足しています" }, 400, origin);
   const existing = await env.QUEUE_DB.prepare("SELECT * FROM analysis_requests WHERE fingerprint = ?")
     .bind(fingerprint).first();
-  if (existing) return response(publicRequest(existing, true), 200, origin);
+  if (existing) return hasStoredSource(existing)
+    ? response(publicRequest(existing, true), 200, origin)
+    : missingSourceResponse(existing, origin);
   const now = new Date().toISOString();
   const requestId = crypto.randomUUID();
   const metadata = {
@@ -100,10 +119,18 @@ async function submit(request, env, origin) {
   } catch {
     const raced = await env.QUEUE_DB.prepare("SELECT * FROM analysis_requests WHERE fingerprint = ?")
       .bind(fingerprint).first();
-    if (raced) return response(publicRequest(raced, true), 200, origin);
-    return response({ error: "依頼を保存できませんでした" }, 500, origin);
+    if (raced) return hasStoredSource(raced)
+      ? response(publicRequest(raced, true), 200, origin)
+      : missingSourceResponse(raced, origin);
+    return response({ error: "原棋譜を保存できませんでした。もう一度送信してください", storageStatus: "failed", analysisStatus: null }, 500, origin);
   }
-  return response({ requestId, fingerprint, createdAt: now, status: "queued", metadata, gameId: null, error: null, duplicate: false }, 201, origin);
+  // A successful response is an acknowledgement that the canonical KIF can be
+  // read back from durable storage, not merely that analysis was queued.
+  const stored = await getRequest(env, requestId);
+  if (!stored || stored.fingerprint !== fingerprint || stored.kif !== input.kif) {
+    return response({ error: "原棋譜の保存を確認できませんでした。もう一度送信してください", storageStatus: "failed", analysisStatus: null }, 500, origin);
+  }
+  return response(publicRequest(stored), 201, origin);
 }
 
 async function claim(env, origin) {
@@ -115,7 +142,8 @@ async function claim(env, origin) {
        SET status = 'processing', updated_at = ?, claim_token = ?, lease_until = ?
      WHERE request_id = (
        SELECT request_id FROM analysis_requests
-        WHERE status = 'queued' OR (status = 'processing' AND lease_until < ?)
+        WHERE (status = 'queued' OR (status = 'processing' AND lease_until < ?))
+          AND kif IS NOT NULL AND length(kif) > 0
         ORDER BY created_at LIMIT 1
      )
      RETURNING *`
@@ -144,16 +172,16 @@ async function fail(request, env, requestId, origin) {
   const current = await getRequest(env, requestId);
   if (!current) return response({ error: "依頼がありません" }, 404, origin);
   if (!canTransition(current.status, "failed") || current.claim_token !== input.claimToken) return response({ error: "依頼状態が一致しません" }, 409, origin);
-  const message = typeof input.error === "string" && input.error.length <= 160 ? input.error : SAFE_ERROR;
   await env.QUEUE_DB.prepare(
     "UPDATE analysis_requests SET status='failed', updated_at=?, error_message=?, claim_token=NULL, lease_until=NULL WHERE request_id=? AND claim_token=?"
-  ).bind(new Date().toISOString(), message, requestId, input.claimToken).run();
+  ).bind(new Date().toISOString(), SAFE_ERROR, requestId, input.claimToken).run();
   return response(publicRequest(await getRequest(env, requestId)), 200, origin);
 }
 
 async function retry(env, requestId, origin) {
   const current = await getRequest(env, requestId);
   if (!current) return response({ error: "依頼がありません" }, 404, origin);
+  if (!hasStoredSource(current)) return missingSourceResponse(current, origin);
   if (!canTransition(current.status, "queued")) return response({ error: "再試行できる状態ではありません" }, 409, origin);
   await env.QUEUE_DB.prepare(
     "UPDATE analysis_requests SET status='queued', updated_at=?, error_message=NULL, claim_token=NULL, lease_until=NULL WHERE request_id=? AND status='failed'"

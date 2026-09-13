@@ -141,19 +141,29 @@ function statusContent(item, endpoint, secret) {
   const heading = document.createElement("b");
   const detail = document.createElement("div");
   detail.className = "sub";
-  const labels = { queued: "解析待ち", processing: "解析中", completed: "解析完了", failed: "解析失敗" };
-  heading.textContent = item.duplicate && item.status === "completed" ? "解析済みです" : (labels[item.status] || item.status);
+  const analysisStatus = item.analysisStatus || item.status;
+  const sourceStored = item.storageStatus === "stored" || (!item.storageStatus && item.requestId);
+  const labels = {
+    queued: "解析：待機中",
+    processing: "解析：処理中",
+    failed: "解析：失敗（原棋譜から再試行できます）",
+    completed: "解析：完了",
+  };
+  heading.textContent = sourceStored ? "原棋譜：保存済み" : "原棋譜：保存未確認";
+  const analysis = document.createElement("div");
+  analysis.className = analysisStatus === "failed" ? "queueError" : "validation";
+  analysis.textContent = labels[analysisStatus] || `解析：${analysisStatus || "状態不明"}`;
   detail.textContent = item.metadata ? `${item.metadata.sente} vs ${item.metadata.gote} / ${item.metadata.moves}手` : `request: ${item.requestId}`;
-  box.append(heading, detail);
-  if (item.status === "completed" && item.gameId) {
+  box.append(heading, analysis, detail);
+  if (analysisStatus === "completed" && item.gameId) {
     box.append(statusButton("感想戦を開く", async () => {
       await window.refreshCatalog?.();
       await window.loadGame?.(item.gameId, true);
     }));
-  } else if (item.status === "failed") {
+  } else if (analysisStatus === "failed") {
     const error = document.createElement("div");
     error.className = "queueError";
-    error.textContent = item.error || "安全のため詳細はWindows workerのログで確認してください";
+    error.textContent = item.error || "原棋譜は保存済みです。詳細はWindows workerのログで確認してください";
     box.append(error, statusButton("再試行", async () => {
       try {
         const updated = await api(endpoint, secret, `/api/requests/${item.requestId}/retry`, { method: "POST", body: "{}" });
@@ -205,7 +215,7 @@ elements.submitKif.addEventListener("click", async () => {
     });
     rememberRequest(item.requestId, settings.endpoint);
     renderQueueStatus(item, settings.endpoint, settings.secret);
-    setText(elements.kifValidation, item.duplicate ? "同じ棋譜の既存依頼を表示しています" : "解析依頼を送信しました");
+    setText(elements.kifValidation, item.duplicate ? "保存済みの同じ原棋譜を表示しています" : "原棋譜を保存しました。解析待ちです");
     const history = rankHistory();
     for (const player of parsedKif.submissionMetadata.players) {
       const value = player.officialRank?.label || confirmations.ranks?.[player.side];

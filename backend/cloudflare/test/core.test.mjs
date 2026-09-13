@@ -52,6 +52,15 @@ test("XSS文字列はdataとして保持し、UIはtextContentを使う", async 
   assert.doesNotMatch(ui, /innerHTML/);
 });
 
+test("PWAは原棋譜の保存と全解析状態を別々に表示する", async () => {
+  const ui = await readFile(resolve(root, "kif-submit-ui.mjs"), "utf8");
+  for (const label of ["原棋譜：保存済み", "解析：待機中", "解析：処理中", "解析：失敗", "解析：完了"]) {
+    assert.match(ui, new RegExp(label));
+  }
+  assert.match(ui, /原棋譜から再試行できます/);
+  assert.match(ui, /原棋譜を保存しました。解析待ちです/);
+});
+
 test("queue status transitionを制限する", () => {
   assert.equal(canTransition("queued", "processing"), true);
   assert.equal(canTransition("processing", "completed"), true);
