@@ -2,6 +2,19 @@
   "schemaVersion": 1,
   "games": [
     {
+      "id": "20260914_choniki",
+      "date": "2026/09/14",
+      "title": "ぺるそなお vs CHONIKI",
+      "side": "先手",
+      "result": "後手・CHONIKI 勝利",
+      "moves": 94,
+      "kif": "games/20260914_choniki.kif",
+      "gameData": "games/20260914_choniki.json",
+      "analysisData": "analysis/20260914_choniki.json",
+      "analyzed": true,
+      "status": "YaneuraOu V9.00 + 水匠5解析済み"
+    },
+    {
       "id": "20260914_招きネコ",
       "date": "2026/09/14",
       "title": "招きネコ vs ぺるそなお",
