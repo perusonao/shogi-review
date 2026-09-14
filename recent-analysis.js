@@ -8,6 +8,7 @@
   const WINDOWS = [10, 30];
   const THEMES = ["check", "capture", "promotion", "drop"];
   const THEME_LABELS = { check: "王手候補", capture: "駒取り", promotion: "成り", drop: "駒打ち" };
+  const TREND_LABELS = { improving: "改善傾向", stable: "横ばい・継続", worsening: "要注意", insufficient_data: "データ不足" };
   const TREND_MIN_RESULTS = 4;
   const TREND_MIN_HALF = 2;
   const TREND_THRESHOLD = 0.25;
@@ -187,6 +188,7 @@
   return {
     THEME_LABELS,
     THEMES,
+    TREND_LABELS,
     TREND_MIN_RESULTS,
     TREND_THRESHOLD,
     aggregateWindow,
@@ -278,11 +280,10 @@ if (typeof document !== "undefined") {
     table.className = "recentThemes";
     table.innerHTML = "<thead><tr><th>テーマ</th><th>機会</th><th>○</th><th>×</th><th>－</th><th>○率</th><th>傾向</th></tr></thead>";
     const body = document.createElement("tbody");
-    const trendLabels = { improving: "改善", stable: "横ばい", worsening: "悪化", insufficient_data: "不足" };
     for (const theme of summary.themes) {
       const row = document.createElement("tr");
       const values = [window.ShogiRecentAnalysis.THEME_LABELS[theme.theme], theme.opportunities, theme.pass, theme.fail,
-        theme.noOpportunity, theme.passRate === null ? "－" : `${Math.round(theme.passRate * 100)}%`, trendLabels[theme.trend]];
+        theme.noOpportunity, theme.passRate === null ? "－" : `${Math.round(theme.passRate * 100)}%`, window.ShogiRecentAnalysis.TREND_LABELS[theme.trend]];
       for (const value of values) appendText(row, "td", value);
       body.appendChild(row);
     }
@@ -305,8 +306,12 @@ if (typeof document !== "undefined") {
         return null;
       }
     }));
-    summaries = window.ShogiRecentAnalysis.buildRecentSummaries(loaded.filter(Boolean));
+    const records = loaded.filter(Boolean);
+    summaries = window.ShogiRecentAnalysis.buildRecentSummaries(records);
+    window.shogiRecentRecords = records;
+    window.shogiRecentSummaries = summaries;
     renderActiveSummary();
+    if (typeof window.renderGrowthDashboard === "function") window.renderGrowthDashboard(records, summaries);
   };
   if (Array.isArray(window.shogiGameCatalog)) window.renderRecentAnalysis(window.shogiGameCatalog);
 }

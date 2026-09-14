@@ -132,4 +132,7 @@ test("PWAは390px、10/30切替、4主要表示、根拠導線を持つ", () => 
   assert.match(ui, /max-width:390px/);
   assert.match(ui, /window\.loadGame\(ref\.gameId, true\)/);
   assert.match(ui, /jumpToSummaryPosition\(ref\.ply\)/);
+  assert.deepEqual(recent.TREND_LABELS, {
+    improving: "改善傾向", stable: "横ばい・継続", worsening: "要注意", insufficient_data: "データ不足",
+  });
 });
