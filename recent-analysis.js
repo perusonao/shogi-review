@@ -310,6 +310,7 @@ if (typeof document !== "undefined") {
     summaries = window.ShogiRecentAnalysis.buildRecentSummaries(records);
     window.shogiRecentRecords = records;
     window.shogiRecentSummaries = summaries;
+    if (typeof window.refreshReviewCoachingFocus === "function") window.refreshReviewCoachingFocus();
     renderActiveSummary();
     if (typeof window.renderGrowthDashboard === "function") window.renderGrowthDashboard(records, summaries);
   };

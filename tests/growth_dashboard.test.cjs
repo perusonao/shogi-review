@@ -78,6 +78,27 @@ test("最新対局のCurrent Tasks 0/1/3と○/×/－履歴を最大3件表示�
   assert.deepEqual(model([one, latest]).latestResults.map((item) => item.label), ["○", "×", "－"]);
 });
 
+test("共通selectorからCoaching Focusと次局ルーティンを構築する", () => {
+  const tasks = [
+    { id: "capture", title: "取れる駒を確認する", nextCheck: { theme: "capture" } },
+    { id: "drop", title: "駒打ちの候補を確認する", nextCheck: { theme: "drop" } },
+  ];
+  const row = game(3, "focus", [], tasks);
+  const recentSummary = {
+    window: 10, sampleGames: 3, gameIds: [row.id],
+    themes: [
+      { theme: "capture", pass: 2, fail: 0, noOpportunity: 0, evidenceRefs: [] },
+      { theme: "drop", pass: 0, fail: 3, noOpportunity: 1, evidenceRefs: [
+        { status: "fail" }, { status: "no_opportunity" }, { status: "fail" }, { status: "fail" },
+      ] },
+    ],
+    recurringChallenges: [{ theme: "drop", kind: "recurring_challenge", evidenceRefs: [] }],
+  };
+  const built = dashboard.buildModel([row], recentSummary);
+  assert.equal(built.coachingFocus.task.id, "drop");
+  assert.equal(built.nextGameRoutine, "指す前に確認: 取れる駒 → 駒打ち");
+});
+
 test("recent summaryのtrendとinsight/evidenceを再計算せず保持する", () => {
   const summary = {
     window: 10, sampleGames: 1, gameIds: ["g"],
@@ -112,7 +133,7 @@ test("390px UI、折りたたみ、10/30、evidence navigationを備える", () 
   const html = fs.readFileSync(path.join(root, "index.html"), "utf8");
   const ui = fs.readFileSync(path.join(root, "growth-dashboard.js"), "utf8");
   assert.match(html, /id="growthDashboard"/);
-  assert.match(html, /growth-dashboard\.js\?v=1/);
+  assert.match(html, /growth-dashboard\.js\?v=30/);
   assert.match(ui, /max-width:390px/);
   assert.match(ui, /document\.createElement\("details"\)/);
   assert.match(ui, /for \(const windowSize of \[10, 30\]\)/);
