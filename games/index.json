@@ -2,6 +2,19 @@
   "schemaVersion": 1,
   "games": [
     {
+      "id": "20260914_tosirin11",
+      "date": "2026/09/14",
+      "title": "sonao81 vs tosirin11",
+      "side": "先手",
+      "result": "先手・sonao81 勝利",
+      "moves": 121,
+      "kif": "games/20260914_tosirin11.kif",
+      "gameData": "games/20260914_tosirin11.json",
+      "analysisData": "analysis/20260914_tosirin11.json",
+      "analyzed": true,
+      "status": "YaneuraOu V9.00 + 水匠5解析済み"
+    },
+    {
       "id": "20260914_aiaipapa",
       "date": "2026/09/14",
       "title": "sonao81 vs AIAIPapa",

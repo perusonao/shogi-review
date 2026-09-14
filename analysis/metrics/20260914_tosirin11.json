@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "gameId": "20260914_tosirin11",
+  "analyzedAt": "2026-09-14T13:34:15.663143Z",
+  "positions": 122,
+  "problemPositions": 6,
+  "baseAnalysisSeconds": 4.49,
+  "extraPvSearchSeconds": 0.913,
+  "totalAnalysisSeconds": 5.403,
+  "shortPvCandidates": 9,
+  "extraSearchExecuted": 9,
+  "pvLengthBeforeAverage": 2.111,
+  "pvLengthAfterAverage": 5.667,
+  "pvLengthsBefore": [
+    2,
+    2,
+    3,
+    2,
+    1,
+    3,
+    2,
+    2,
+    2
+  ],
+  "pvLengthsAfter": [
+    11,
+    2,
+    3,
+    2,
+    13,
+    3,
+    2,
+    13,
+    2
+  ],
+  "improvedPvCount": 3,
+  "unchangedPvCount": 6
+}
