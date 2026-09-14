@@ -7,7 +7,8 @@ reviewPhase1Style.textContent = `
 .evalWrap{height:49px;margin:1px 0;padding:1px 5px}.evalHead{height:11px}.evalSvg{height:34px}
 .warn{border-left-color:var(--actual-card)}.warn h2{margin-bottom:2px}.legend{font-size:8px;margin-bottom:2px}.actualSemantic,.red{color:var(--actual-card)}.recommendedSemantic,.green{color:var(--recommended-card)}
 .compare{display:grid;grid-template-columns:1fr!important;gap:1px!important}.choice{padding:1px 4px;font-size:10px;display:flex;align-items:center;gap:7px;min-height:20px}.choice .moveRole{font-weight:700;min-width:30px}.choiceNotation{font-size:11px;color:#fff3df;font-weight:700}.bad{border-color:var(--actual-card)}.good{border:1px dashed var(--recommended-card)}.bad .moveRole{color:var(--actual-card)}.good .moveRole{color:var(--recommended-card)}
-.loss{font-size:8px;margin-top:2px}.reasonBlocks{margin-top:2px}.reasonBlock{font-size:9px;line-height:1.25;margin-top:2px;color:#fff3df}.reasonBlock b{color:#f5d49c;margin-right:3px}.reasonLevel{float:right;color:#a99d8c;font-size:8px}.pvDetails{margin-top:3px;font-size:8px}.pvDetails summary{cursor:pointer;color:#d8c19a;font-weight:700}.pvBranch{margin-top:2px}.pvBranch.actual{border-left:2px solid var(--actual-card);padding-left:4px}.pvBranch.recommended{border-left:2px dashed var(--recommended-card);padding-left:4px}.jump{display:none!important}
+.loss{font-size:8px;margin-top:2px}.reasonBlocks{margin-top:2px}.reasonBlock{font-size:9px;line-height:1.25;margin-top:2px;color:#fff3df;overflow-wrap:anywhere}.reasonBlock b{color:#f5d49c;margin-right:3px}.reasonBlock.conclusion{border-top:1px solid #5c4933;padding-top:2px}.reasonBlock.scope{color:#c8b99e}.reasonLevel{float:right;color:#a99d8c;font-size:8px}.pvDetails{margin-top:3px;font-size:8px}.pvDetails summary{cursor:pointer;color:#d8c19a;font-weight:700}.pvBranch{margin-top:2px}.pvBranch.actual{border-left:2px solid var(--actual-card);padding-left:4px}.pvBranch.recommended{border-left:2px dashed var(--recommended-card);padding-left:4px}.jump{display:none!important}
+@media(max-width:380px){.boardShell{width:min(100%,40.5dvh)}}
 `;
 document.head.appendChild(reviewPhase1Style);
 
@@ -118,7 +119,7 @@ function renderVerifiedIssue(issue) {
   reasonBlocks.className = "reasonBlocks";
   reasonBlocksForDisplay.forEach((block) => {
     const line = document.createElement("div");
-    line.className = "reasonBlock";
+    line.className = `reasonBlock ${block.key || ""}`;
     appendText(line, "b", `【${block.title}】`);
     line.appendChild(document.createTextNode(block.text));
     reasonBlocks.appendChild(line);

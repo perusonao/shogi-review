@@ -273,6 +273,9 @@
       piece: event.piece || null,
       from: event.from || null,
       to: event.to || null,
+      promotion: Boolean(event.promotion),
+      drop: Boolean(event.drop),
+      previous_to: extra.previous_to || null,
       target_piece: target?.piece || null,
       target_square: extra.target_square || (target ? event.to : null),
       ply_distance: event.ply_distance || 1,
@@ -287,17 +290,20 @@
 
   function tacticalEvidence(input, branch, branchReplay) {
     const result = [];
-    for (const event of branchReplay.events) {
-      if (event.captured) result.push(evidenceBase(input, branch, "LEGAL_CAPTURE", event));
-      if (event.check) result.push(evidenceBase(input, branch, "CHECK", event));
-      if (event.check && event.captured) result.push(evidenceBase(input, branch, "CHECK_AND_CAPTURE", event));
-      if (event.promotion) result.push(evidenceBase(input, branch, "PROMOTION", event));
-      if (event.drop) result.push(evidenceBase(input, branch, "DROP", event));
+    for (let index = 0; index < branchReplay.events.length; index += 1) {
+      const event = branchReplay.events[index];
+      const previous_to = index ? branchReplay.events[index - 1].to : null;
+      if (event.captured) result.push(evidenceBase(input, branch, "LEGAL_CAPTURE", event, { previous_to }));
+      if (event.check) result.push(evidenceBase(input, branch, "CHECK", event, { previous_to }));
+      if (event.check && event.captured) result.push(evidenceBase(input, branch, "CHECK_AND_CAPTURE", event, { previous_to }));
+      if (event.promotion) result.push(evidenceBase(input, branch, "PROMOTION", event, { previous_to }));
+      if (event.drop) result.push(evidenceBase(input, branch, "DROP", event, { previous_to }));
     }
     for (let index = 1; index < branchReplay.events.length; index += 1) {
       const capture = branchReplay.events[index - 1], recapture = branchReplay.events[index];
       if (capture.captured && recapture.captured?.id === capture.piece_id && recapture.to === capture.to) {
         result.push(evidenceBase(input, branch, "IMMEDIATE_RECAPTURE", recapture, {
+          previous_to: capture.to,
           fields: { captured_ply: capture.ply_distance, captured_piece: capture.piece, recaptured_piece: capture.piece, exchange_target_piece: capture.captured.piece, capturer_from: capture.from },
           proof: { method: "LEGAL_REPLAY", capture_move: capture.usi, recapture_move: recapture.usi, square: capture.to },
         }));
@@ -312,6 +318,7 @@
         else runs.push([event]);
       }
       for (const run of runs.filter((items) => items.length >= 2)) result.push(evidenceBase(input, branch, "CHECK_SEQUENCE", run[0], {
+        previous_to: branchReplay.events[run[0].ply_distance - 2]?.to || null,
         fields: { check_plies: run.map((event) => event.ply_distance), sequence_length: run.length },
         proof: { method: "LEGAL_REPLAY", check_moves: run.map((event) => event.usi), check_plies: run.map((event) => event.ply_distance) },
       }));
@@ -321,6 +328,7 @@
       if (replies.length === 0) {
         const endpoint = branchReplay.events.at(-1);
         result.push(evidenceBase(input, branch, "MATE_ENDPOINT", endpoint, {
+          previous_to: branchReplay.events[endpoint.ply_distance - 2]?.to || null,
           fields: { mate_ply: endpoint.ply_distance, legal_reply_count: 0 },
           proof: { method: "COMPLETE_LEGAL_PV_ENDPOINT", terminal_move: endpoint.usi, terminal_check: true, legal_reply_count: 0 },
         }));
@@ -433,6 +441,8 @@
       if (item.side !== expected.side) errors.push("SIDE");
       if (item.piece !== expected.piece) errors.push("PIECE");
       if (item.from !== expected.from || item.to !== expected.to) errors.push("SQUARE");
+      if (item.promotion !== Boolean(expected.promotion) || item.drop !== Boolean(expected.drop)) errors.push("MOVE_KIND");
+      if (item.previous_to !== (branchReplay.events[item.ply_distance - 2]?.to || null)) errors.push("PREVIOUS_DESTINATION");
       if ((item.type === "LEGAL_CAPTURE" || item.type === "CHECK_AND_CAPTURE") && (!expected.captured || item.target_piece !== expected.captured.piece || item.target_square !== expected.to)) errors.push("CAPTURE");
       if ((item.type === "CHECK" || item.type === "CHECK_AND_CAPTURE") && !expected.check) errors.push("CHECK");
       if (item.type === "CHECK_AND_CAPTURE" && !expected.captured) errors.push("CAPTURE");
@@ -472,8 +482,9 @@
 
   function jaMove(item) {
     const mark = item.side === "b" ? "▲" : "△";
-    const destination = item.to ? `${item.to[0]}${RANK_JA[coords(item.to).rank - 1]}` : "";
-    return `${mark}${destination}${PIECE_JA[item.piece] || item.piece || "駒"}${item.type === "DROP" || item.from === null && item.piece !== "K" ? "打" : ""}`;
+    const destination = item.to ? (item.previous_to === item.to ? "同" : `${item.to[0]}${RANK_JA[coords(item.to).rank - 1]}`) : "";
+    const piece = item.promotion ? `${PIECE_JA[unpromoted(item.piece)] || unpromoted(item.piece)}成` : (PIECE_JA[item.piece] || item.piece || "駒");
+    return `${mark}${destination}${piece}${item.drop ? "打" : ""}`;
   }
 
   function candidateReason(bundle) {
@@ -523,6 +534,15 @@
   }
 
   function productionReason(bundle) {
+    const scopeBlock = (reason) => ({
+      key: "scope",
+      title: "理由の範囲",
+      text: reason === "INVALID" || reason === "VALIDATOR_FAILURE"
+        ? "保存データを安全に検証できなかったため、この局面の理由は表示できません。"
+        : "保存データから確認できる範囲では、これ以上の理由は断定できません。",
+      confidence: "HIGH",
+      evidence_type: "SAFE_FALLBACK",
+    });
     const rejected = (reason, safe = false) => ({
       status: "FALLBACK",
       safe,
@@ -530,7 +550,7 @@
       q1: "×",
       q2: "×",
       q3: "×",
-      blocks: [],
+      blocks: [scopeBlock(reason)],
       accepted_types: [],
     });
     if (!bundle || bundle.status !== "VALID") return rejected(bundle?.status === "INVALID" ? "INVALID" : "UNRESOLVED");
@@ -563,7 +583,7 @@
     if (recommendedMate) {
       blocks.push({
         key: "recommended",
-        title: "推奨手だとどう変わる？",
+        title: "推奨手なら",
         text: `推奨手の読み筋では、${recommendedMate.ply_distance}ply目の${jaMove(recommendedMate)}が王手で、合法な応手がありません。`,
         confidence: "HIGH",
         evidence_type: PRODUCTION_ALLOWLIST.Q2_RECOMMENDED_MATE_ENDPOINT,
@@ -573,7 +593,7 @@
       const squareJa = `${recommendedCheckCapture.target_square[0]}${RANK_JA[coords(recommendedCheckCapture.target_square).rank - 1]}`;
       blocks.push({
         key: "recommended",
-        title: "推奨手だとどう変わる？",
+        title: "推奨手なら",
         text: `推奨手の読み筋では、保存PVの${recommendedSequence.check_plies.join("・")}ply目に王手が続き、${recommendedCheckCapture.ply_distance}ply目の${jaMove(recommendedCheckCapture)}が${squareJa}の${PIECE_JA[recommendedCheckCapture.target_piece]}を取ります。`,
         confidence: "HIGH",
         evidence_type: PRODUCTION_ALLOWLIST.Q2_RECOMMENDED_CHECK_SEQUENCE_WITH_CAPTURE,
@@ -581,6 +601,26 @@
       acceptedTypes.push(PRODUCTION_ALLOWLIST.Q2_RECOMMENDED_CHECK_SEQUENCE_WITH_CAPTURE);
     }
     if (!blocks.length) return rejected("SUPPORTING_ONLY", true);
+    if (actualMate && recommendedMate) {
+      blocks.push({
+        key: "conclusion",
+        title: "つまり",
+        text: `保存PVでは、実戦枝は${actualMate.ply_distance}ply目、推奨枝は${recommendedMate.ply_distance}ply目に、それぞれ王手に合法な応手がない局面へ到達します。`,
+        confidence: "HIGH",
+        evidence_type: "BRANCH_CONTRAST_MATE_ENDPOINTS",
+      });
+    } else if (actualMate && recommendedSequence && recommendedCheckCapture) {
+      const squareJa = `${recommendedCheckCapture.target_square[0]}${RANK_JA[coords(recommendedCheckCapture.target_square).rank - 1]}`;
+      blocks.push({
+        key: "conclusion",
+        title: "つまり",
+        text: `保存PVでは、実戦枝は${actualMate.ply_distance}ply目に王手への合法な応手がなくなり、推奨枝では${recommendedCheckCapture.ply_distance}ply目に${squareJa}の${PIECE_JA[recommendedCheckCapture.target_piece]}を取る王手が確認されます。`,
+        confidence: "HIGH",
+        evidence_type: "BRANCH_CONTRAST_MATE_AND_CHECK_CAPTURE",
+      });
+    } else {
+      blocks.push(scopeBlock("ONE_SIDED_EVIDENCE"));
+    }
     return {
       status: "PRODUCTION_READY",
       safe: true,
@@ -595,12 +635,8 @@
 
   function mergeProductionBlocks(fallbackBlocks, production) {
     const fallback = Array.isArray(fallbackBlocks) ? fallbackBlocks.map((block) => ({ ...block })) : [];
-    if (production?.status !== "PRODUCTION_READY" || !production.safe) return fallback;
-    const replacements = new Map(production.blocks.map((block) => [block.key, { ...block }]));
-    const slot = (block) => block.key === "why" ? "problem" : block.key;
-    const merged = fallback.map((block) => replacements.has(slot(block)) ? replacements.get(slot(block)) : block);
-    for (const block of production.blocks) if (!merged.some((item) => slot(item) === block.key)) merged.push({ ...block });
-    return merged;
+    if (!production || !Array.isArray(production.blocks)) return fallback;
+    return production.blocks.map((block) => ({ ...block }));
   }
 
   function extractEvidence(source) {
@@ -635,5 +671,5 @@
     return { valid: bundle.status !== "INVALID" && results.every((item) => item.valid), status: bundle.status, evidence: results };
   }
 
-  return { parseSfen, parseUsi, applyMove, legalMoves, replay, attackers, isInCheck, extractEvidence, validateEvidence, validateBundle, candidateReason, productionReason, mergeProductionBlocks, PRODUCTION_ALLOWLIST, PIECE_JA };
+  return { parseSfen, parseUsi, applyMove, legalMoves, replay, attackers, isInCheck, extractEvidence, validateEvidence, validateBundle, candidateReason, productionReason, mergeProductionBlocks, jaMove, PRODUCTION_ALLOWLIST, PIECE_JA };
 });
