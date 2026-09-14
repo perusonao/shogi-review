@@ -13,7 +13,13 @@ from unittest.mock import patch
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "tools"))
 
-from analysis_worker import find_existing_game_id, process_claim, validate_claim  # noqa: E402
+from analysis_worker import (  # noqa: E402
+    find_existing_game_id,
+    process_claim,
+    refresh_worker_checkout,
+    safe_output_summary,
+    validate_claim,
+)
 from kif_to_game import parse as parse_kif  # noqa: E402
 from queue_common import MAX_KIF_BYTES, canonical_fingerprint, normalize_rank, submission_metadata, validate_kif_text  # noqa: E402
 from pwa_intake import intake_player_games  # noqa: E402
@@ -226,8 +232,48 @@ class Phase2Tests(unittest.TestCase):
         self.assertIn("exit 1", joined)
         self.assertIn("preflight output", joined)
         self.assertIn("publish requires main", joined)
+        self.assertIn("stage=analysis_publish_subprocess", joined)
+        self.assertIn(self.fingerprint[:12], joined)
         self.assertNotIn(claim["claimToken"], joined)
         self.assertTrue(client.failed)
+
+    def test_worker_redacts_and_bounds_subprocess_output(self) -> None:
+        summary = safe_output_summary("x" * 2500 + " token=do-not-log Authorization: Bearer also-secret")
+        self.assertLessEqual(len(summary), 2100)
+        self.assertNotIn("do-not-log", summary)
+        self.assertNotIn("also-secret", summary)
+        self.assertIn("[REDACTED]", summary)
+
+    def test_worker_refreshes_detached_checkout_before_claim(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            base = Path(directory)
+            origin = base / "origin.git"
+            source = base / "source"
+            worker = base / "worker"
+            origin.mkdir(); source.mkdir()
+            subprocess.run(["git", "init", "--bare"], cwd=origin, check=True, capture_output=True)
+            subprocess.run(["git", "init", "-b", "main"], cwd=source, check=True, capture_output=True)
+            subprocess.run(["git", "config", "user.name", "Worker Test"], cwd=source, check=True)
+            subprocess.run(["git", "config", "user.email", "worker@example.invalid"], cwd=source, check=True)
+            (source / "marker.txt").write_text("old\n", encoding="utf-8")
+            subprocess.run(["git", "add", "marker.txt"], cwd=source, check=True)
+            subprocess.run(["git", "commit", "-m", "old"], cwd=source, check=True, capture_output=True)
+            subprocess.run(["git", "remote", "add", "origin", str(origin)], cwd=source, check=True)
+            subprocess.run(["git", "push", "-u", "origin", "main"], cwd=source, check=True, capture_output=True)
+            subprocess.run(["git", "worktree", "add", "--detach", str(worker), "HEAD"], cwd=source,
+                           check=True, capture_output=True)
+            (source / "marker.txt").write_text("new\n", encoding="utf-8")
+            subprocess.run(["git", "add", "marker.txt"], cwd=source, check=True)
+            subprocess.run(["git", "commit", "-m", "new"], cwd=source, check=True, capture_output=True)
+            subprocess.run(["git", "push", "origin", "main"], cwd=source, check=True, capture_output=True)
+
+            head, updated = refresh_worker_checkout(worker)
+            expected = subprocess.run(["git", "rev-parse", "origin/main"], cwd=worker, check=True,
+                                      capture_output=True, text=True).stdout.strip()
+            self.assertTrue(updated)
+            self.assertEqual(head, expected)
+            self.assertEqual((worker / "marker.txt").read_text(encoding="utf-8"), "new\n")
+            self.assertEqual(refresh_worker_checkout(worker), (expected, False))
 
 
 if __name__ == "__main__":

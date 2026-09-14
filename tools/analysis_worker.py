@@ -6,6 +6,7 @@ import argparse
 import json
 import logging
 import os
+import re
 import subprocess
 import sys
 import time
@@ -25,6 +26,16 @@ SAFE_FAILURE = "解析処理に失敗しました。Windows workerのログを�
 
 class WorkerError(RuntimeError):
     pass
+
+
+def safe_output_summary(value: str | None, limit: int = 2000) -> str:
+    """Bound subprocess diagnostics and redact credential-shaped text."""
+    if not value:
+        return ""
+    summary = value.strip()[-limit:]
+    summary = re.sub(r"(?i)(authorization:\s*bearer\s+)[^\s]+", r"\1[REDACTED]", summary)
+    summary = re.sub(r"(?i)((?:secret|token)\s*[=:]\s*)[^\s]+", r"\1[REDACTED]", summary)
+    return summary
 
 
 class QueueClient:
@@ -119,6 +130,36 @@ def run_checked(command: list[str], root: Path, *, capture: bool = False) -> sub
     )
 
 
+def refresh_worker_checkout(root: Path) -> tuple[str, bool]:
+    """Fast-forward the clean detached worker before it claims durable work."""
+    status = run_checked(["git", "status", "--porcelain"], root, capture=True)
+    if status.returncode != 0:
+        raise WorkerError("checkout status failed")
+    if status.stdout.strip():
+        raise WorkerError("worker checkout is dirty")
+    branch = run_checked(["git", "branch", "--show-current"], root, capture=True)
+    if branch.returncode != 0:
+        raise WorkerError("checkout branch failed")
+    if branch.stdout.strip():
+        raise WorkerError("worker checkout must use detached HEAD")
+    if run_checked(["git", "fetch", "origin", "main"], root, capture=True).returncode != 0:
+        raise WorkerError("checkout fetch failed")
+    head = run_checked(["git", "rev-parse", "HEAD"], root, capture=True).stdout.strip()
+    origin = run_checked(["git", "rev-parse", "origin/main"], root, capture=True).stdout.strip()
+    if not head or not origin:
+        raise WorkerError("checkout revision lookup failed")
+    if head == origin:
+        return head, False
+    if run_checked(["git", "merge-base", "--is-ancestor", "HEAD", "origin/main"], root).returncode != 0:
+        raise WorkerError("worker checkout diverged from origin/main")
+    if run_checked(["git", "merge", "--ff-only", "origin/main"], root, capture=True).returncode != 0:
+        raise WorkerError("worker checkout fast-forward failed")
+    updated = run_checked(["git", "rev-parse", "HEAD"], root, capture=True).stdout.strip()
+    if updated != origin:
+        raise WorkerError("worker checkout update verification failed")
+    return updated, True
+
+
 def ensure_published(root: Path) -> None:
     if run_checked(["git", "fetch", "origin", "main"], root).returncode != 0:
         raise WorkerError("git fetch failed")
@@ -153,18 +194,27 @@ def intake_existing(root: Path, game_id: str, fingerprint: str, metadata: dict) 
 def process_claim(client: QueueClient, claim: dict, root: Path, user_names: tuple[str, ...]) -> str:
     request_id = str(claim.get("requestId", ""))
     claim_token = str(claim.get("claimToken", ""))
+    fingerprint_id = str(claim.get("fingerprint", ""))[:12] or "unknown"
+    stage = "claim_validation"
     inbox_path: Path | None = None
     try:
         _, fingerprint, user, calibration_metadata = validate_claim(claim, user_names)
+        fingerprint_id = fingerprint[:12]
+        logging.info("processing request=%s fingerprint=%s", request_id, fingerprint_id)
         if calibration_metadata is None:
             logging.warning("request %s predates calibration metadata; D2 intake will be skipped", request_id)
+        stage = "existing_artifact_lookup"
         existing = find_existing_game_id(root, fingerprint, user)
         if existing:
             if calibration_metadata is not None:
+                stage = "calibration_intake"
                 intake_existing(root, existing, fingerprint, calibration_metadata)
+            stage = "publish_verification"
             ensure_published(root)
+            stage = "queue_complete"
             client.complete(request_id, claim_token, existing)
             return existing
+        stage = "durable_kif_materialization"
         inbox_path = root / "games" / "inbox" / f"queue-{request_id}.kif"
         inbox_path.parent.mkdir(parents=True, exist_ok=True)
         with inbox_path.open("x", encoding="utf-8", newline="\n") as handle:
@@ -179,21 +229,34 @@ def process_claim(client: QueueClient, claim: dict, root: Path, user_names: tupl
         if calibration_metadata is not None:
             command.extend(["--calibration-metadata", json.dumps(
                 {"fingerprint": fingerprint, "metadata": calibration_metadata}, ensure_ascii=False)])
+        stage = "analysis_publish_subprocess"
         completed = run_checked(command, root, capture=True)
         if completed.returncode != 0:
-            logging.error("import pipeline failed (exit %s)", completed.returncode)
-            if completed.stdout and completed.stdout.strip():
-                logging.error("import stdout:\n%s", completed.stdout.rstrip())
-            if completed.stderr and completed.stderr.strip():
-                logging.error("import stderr:\n%s", completed.stderr.rstrip())
+            logging.error("import pipeline failed request=%s fingerprint=%s stage=%s exit %s",
+                          request_id, fingerprint_id, stage, completed.returncode)
+            stdout = safe_output_summary(completed.stdout)
+            stderr = safe_output_summary(completed.stderr)
+            if stdout:
+                logging.error("import stdout summary:\n%s", stdout)
+            if stderr:
+                logging.error("import stderr summary:\n%s", stderr)
             raise WorkerError("analysis pipeline failed")
+        stage = "artifact_verification"
         game_id = find_existing_game_id(root, fingerprint, user)
         if not game_id:
             raise WorkerError("published game not found")
+        stage = "publish_verification"
         ensure_published(root)
+        stage = "queue_complete"
         client.complete(request_id, claim_token, game_id)
         return game_id
-    except Exception:
+    except Exception as exc:
+        head_result = run_checked(["git", "rev-parse", "HEAD"], root, capture=True)
+        branch_result = run_checked(["git", "branch", "--show-current"], root, capture=True)
+        head = (head_result.stdout or "").strip() or "unknown"
+        branch = (branch_result.stdout or "").strip() or "detached"
+        logging.error("request=%s fingerprint=%s failed stage=%s error=%s head=%s branch=%s",
+                      request_id, fingerprint_id, stage, type(exc).__name__, head[:12], branch)
         if inbox_path and inbox_path.exists():
             inbox_path.unlink()
         try:
@@ -227,6 +290,11 @@ def main() -> int:
     logging.info("analysis worker started (poll=%ss)", args.poll_seconds)
     while True:
         try:
+            head, updated = refresh_worker_checkout(args.root.resolve())
+            logging.info("worker checkout ready head=%s branch=detached", head[:12])
+            if updated:
+                logging.info("worker checkout advanced; restarting with latest code")
+                os.execv(sys.executable, [sys.executable, *sys.argv])
             claim = client.claim()
             if claim:
                 game_id = process_claim(client, claim, args.root.resolve(), users)
