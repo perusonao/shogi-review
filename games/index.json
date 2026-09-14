@@ -2,6 +2,19 @@
   "schemaVersion": 1,
   "games": [
     {
+      "id": "20260914_招きネコ",
+      "date": "2026/09/14",
+      "title": "招きネコ vs ぺるそなお",
+      "side": "後手",
+      "result": "後手・ぺるそなお 勝利",
+      "moves": 148,
+      "kif": "games/20260914_招きネコ.kif",
+      "gameData": "games/20260914_招きネコ.json",
+      "analysisData": "analysis/20260914_招きネコ.json",
+      "analyzed": true,
+      "status": "YaneuraOu V9.00 + 水匠5解析済み"
+    },
+    {
       "id": "20260914_tosirin11",
       "date": "2026/09/14",
       "title": "sonao81 vs tosirin11",

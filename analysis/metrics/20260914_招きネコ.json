@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "gameId": "20260914_招きネコ",
+  "analyzedAt": "2026-09-14T14:39:48.360316Z",
+  "positions": 149,
+  "problemPositions": 6,
+  "baseAnalysisSeconds": 5.868,
+  "extraPvSearchSeconds": 0.781,
+  "totalAnalysisSeconds": 6.649,
+  "shortPvCandidates": 2,
+  "extraSearchExecuted": 2,
+  "pvLengthBeforeAverage": 2.0,
+  "pvLengthAfterAverage": 9.5,
+  "pvLengthsBefore": [
+    2,
+    2
+  ],
+  "pvLengthsAfter": [
+    17,
+    2
+  ],
+  "improvedPvCount": 1,
+  "unchangedPvCount": 1
+}
