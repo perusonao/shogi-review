@@ -2,6 +2,19 @@
   "schemaVersion": 1,
   "games": [
     {
+      "id": "20260914_aleph009",
+      "date": "2026/09/14",
+      "title": "sonao81 vs aleph009",
+      "side": "先手",
+      "result": "先手・sonao81 勝利",
+      "moves": 53,
+      "kif": "games/20260914_aleph009.kif",
+      "gameData": "games/20260914_aleph009.json",
+      "analysisData": "analysis/20260914_aleph009.json",
+      "analyzed": true,
+      "status": "YaneuraOu V9.00 + 水匠5解析済み"
+    },
+    {
       "id": "20260914_issue24-e2e",
       "date": "2026/09/14",
       "title": "issue24-e2e vs ぺるそなお",

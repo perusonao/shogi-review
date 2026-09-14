@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "gameId": "20260914_aleph009",
+  "analyzedAt": "2026-09-14T07:41:50.673165Z",
+  "positions": 54,
+  "problemPositions": 5,
+  "baseAnalysisSeconds": 1.872,
+  "extraPvSearchSeconds": 0.841,
+  "totalAnalysisSeconds": 2.713,
+  "shortPvCandidates": 9,
+  "extraSearchExecuted": 9,
+  "pvLengthBeforeAverage": 2.111,
+  "pvLengthAfterAverage": 7.778,
+  "pvLengthsBefore": [
+    1,
+    3,
+    1,
+    3,
+    2,
+    3,
+    1,
+    2,
+    3
+  ],
+  "pvLengthsAfter": [
+    16,
+    3,
+    2,
+    18,
+    2,
+    12,
+    2,
+    12,
+    3
+  ],
+  "improvedPvCount": 6,
+  "unchangedPvCount": 3
+}
