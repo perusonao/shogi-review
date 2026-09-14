@@ -2,6 +2,19 @@
   "schemaVersion": 1,
   "games": [
     {
+      "id": "20260914_aiaipapa",
+      "date": "2026/09/14",
+      "title": "sonao81 vs AIAIPapa",
+      "side": "先手",
+      "result": "後手・AIAIPapa 勝利",
+      "moves": 110,
+      "kif": "games/20260914_aiaipapa.kif",
+      "gameData": "games/20260914_aiaipapa.json",
+      "analysisData": "analysis/20260914_aiaipapa.json",
+      "analyzed": true,
+      "status": "YaneuraOu V9.00 + 水匠5解析済み"
+    },
+    {
       "id": "20260914_aleph009",
       "date": "2026/09/14",
       "title": "sonao81 vs aleph009",

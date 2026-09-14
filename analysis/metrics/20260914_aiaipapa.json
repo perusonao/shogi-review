@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "gameId": "20260914_aiaipapa",
+  "analyzedAt": "2026-09-14T13:13:17.587128Z",
+  "positions": 111,
+  "problemPositions": 6,
+  "baseAnalysisSeconds": 4.131,
+  "extraPvSearchSeconds": 0.706,
+  "totalAnalysisSeconds": 4.837,
+  "shortPvCandidates": 4,
+  "extraSearchExecuted": 4,
+  "pvLengthBeforeAverage": 2.0,
+  "pvLengthAfterAverage": 2.25,
+  "pvLengthsBefore": [
+    3,
+    2,
+    1,
+    2
+  ],
+  "pvLengthsAfter": [
+    3,
+    2,
+    2,
+    2
+  ],
+  "improvedPvCount": 1,
+  "unchangedPvCount": 3
+}
