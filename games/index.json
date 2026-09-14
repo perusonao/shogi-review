@@ -2,6 +2,19 @@
   "schemaVersion": 1,
   "games": [
     {
+      "id": "20260914_issue24-e2e",
+      "date": "2026/09/14",
+      "title": "issue24-e2e vs ぺるそなお",
+      "side": "後手",
+      "result": "後手・ぺるそなお 勝利",
+      "moves": 58,
+      "kif": "games/20260914_issue24-e2e.kif",
+      "gameData": "games/20260914_issue24-e2e.json",
+      "analysisData": "analysis/20260914_issue24-e2e.json",
+      "analyzed": true,
+      "status": "YaneuraOu V9.00 + 水匠5解析済み"
+    },
+    {
       "id": "20260913_soumazpanda",
       "date": "2026/09/13",
       "title": "sonao81 vs soumazPanda",

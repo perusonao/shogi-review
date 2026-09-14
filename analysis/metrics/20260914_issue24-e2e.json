@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "gameId": "20260914_issue24-e2e",
+  "analyzedAt": "2026-09-14T04:49:38.649195Z",
+  "positions": 59,
+  "problemPositions": 3,
+  "baseAnalysisSeconds": 2.162,
+  "extraPvSearchSeconds": 0.489,
+  "totalAnalysisSeconds": 2.651,
+  "shortPvCandidates": 3,
+  "extraSearchExecuted": 3,
+  "pvLengthBeforeAverage": 3.0,
+  "pvLengthAfterAverage": 8.0,
+  "pvLengthsBefore": [
+    3,
+    3,
+    3
+  ],
+  "pvLengthsAfter": [
+    13,
+    8,
+    3
+  ],
+  "improvedPvCount": 2,
+  "unchangedPvCount": 1
+}
