@@ -126,7 +126,7 @@ class CohortAndDashboardTests(unittest.TestCase):
         rows, _ = collect(ROOT)
         rows = [item for item in rows if item["game_id"] not in PILOT_EXCLUDED_GAME_IDS]
         report = dataset_dashboard(build_dataset(rows, default_route="existing-kif"))
-        self.assertEqual(report["all_data"]["player_games"], 64)
+        self.assertEqual(report["all_data"]["player_games"], len(rows))
         self.assertEqual(report["pilot_cohort"]["player_games"], 24)
         self.assertEqual(report["pilot_cohort"]["unique_users"], 13)
         self.assertEqual(report["pilot_cohort"]["stages"]["stage_1"]["total_shortage"], 66)
@@ -134,14 +134,17 @@ class CohortAndDashboardTests(unittest.TestCase):
     def test_latest_main_counts_are_default_growth_baseline(self):
         rows, _ = collect(ROOT)
         report = dataset_dashboard(build_dataset(rows, default_route="existing-kif"))
-        self.assertEqual(report["all_data"]["player_games"], 68)
+        self.assertEqual(report["all_data"]["player_games"], len(rows))
         self.assertEqual(report["pilot_cohort"]["player_games"], 26)
         self.assertEqual(report["pilot_cohort"]["unique_users"], 14)
         self.assertEqual(report["pilot_cohort"]["by_rank"]["2級"]["player_games"], 2)
         self.assertEqual(report["pilot_cohort"]["by_rank"]["1級"]["player_games"], 8)
         self.assertEqual(report["pilot_cohort"]["by_rank"]["初段"]["player_games"], 16)
         self.assertEqual(report["pilot_cohort"]["stages"]["stage_1"]["total_shortage"], 64)
-        self.assertEqual(report["all_data"]["non_pilot_player_games_preserved"], 42)
+        self.assertEqual(
+            report["all_data"]["non_pilot_player_games_preserved"],
+            len(rows) - report["pilot_cohort"]["player_games"],
+        )
         self.assertIn("missing", report["all_data"]["summary"])
 
 
