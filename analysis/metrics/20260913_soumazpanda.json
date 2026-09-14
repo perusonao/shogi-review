@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "gameId": "20260913_soumazpanda",
+  "analyzedAt": "2026-09-14T04:48:39.863942Z",
+  "positions": 81,
+  "problemPositions": 6,
+  "baseAnalysisSeconds": 3.11,
+  "extraPvSearchSeconds": 0.661,
+  "totalAnalysisSeconds": 3.771,
+  "shortPvCandidates": 4,
+  "extraSearchExecuted": 4,
+  "pvLengthBeforeAverage": 1.5,
+  "pvLengthAfterAverage": 2.0,
+  "pvLengthsBefore": [
+    1,
+    2,
+    1,
+    2
+  ],
+  "pvLengthsAfter": [
+    2,
+    2,
+    2,
+    2
+  ],
+  "improvedPvCount": 2,
+  "unchangedPvCount": 2
+}

@@ -2,6 +2,19 @@
   "schemaVersion": 1,
   "games": [
     {
+      "id": "20260913_soumazpanda",
+      "date": "2026/09/13",
+      "title": "sonao81 vs soumazPanda",
+      "side": "先手",
+      "result": "後手・soumazPanda 勝利",
+      "moves": 80,
+      "kif": "games/20260913_soumazpanda.kif",
+      "gameData": "games/20260913_soumazpanda.json",
+      "analysisData": "analysis/20260913_soumazpanda.json",
+      "analyzed": true,
+      "status": "YaneuraOu V9.00 + 水匠5解析済み"
+    },
+    {
       "id": "20260912_じーく___ω",
       "date": "2026/09/12",
       "title": "ぺるそなお vs じーく(´・ω・｀)",
