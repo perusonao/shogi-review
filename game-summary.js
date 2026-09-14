@@ -470,6 +470,7 @@
 if (typeof document !== "undefined" && typeof render === "function") {
   const learningStyle = document.createElement("style");
   learningStyle.textContent = ".nextGameLearning,.taskResults,.currentTasks{margin:2px 0}.nextGameLearning details,.taskResults,.currentTasks{background:#211a13;border:1px solid #527056;border-radius:7px;padding:4px}.nextGameLearning summary{cursor:pointer;color:#9fe0a9;font-size:10px;font-weight:700}.learningIntro,.currentTasksEmpty{font-size:8px;color:#c8b99e;margin:4px 0}.learningItem{display:grid;grid-template-columns:64px 1fr;align-items:center;width:100%;text-align:left;border:0;border-top:1px solid #4c4438;background:transparent;color:#fff3df;padding:5px 2px;font:inherit}.learningItem b{font-size:9px;color:#c7ebc9}.learningItem span{font-size:9px}.learningItem small{grid-column:2;font-size:8px;color:#c8b99e;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.taskResults h2,.currentTasks h2{margin:0 0 3px;color:#ffd590;font-size:10px}.taskResult{display:grid;grid-template-columns:28px minmax(0,1fr);gap:1px 4px;border-top:1px solid #4c4438;padding:6px 2px}.taskResultLabel{grid-row:1/4;display:flex;align-items:center;justify-content:center;width:24px;height:24px;border-radius:50%;font-size:15px;font-weight:800;background:#423426}.taskResult.pass .taskResultLabel{color:#a8efb3;border:1px solid #62d17d}.taskResult.fail .taskResultLabel{color:#ffb4a8;border:1px solid #e85a49}.taskResult.no_opportunity .taskResultLabel{color:#d6c8b5;border:1px solid #867a6b}.taskResult b{font-size:10px}.taskResult span{font-size:8px;line-height:1.35;color:#d7c8b2}.taskResult button{justify-self:start;border:0;background:transparent;color:#e9c98f;padding:1px 0;font:inherit;font-size:8px;font-weight:700;line-height:1.3;text-align:left}.currentTask{display:grid;grid-template-columns:20px 1fr;width:100%;text-align:left;border:0;border-top:1px solid #4c4438;background:transparent;color:#fff3df;padding:5px 2px;font:inherit}.currentTaskIndex{grid-row:1/4;color:#f1c679;font-size:12px;font-weight:700}.currentTask b{font-size:10px}.currentTask span,.currentTask small{grid-column:2;font-size:8px;line-height:1.3}.currentTask span{color:#c7ebc9}.currentTask small{color:#c8b99e}.summaryItem{padding:0!important;overflow:hidden}.summaryMain{display:block;width:100%;min-height:68px;text-align:left;border:0;background:transparent;color:inherit;padding:5px;font:inherit}.summaryRelated{border-top:1px solid #5c4933;padding:3px 5px}.summaryRelatedLabel{font-size:8px;color:#c8b99e}.auxiliaryJump{display:block;width:100%;border:0;background:transparent;color:#e9c98f;text-align:left;padding:2px 0;font-size:8px;line-height:1.2}.auxiliaryJump:focus-visible,.summaryMain:focus-visible,.taskResult button:focus-visible,.currentTask:focus-visible{outline:2px solid #f1c679;outline-offset:-2px}@media(max-width:390px){.taskResult,.currentTask{grid-template-columns:26px minmax(0,1fr);padding:7px 2px}.currentTask{grid-template-columns:18px minmax(0,1fr)}.taskResult b,.currentTask b{font-size:10px}.taskResult span,.currentTask span,.currentTask small{overflow-wrap:anywhere}}";
+  learningStyle.textContent += ".coachingFocus{display:block;width:100%;margin:4px 0;padding:6px;border:1px solid #d0a15e;border-radius:6px;background:#3b2c1d;color:#fff3df;text-align:left;font:inherit}.coachingFocus strong,.coachingFocus span{display:block;overflow-wrap:anywhere}.coachingFocus strong{color:#ffe0a5;font-size:10px}.coachingFocus span{margin-top:2px;color:#c7ebc9;font-size:8px}.nextGameRoutine{margin:4px 0;padding:5px;border-radius:5px;background:#18130d;color:#f5d49c;font-size:9px;line-height:1.35;overflow-wrap:anywhere}.coachingFocus:focus-visible{outline:2px solid #f1c679;outline-offset:-2px}@media(max-width:390px){.coachingFocus,.nextGameRoutine{max-width:100%}}";
   document.head.appendChild(learningStyle);
   const renderBeforeGameSummary = render;
   let summaryGameId = null;
@@ -594,6 +595,23 @@ if (typeof document !== "undefined" && typeof render === "function") {
       appendText(container, "p", "この対局には課題化できる十分な根拠がありません。", "currentTasksEmpty");
       return;
     }
+    const focus = window.ShogiCoachingFocus?.selectCoachingFocus(tasks, window.shogiRecentSummaries?.[10]);
+    const routine = window.ShogiCoachingFocus?.buildNextGameRoutine(tasks);
+    if (focus) {
+      const focusButton = document.createElement("button");
+      focusButton.type = "button";
+      focusButton.className = "coachingFocus";
+      appendText(focusButton, "strong", `最優先: ${focus.task.title || "現在の課題"}`);
+      appendText(focusButton, "span", focus.detail);
+      focusButton.addEventListener("click", async () => {
+        if (focus.task.sourceGame && focus.task.sourceGame !== currentGameId) {
+          await loadGame(focus.task.sourceGame, true);
+        }
+        jumpToSummaryPosition(focus.task.sourcePly);
+      });
+      container.appendChild(focusButton);
+    }
+    if (routine) appendText(container, "p", routine, "nextGameRoutine");
     tasks.forEach((task, index) => {
       const button = document.createElement("button");
       button.type = "button";
@@ -713,4 +731,7 @@ if (typeof document !== "undefined" && typeof render === "function") {
     renderGameSummary();
   };
   window.jumpToSummaryPosition = jumpToSummaryPosition;
+  window.refreshReviewCoachingFocus = function refreshReviewCoachingFocus() {
+    if (D) renderCurrentTasks(Array.isArray(currentTasks) ? currentTasks.slice(0, 3) : []);
+  };
 }

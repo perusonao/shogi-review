@@ -223,6 +223,10 @@ test("次局の課題UIは最大3件・390px・元局面導線と旧JSONの0件�
   assert.match(ui, /jumpToSummaryPosition\(task\.sourcePly\)/);
   assert.match(ui, /max-width:390px/);
   assert.match(ui, /課題化できる十分な根拠がありません/);
+  assert.match(ui, /ShogiCoachingFocus\?\.selectCoachingFocus/);
+  assert.match(ui, /ShogiCoachingFocus\?\.buildNextGameRoutine/);
+  assert.match(ui, /className = "coachingFocus"/);
+  assert.match(ui, /focus\.task\.sourceGame/);
 });
 
 test("前回の課題UIは○×－・短い理由・根拠局面導線を390pxで表示する", () => {
