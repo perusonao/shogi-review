@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "gameId": "20260916_ゼルダ4869",
+  "analyzedAt": "2026-09-15T16:05:00.803341Z",
+  "positions": 193,
+  "problemPositions": 6,
+  "baseAnalysisSeconds": 7.288,
+  "extraPvSearchSeconds": 1.209,
+  "totalAnalysisSeconds": 8.497,
+  "shortPvCandidates": 6,
+  "extraSearchExecuted": 6,
+  "pvLengthBeforeAverage": 1.833,
+  "pvLengthAfterAverage": 4.667,
+  "pvLengthsBefore": [
+    1,
+    1,
+    1,
+    3,
+    3,
+    2
+  ],
+  "pvLengthsAfter": [
+    2,
+    1,
+    17,
+    3,
+    3,
+    2
+  ],
+  "improvedPvCount": 2,
+  "unchangedPvCount": 4
+}
