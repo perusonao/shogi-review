@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "gameId": "20260915_bikken75",
+  "analyzedAt": "2026-09-15T06:27:17.750171Z",
+  "positions": 123,
+  "problemPositions": 6,
+  "baseAnalysisSeconds": 5.33,
+  "extraPvSearchSeconds": 1.058,
+  "totalAnalysisSeconds": 6.388,
+  "shortPvCandidates": 8,
+  "extraSearchExecuted": 8,
+  "pvLengthBeforeAverage": 2.375,
+  "pvLengthAfterAverage": 4.125,
+  "pvLengthsBefore": [
+    1,
+    3,
+    2,
+    3,
+    3,
+    3,
+    2,
+    2
+  ],
+  "pvLengthsAfter": [
+    15,
+    3,
+    2,
+    3,
+    3,
+    3,
+    2,
+    2
+  ],
+  "improvedPvCount": 1,
+  "unchangedPvCount": 7
+}
