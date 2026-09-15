@@ -2,6 +2,19 @@
   "schemaVersion": 1,
   "games": [
     {
+      "id": "20260916_ほのたん",
+      "date": "2026/09/16",
+      "title": "ぺるそなお vs ほのたん",
+      "side": "先手",
+      "result": "先手・ぺるそなお 勝利",
+      "moves": 157,
+      "kif": "games/20260916_ほのたん.kif",
+      "gameData": "games/20260916_ほのたん.json",
+      "analysisData": "analysis/20260916_ほのたん.json",
+      "analyzed": true,
+      "status": "YaneuraOu V9.00 + 水匠5解析済み"
+    },
+    {
       "id": "20260916_ゼルダ4869",
       "date": "2026/09/16",
       "title": "ぺるそなお vs ゼルダ4869",
