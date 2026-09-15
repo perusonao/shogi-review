@@ -115,10 +115,10 @@ class ModelTests(unittest.TestCase):
         rows, _ = collect(ROOT)
         pilot = labeled_pilot_rows([r for r in rows if r["game_id"] != "20260912_shuty005"])
         validation = validate_rows(pilot)
-        self.assertEqual(validation["rows"], 24)
-        self.assertEqual(validation["unique_users"], 13)
+        self.assertEqual(validation["rows"], 30)
+        self.assertEqual(validation["unique_users"], 16)
         result = experiment(pilot)
-        self.assertEqual(result["models"]["raw_score_only"]["folds"], 13)
+        self.assertEqual(result["models"]["raw_score_only"]["folds"], 16)
         self.assertEqual(set(result["phase_models"]), {"overall", "opening", "middlegame", "endgame"})
 
 

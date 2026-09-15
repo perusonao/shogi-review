@@ -115,6 +115,82 @@ test("recent summaryのtrendとinsight/evidenceを再計算せず保持する", 
   assert.equal(built.themes[0].trend, "worsening");
 });
 
+test("課題別ProgressはCurrent Tasks順を優先しtheme重複を除いて直近5判定を保持する", () => {
+  const tasks = [
+    { id: "drop-a", nextCheck: { theme: "drop" } },
+    { id: "drop-b", nextCheck: { theme: "drop" } },
+    { id: "legacy", nextCheck: { theme: "unknown" } },
+  ];
+  const records = Array.from({ length: 6 }, (_, index) => {
+    const row = game(index + 1, `p${index}`);
+    row.analysis.taskResults = [result(row.id, "drop", ["pass", "fail", "no_opportunity"][index % 3], index, 30 + index)];
+    return row;
+  });
+  const summaries = recent.buildRecentSummaries(records);
+  const progress = dashboard.buildThemeProgress(tasks, summaries);
+  assert.deepEqual(progress.map((item) => item.theme), ["drop"]);
+  assert.deepEqual(progress[0].history.map((item) => item.status),
+    ["fail", "no_opportunity", "pass", "fail", "no_opportunity"]);
+  assert.equal(progress[0].passRate, 0.5);
+  assert.equal(progress[0].latestEvidence.status, "fail");
+});
+
+test("課題別Progressは－を分母外にし○のみ/×のみ/－のみ/mixedを安全に扱う", () => {
+  const records = [
+    game(1, "pass", [], []), game(2, "fail", [], []), game(3, "excluded", [], []),
+  ];
+  records[0].analysis.taskResults = [result(records[0].id, "check", "pass")];
+  records[1].analysis.taskResults = [result(records[1].id, "capture", "fail")];
+  records[2].analysis.taskResults = [
+    result(records[2].id, "promotion", "no_opportunity"),
+    result(records[2].id, "drop", "pass", 1),
+    result(records[2].id, "drop", "no_opportunity", 2),
+    result(records[2].id, "drop", "fail", 3),
+  ];
+  const byTheme = Object.fromEntries(dashboard.buildThemeProgress([], recent.buildRecentSummaries(records))
+    .map((item) => [item.theme, item]));
+  assert.equal(byTheme.check.passRate, 1);
+  assert.equal(byTheme.capture.passRate, 0);
+  assert.equal(byTheme.promotion.passRate, null);
+  assert.equal(byTheme.promotion.latestEvidence, null);
+  assert.equal(byTheme.drop.passRate, 0.5);
+});
+
+test("10/30比較は既存trendの最低4件契約を再利用し少数データで断定しない", () => {
+  const makeRecords = (statuses) => statuses.map((status, index) => {
+    const row = game((index % 28) + 1, `trend${String(index).padStart(2, "0")}`);
+    row.analysis.taskResults = [result(row.id, "check", status, index, 20 + index)];
+    return row;
+  });
+  const insufficient = dashboard.buildThemeProgress([], recent.buildRecentSummaries(makeRecords(["fail", "pass", "pass"])))[0];
+  assert.equal(insufficient.comparison, null);
+
+  const enoughRecords = makeRecords(["fail", "fail", "pass", "pass"]);
+  const summaries = recent.buildRecentSummaries(enoughRecords);
+  const enough = dashboard.buildThemeProgress([], summaries)[0];
+  assert.deepEqual(enough.comparison, {
+    recent10Rate: 0.5,
+    recent30Rate: 0.5,
+    trend: "stable",
+  });
+  assert.equal(dashboard.comparisonTrend(
+    { pass: 4, fail: 0, passRate: 1 }, { pass: 4, fail: 8, passRate: 1 / 3 }), "improving");
+  assert.equal(dashboard.comparisonTrend(
+    { pass: 0, fail: 4, passRate: 0 }, { pass: 8, fail: 4, passRate: 2 / 3 }), "worsening");
+});
+
+test("課題別Progressは0件・legacy/missing summary・evidenceなしで安全", () => {
+  assert.deepEqual(dashboard.buildThemeProgress([], null), []);
+  assert.deepEqual(dashboard.buildThemeProgress([{ nextCheck: {} }], { 10: { themes: null } }), []);
+  const progress = dashboard.buildThemeProgress([{ nextCheck: { theme: "check" } }], {
+    10: { themes: [{ theme: "check", pass: 0, fail: 0, passRate: null, trend: "insufficient_data" }] },
+  });
+  assert.equal(progress.length, 1);
+  assert.deepEqual(progress[0].history, []);
+  assert.equal(progress[0].latestEvidence, null);
+  assert.equal(progress[0].comparison, null);
+});
+
 test("1/10未満/10以上30未満/30以上でも既存window summaryを使う", () => {
   for (const count of [1, 9, 10, 29, 31]) {
     const records = Array.from({ length: count }, (_, index) => game((index % 28) + 1, `g${index}`));
@@ -133,9 +209,11 @@ test("390px UI、折りたたみ、10/30、evidence navigationを備える", () 
   const html = fs.readFileSync(path.join(root, "index.html"), "utf8");
   const ui = fs.readFileSync(path.join(root, "growth-dashboard.js"), "utf8");
   assert.match(html, /id="growthDashboard"/);
-  assert.match(html, /growth-dashboard\.js\?v=30/);
+  assert.match(html, /growth-dashboard\.js\?v=35/);
   assert.match(ui, /max-width:390px/);
   assert.match(ui, /document\.createElement\("details"\)/);
+  assert.match(ui, /課題の推移/);
+  assert.match(ui, /10\/30比較: データ不足/);
   assert.match(ui, /for \(const windowSize of \[10, 30\]\)/);
   assert.match(ui, /jumpToEvidence\(ref\.gameId, ref\.ply\)/);
   assert.match(ui, /window\.shogiRecentSummaries/);
