@@ -2,6 +2,19 @@
   "schemaVersion": 1,
   "games": [
     {
+      "id": "20260915_masa1976",
+      "date": "2026/09/15",
+      "title": "masa1976 vs ぺるそなお",
+      "side": "後手",
+      "result": "後手・ぺるそなお 勝利",
+      "moves": 80,
+      "kif": "games/20260915_masa1976.kif",
+      "gameData": "games/20260915_masa1976.json",
+      "analysisData": "analysis/20260915_masa1976.json",
+      "analyzed": true,
+      "status": "YaneuraOu V9.00 + 水匠5解析済み"
+    },
+    {
       "id": "20260915_bikken75",
       "date": "2026/09/15",
       "title": "bikken75 vs ぺるそなお",

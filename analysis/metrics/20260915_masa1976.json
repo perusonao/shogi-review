@@ -1,0 +1,34 @@
+{
+  "schemaVersion": 1,
+  "gameId": "20260915_masa1976",
+  "analyzedAt": "2026-09-15T11:42:37.228165Z",
+  "positions": 81,
+  "problemPositions": 6,
+  "baseAnalysisSeconds": 3.035,
+  "extraPvSearchSeconds": 0.816,
+  "totalAnalysisSeconds": 3.851,
+  "shortPvCandidates": 7,
+  "extraSearchExecuted": 7,
+  "pvLengthBeforeAverage": 2.429,
+  "pvLengthAfterAverage": 4.143,
+  "pvLengthsBefore": [
+    2,
+    2,
+    2,
+    3,
+    2,
+    3,
+    3
+  ],
+  "pvLengthsAfter": [
+    2,
+    2,
+    2,
+    3,
+    14,
+    3,
+    3
+  ],
+  "improvedPvCount": 1,
+  "unchangedPvCount": 6
+}
