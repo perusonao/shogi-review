@@ -2,6 +2,19 @@
   "schemaVersion": 1,
   "games": [
     {
+      "id": "20260915_ほんだまん",
+      "date": "2026/09/15",
+      "title": "ほんだまん vs ぺるそなお",
+      "side": "後手",
+      "result": "先手・ほんだまん 勝利",
+      "moves": 79,
+      "kif": "games/20260915_ほんだまん.kif",
+      "gameData": "games/20260915_ほんだまん.json",
+      "analysisData": "analysis/20260915_ほんだまん.json",
+      "analyzed": true,
+      "status": "YaneuraOu V9.00 + 水匠5解析済み"
+    },
+    {
       "id": "20260915_ryube01",
       "date": "2026/09/15",
       "title": "Ryube01 vs sonao81",
