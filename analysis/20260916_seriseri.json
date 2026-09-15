@@ -1,0 +1,5112 @@
+{
+  "schemaVersion": 2,
+  "gameId": "20260916_seriseri",
+  "date": "2026-09-16",
+  "sente": "ぺるそなお",
+  "gote": "SeriSeri",
+  "userSide": "sente",
+  "result": "先手・ぺるそなお 勝利",
+  "moves": 67,
+  "engine": {
+    "name": "YaneuraOu + Suisho5",
+    "status": "analyzed",
+    "nodesPerPosition": 30000,
+    "scorePerspective": "sente",
+    "problemPvRefinement": {
+      "enabled": true,
+      "nodesPerSearch": 60000,
+      "triggerBelowPlies": 4,
+      "issuesConsidered": 6,
+      "bestSearches": 4,
+      "actualSearches": 2,
+      "shortPvCandidates": 6,
+      "extraSearchExecuted": 6,
+      "pvLengthBeforeAverage": 2.167,
+      "pvLengthAfterAverage": 4.0,
+      "pvLengthsBefore": [
+        2,
+        3,
+        2,
+        3,
+        2,
+        1
+      ],
+      "pvLengthsAfter": [
+        2,
+        3,
+        2,
+        13,
+        2,
+        2
+      ],
+      "improvedPvCount": 2,
+      "unchangedPvCount": 4,
+      "elapsedSeconds": 0.8
+    }
+  },
+  "evaluations": [
+    {
+      "ply": 0,
+      "cp": 132,
+      "score": {
+        "type": "cp",
+        "value": 132
+      }
+    },
+    {
+      "ply": 1,
+      "cp": -74,
+      "score": {
+        "type": "cp",
+        "value": -74
+      }
+    },
+    {
+      "ply": 2,
+      "cp": 16,
+      "score": {
+        "type": "cp",
+        "value": 16
+      }
+    },
+    {
+      "ply": 3,
+      "cp": -292,
+      "score": {
+        "type": "cp",
+        "value": -292
+      }
+    },
+    {
+      "ply": 4,
+      "cp": -50,
+      "score": {
+        "type": "cp",
+        "value": -50
+      }
+    },
+    {
+      "ply": 5,
+      "cp": -162,
+      "score": {
+        "type": "cp",
+        "value": -162
+      }
+    },
+    {
+      "ply": 6,
+      "cp": -81,
+      "score": {
+        "type": "cp",
+        "value": -81
+      }
+    },
+    {
+      "ply": 7,
+      "cp": -172,
+      "score": {
+        "type": "cp",
+        "value": -172
+      }
+    },
+    {
+      "ply": 8,
+      "cp": -176,
+      "score": {
+        "type": "cp",
+        "value": -176
+      }
+    },
+    {
+      "ply": 9,
+      "cp": -102,
+      "score": {
+        "type": "cp",
+        "value": -102
+      }
+    },
+    {
+      "ply": 10,
+      "cp": -102,
+      "score": {
+        "type": "cp",
+        "value": -102
+      }
+    },
+    {
+      "ply": 11,
+      "cp": -220,
+      "score": {
+        "type": "cp",
+        "value": -220
+      }
+    },
+    {
+      "ply": 12,
+      "cp": -171,
+      "score": {
+        "type": "cp",
+        "value": -171
+      }
+    },
+    {
+      "ply": 13,
+      "cp": -87,
+      "score": {
+        "type": "cp",
+        "value": -87
+      }
+    },
+    {
+      "ply": 14,
+      "cp": -100,
+      "score": {
+        "type": "cp",
+        "value": -100
+      }
+    },
+    {
+      "ply": 15,
+      "cp": -147,
+      "score": {
+        "type": "cp",
+        "value": -147
+      }
+    },
+    {
+      "ply": 16,
+      "cp": -65,
+      "score": {
+        "type": "cp",
+        "value": -65
+      }
+    },
+    {
+      "ply": 17,
+      "cp": -94,
+      "score": {
+        "type": "cp",
+        "value": -94
+      }
+    },
+    {
+      "ply": 18,
+      "cp": -105,
+      "score": {
+        "type": "cp",
+        "value": -105
+      }
+    },
+    {
+      "ply": 19,
+      "cp": -114,
+      "score": {
+        "type": "cp",
+        "value": -114
+      }
+    },
+    {
+      "ply": 20,
+      "cp": -82,
+      "score": {
+        "type": "cp",
+        "value": -82
+      }
+    },
+    {
+      "ply": 21,
+      "cp": -408,
+      "score": {
+        "type": "cp",
+        "value": -408
+      }
+    },
+    {
+      "ply": 22,
+      "cp": -391,
+      "score": {
+        "type": "cp",
+        "value": -391
+      }
+    },
+    {
+      "ply": 23,
+      "cp": -401,
+      "score": {
+        "type": "cp",
+        "value": -401
+      }
+    },
+    {
+      "ply": 24,
+      "cp": -267,
+      "score": {
+        "type": "cp",
+        "value": -267
+      }
+    },
+    {
+      "ply": 25,
+      "cp": -351,
+      "score": {
+        "type": "cp",
+        "value": -351
+      }
+    },
+    {
+      "ply": 26,
+      "cp": -206,
+      "score": {
+        "type": "cp",
+        "value": -206
+      }
+    },
+    {
+      "ply": 27,
+      "cp": -263,
+      "score": {
+        "type": "cp",
+        "value": -263
+      }
+    },
+    {
+      "ply": 28,
+      "cp": -91,
+      "score": {
+        "type": "cp",
+        "value": -91
+      }
+    },
+    {
+      "ply": 29,
+      "cp": -135,
+      "score": {
+        "type": "cp",
+        "value": -135
+      }
+    },
+    {
+      "ply": 30,
+      "cp": -142,
+      "score": {
+        "type": "cp",
+        "value": -142
+      }
+    },
+    {
+      "ply": 31,
+      "cp": -363,
+      "score": {
+        "type": "cp",
+        "value": -363
+      }
+    },
+    {
+      "ply": 32,
+      "cp": 701,
+      "score": {
+        "type": "cp",
+        "value": 701
+      }
+    },
+    {
+      "ply": 33,
+      "cp": -612,
+      "score": {
+        "type": "cp",
+        "value": -612
+      }
+    },
+    {
+      "ply": 34,
+      "cp": -494,
+      "score": {
+        "type": "cp",
+        "value": -494
+      }
+    },
+    {
+      "ply": 35,
+      "cp": -653,
+      "score": {
+        "type": "cp",
+        "value": -653
+      }
+    },
+    {
+      "ply": 36,
+      "cp": -451,
+      "score": {
+        "type": "cp",
+        "value": -451
+      }
+    },
+    {
+      "ply": 37,
+      "cp": -847,
+      "score": {
+        "type": "cp",
+        "value": -847
+      }
+    },
+    {
+      "ply": 38,
+      "cp": -920,
+      "score": {
+        "type": "cp",
+        "value": -920
+      }
+    },
+    {
+      "ply": 39,
+      "cp": -1315,
+      "score": {
+        "type": "cp",
+        "value": -1315
+      }
+    },
+    {
+      "ply": 40,
+      "cp": -1375,
+      "score": {
+        "type": "cp",
+        "value": -1375
+      }
+    },
+    {
+      "ply": 41,
+      "cp": -1480,
+      "score": {
+        "type": "cp",
+        "value": -1480
+      }
+    },
+    {
+      "ply": 42,
+      "cp": -1350,
+      "score": {
+        "type": "cp",
+        "value": -1350
+      }
+    },
+    {
+      "ply": 43,
+      "cp": -1753,
+      "score": {
+        "type": "cp",
+        "value": -1753
+      }
+    },
+    {
+      "ply": 44,
+      "cp": -1696,
+      "score": {
+        "type": "cp",
+        "value": -1696
+      }
+    },
+    {
+      "ply": 45,
+      "cp": -1606,
+      "score": {
+        "type": "cp",
+        "value": -1606
+      }
+    },
+    {
+      "ply": 46,
+      "cp": -1806,
+      "score": {
+        "type": "cp",
+        "value": -1806
+      }
+    },
+    {
+      "ply": 47,
+      "cp": -2106,
+      "score": {
+        "type": "cp",
+        "value": -2106
+      }
+    },
+    {
+      "ply": 48,
+      "cp": -1636,
+      "score": {
+        "type": "cp",
+        "value": -1636
+      }
+    },
+    {
+      "ply": 49,
+      "cp": -2225,
+      "score": {
+        "type": "cp",
+        "value": -2225
+      }
+    },
+    {
+      "ply": 50,
+      "cp": -2254,
+      "score": {
+        "type": "cp",
+        "value": -2254
+      }
+    },
+    {
+      "ply": 51,
+      "cp": -2271,
+      "score": {
+        "type": "cp",
+        "value": -2271
+      }
+    },
+    {
+      "ply": 52,
+      "cp": -2497,
+      "score": {
+        "type": "cp",
+        "value": -2497
+      }
+    },
+    {
+      "ply": 53,
+      "cp": -2410,
+      "score": {
+        "type": "cp",
+        "value": -2410
+      }
+    },
+    {
+      "ply": 54,
+      "cp": -1833,
+      "score": {
+        "type": "cp",
+        "value": -1833
+      }
+    },
+    {
+      "ply": 55,
+      "cp": -1708,
+      "score": {
+        "type": "cp",
+        "value": -1708
+      }
+    },
+    {
+      "ply": 56,
+      "cp": -816,
+      "score": {
+        "type": "cp",
+        "value": -816
+      }
+    },
+    {
+      "ply": 57,
+      "cp": -751,
+      "score": {
+        "type": "cp",
+        "value": -751
+      }
+    },
+    {
+      "ply": 58,
+      "cp": -846,
+      "score": {
+        "type": "cp",
+        "value": -846
+      }
+    },
+    {
+      "ply": 59,
+      "cp": -967,
+      "score": {
+        "type": "cp",
+        "value": -967
+      }
+    },
+    {
+      "ply": 60,
+      "cp": 1792,
+      "score": {
+        "type": "cp",
+        "value": 1792
+      }
+    },
+    {
+      "ply": 61,
+      "cp": 2037,
+      "score": {
+        "type": "cp",
+        "value": 2037
+      }
+    },
+    {
+      "ply": 62,
+      "cp": 1866,
+      "score": {
+        "type": "cp",
+        "value": 1866
+      }
+    },
+    {
+      "ply": 63,
+      "cp": 2131,
+      "score": {
+        "type": "cp",
+        "value": 2131
+      }
+    },
+    {
+      "ply": 64,
+      "cp": 2047,
+      "score": {
+        "type": "cp",
+        "value": 2047
+      }
+    },
+    {
+      "ply": 65,
+      "cp": 2125,
+      "score": {
+        "type": "cp",
+        "value": 2125
+      }
+    },
+    {
+      "ply": 66,
+      "cp": 2603,
+      "score": {
+        "type": "cp",
+        "value": 2603
+      }
+    },
+    {
+      "ply": 67,
+      "cp": 2295,
+      "score": {
+        "type": "cp",
+        "value": 2295
+      }
+    }
+  ],
+  "moveAnalyses": [
+    {
+      "ply": 1,
+      "scorePerspective": "mover",
+      "scoreBefore": {
+        "type": "cp",
+        "value": 132
+      },
+      "actualMove": "5g5f",
+      "scoreAfterActual": {
+        "type": "cp",
+        "value": -74
+      },
+      "bestMove": "7g7f",
+      "bestScore": {
+        "type": "cp",
+        "value": 132
+      },
+      "pv": [
+        "7g7f",
+        "4a3b"
+      ],
+      "pvJa": [
+        "▲7六歩",
+        "△3二金"
+      ],
+      "actualPv": [
+        "5g5f",
+        "8c8d",
+        "6i7h"
+      ],
+      "actualPvJa": [
+        "▲5六歩",
+        "△8四歩",
+        "▲7八金"
+      ]
+    },
+    {
+      "ply": 2,
+      "scorePerspective": "mover",
+      "scoreBefore": {
+        "type": "cp",
+        "value": 74
+      },
+      "actualMove": "3c3d",
+      "scoreAfterActual": {
+        "type": "cp",
+        "value": -16
+      },
+      "bestMove": "8c8d",
+      "bestScore": {
+        "type": "cp",
+        "value": 74
+      },
+      "pv": [
+        "8c8d",
+        "6i7h"
+      ],
+      "pvJa": [
+        "△8四歩",
+        "▲7八金"
+      ],
+      "actualPv": [
+        "3c3d",
+        "3i4h",
+        "4a3b"
+      ],
+      "actualPvJa": [
+        "△3四歩",
+        "▲4八銀",
+        "△3二金"
+      ]
+    },
+    {
+      "ply": 3,
+      "scorePerspective": "mover",
+      "scoreBefore": {
+        "type": "cp",
+        "value": 16
+      },
+      "actualMove": "2h5h",
+      "scoreAfterActual": {
+        "type": "cp",
+        "value": -292
+      },
+      "bestMove": "3i4h",
+      "bestScore": {
+        "type": "cp",
+        "value": 16
+      },
+      "pv": [
+        "3i4h",
+        "4a3b"
+      ],
+      "pvJa": [
+        "▲4八銀",
+        "△3二金"
+      ],
+      "actualPv": [
+        "2h5h",
+        "6a5b",
+        "7g7f",
+        "5a4b",
+        "5f5e",
+        "1c1d",
+        "1g1f",
+        "4b3b",
+        "5i4h",
+        "7a6b",
+        "6i7h",
+        "8c8d",
+        "8h7g",
+        "7c7d"
+      ],
+      "actualPvJa": [
+        "▲5八飛",
+        "△5二金右",
+        "▲7六歩",
+        "△4二玉",
+        "▲5五歩",
+        "△1四歩",
+        "▲1六歩",
+        "△3二玉",
+        "▲4八玉",
+        "△6二銀",
+        "▲7八金",
+        "△8四歩",
+        "▲7七角",
+        "△7四歩"
+      ]
+    },
+    {
+      "ply": 4,
+      "scorePerspective": "mover",
+      "scoreBefore": {
+        "type": "cp",
+        "value": 292
+      },
+      "actualMove": "8b3b",
+      "scoreAfterActual": {
+        "type": "cp",
+        "value": 50
+      },
+      "bestMove": "6a5b",
+      "bestScore": {
+        "type": "cp",
+        "value": 292
+      },
+      "pv": [
+        "6a5b",
+        "7g7f",
+        "5a4b",
+        "5f5e",
+        "1c1d",
+        "1g1f",
+        "4b3b",
+        "5i4h",
+        "7a6b",
+        "6i7h",
+        "8c8d",
+        "8h7g",
+        "7c7d"
+      ],
+      "pvJa": [
+        "△5二金右",
+        "▲7六歩",
+        "△4二玉",
+        "▲5五歩",
+        "△1四歩",
+        "▲1六歩",
+        "△3二玉",
+        "▲4八玉",
+        "△6二銀",
+        "▲7八金",
+        "△8四歩",
+        "▲7七角",
+        "△7四歩"
+      ],
+      "actualPv": [
+        "8b3b",
+        "5h2h",
+        "3b8b"
+      ],
+      "actualPvJa": [
+        "△3二飛",
+        "▲2八飛",
+        "△8二飛"
+      ]
+    },
+    {
+      "ply": 5,
+      "scorePerspective": "mover",
+      "scoreBefore": {
+        "type": "cp",
+        "value": -50
+      },
+      "actualMove": "5f5e",
+      "scoreAfterActual": {
+        "type": "cp",
+        "value": -162
+      },
+      "bestMove": "5h2h",
+      "bestScore": {
+        "type": "cp",
+        "value": -50
+      },
+      "pv": [
+        "5h2h",
+        "3b8b"
+      ],
+      "pvJa": [
+        "▲2八飛",
+        "△8二飛"
+      ],
+      "actualPv": [
+        "5f5e",
+        "5a6b",
+        "3i4h"
+      ],
+      "actualPvJa": [
+        "▲5五歩",
+        "△6二玉",
+        "▲4八銀"
+      ]
+    },
+    {
+      "ply": 6,
+      "scorePerspective": "mover",
+      "scoreBefore": {
+        "type": "cp",
+        "value": 162
+      },
+      "actualMove": "3d3e",
+      "scoreAfterActual": {
+        "type": "cp",
+        "value": 81
+      },
+      "bestMove": "5a6b",
+      "bestScore": {
+        "type": "cp",
+        "value": 162
+      },
+      "pv": [
+        "5a6b",
+        "3i4h"
+      ],
+      "pvJa": [
+        "△6二玉",
+        "▲4八銀"
+      ],
+      "actualPv": [
+        "3d3e",
+        "9g9f",
+        "9c9d"
+      ],
+      "actualPvJa": [
+        "△3五歩",
+        "▲9六歩",
+        "△9四歩"
+      ]
+    },
+    {
+      "ply": 7,
+      "scorePerspective": "mover",
+      "scoreBefore": {
+        "type": "cp",
+        "value": -81
+      },
+      "actualMove": "5h5f",
+      "scoreAfterActual": {
+        "type": "cp",
+        "value": -172
+      },
+      "bestMove": "9g9f",
+      "bestScore": {
+        "type": "cp",
+        "value": -81
+      },
+      "pv": [
+        "9g9f",
+        "9c9d"
+      ],
+      "pvJa": [
+        "▲9六歩",
+        "△9四歩"
+      ],
+      "actualPv": [
+        "5h5f",
+        "5a6b",
+        "9g9f",
+        "9c9d"
+      ],
+      "actualPvJa": [
+        "▲5六飛",
+        "△6二玉",
+        "▲9六歩",
+        "△9四歩"
+      ]
+    },
+    {
+      "ply": 8,
+      "scorePerspective": "mover",
+      "scoreBefore": {
+        "type": "cp",
+        "value": 172
+      },
+      "actualMove": "3b3d",
+      "scoreAfterActual": {
+        "type": "cp",
+        "value": 176
+      },
+      "bestMove": "5a6b",
+      "bestScore": {
+        "type": "cp",
+        "value": 172
+      },
+      "pv": [
+        "5a6b",
+        "9g9f",
+        "9c9d"
+      ],
+      "pvJa": [
+        "△6二玉",
+        "▲9六歩",
+        "△9四歩"
+      ],
+      "actualPv": [
+        "3b3d",
+        "6i5h",
+        "5a6b"
+      ],
+      "actualPvJa": [
+        "△3四飛",
+        "▲5八金左",
+        "△6二玉"
+      ]
+    },
+    {
+      "ply": 9,
+      "scorePerspective": "mover",
+      "scoreBefore": {
+        "type": "cp",
+        "value": -176
+      },
+      "actualMove": "7g7f",
+      "scoreAfterActual": {
+        "type": "cp",
+        "value": -102
+      },
+      "bestMove": "6i5h",
+      "bestScore": {
+        "type": "cp",
+        "value": -176
+      },
+      "pv": [
+        "6i5h",
+        "5a6b"
+      ],
+      "pvJa": [
+        "▲5八金左",
+        "△6二玉"
+      ],
+      "actualPv": [
+        "7g7f",
+        "5a6b",
+        "9g9f",
+        "9c9d",
+        "5i4h",
+        "3a4b",
+        "4h3h",
+        "2a3c",
+        "3h2h",
+        "1c1d"
+      ],
+      "actualPvJa": [
+        "▲7六歩",
+        "△6二玉",
+        "▲9六歩",
+        "△9四歩",
+        "▲4八玉",
+        "△4二銀",
+        "▲3八玉",
+        "△3三桂",
+        "▲2八玉",
+        "△1四歩"
+      ]
+    },
+    {
+      "ply": 10,
+      "scorePerspective": "mover",
+      "scoreBefore": {
+        "type": "cp",
+        "value": 102
+      },
+      "actualMove": "5a6b",
+      "scoreAfterActual": {
+        "type": "cp",
+        "value": 102
+      },
+      "bestMove": "5a6b",
+      "bestScore": {
+        "type": "cp",
+        "value": 102
+      },
+      "pv": [
+        "5a6b",
+        "9g9f",
+        "9c9d",
+        "5i4h",
+        "3a4b",
+        "4h3h",
+        "2a3c",
+        "3h2h",
+        "1c1d"
+      ],
+      "pvJa": [
+        "△6二玉",
+        "▲9六歩",
+        "△9四歩",
+        "▲4八玉",
+        "△4二銀",
+        "▲3八玉",
+        "△3三桂",
+        "▲2八玉",
+        "△1四歩"
+      ],
+      "actualPv": [
+        "5a6b",
+        "9g9f"
+      ],
+      "actualPvJa": [
+        "△6二玉",
+        "▲9六歩"
+      ]
+    },
+    {
+      "ply": 11,
+      "scorePerspective": "mover",
+      "scoreBefore": {
+        "type": "cp",
+        "value": -102
+      },
+      "actualMove": "5i4h",
+      "scoreAfterActual": {
+        "type": "cp",
+        "value": -220
+      },
+      "bestMove": "9g9f",
+      "bestScore": {
+        "type": "cp",
+        "value": -102
+      },
+      "pv": [
+        "9g9f"
+      ],
+      "pvJa": [
+        "▲9六歩"
+      ],
+      "actualPv": [
+        "5i4h",
+        "1c1d"
+      ],
+      "actualPvJa": [
+        "▲4八玉",
+        "△1四歩"
+      ]
+    },
+    {
+      "ply": 12,
+      "scorePerspective": "mover",
+      "scoreBefore": {
+        "type": "cp",
+        "value": 220
+      },
+      "actualMove": "6b7b",
+      "scoreAfterActual": {
+        "type": "cp",
+        "value": 171
+      },
+      "bestMove": "1c1d",
+      "bestScore": {
+        "type": "cp",
+        "value": 220
+      },
+      "pv": [
+        "1c1d"
+      ],
+      "pvJa": [
+        "△1四歩"
+      ],
+      "actualPv": [
+        "6b7b",
+        "3i3h",
+        "1c1d"
+      ],
+      "actualPvJa": [
+        "△7二玉",
+        "▲3八銀",
+        "△1四歩"
+      ]
+    },
+    {
+      "ply": 13,
+      "scorePerspective": "mover",
+      "scoreBefore": {
+        "type": "cp",
+        "value": -171
+      },
+      "actualMove": "3i3h",
+      "scoreAfterActual": {
+        "type": "cp",
+        "value": -87
+      },
+      "bestMove": "3i3h",
+      "bestScore": {
+        "type": "cp",
+        "value": -171
+      },
+      "pv": [
+        "3i3h",
+        "1c1d"
+      ],
+      "pvJa": [
+        "▲3八銀",
+        "△1四歩"
+      ],
+      "actualPv": [
+        "3i3h",
+        "1c1d",
+        "4h3i"
+      ],
+      "actualPvJa": [
+        "▲3八銀",
+        "△1四歩",
+        "▲3九玉"
+      ]
+    },
+    {
+      "ply": 14,
+      "scorePerspective": "mover",
+      "scoreBefore": {
+        "type": "cp",
+        "value": 87
+      },
+      "actualMove": "3a4b",
+      "scoreAfterActual": {
+        "type": "cp",
+        "value": 100
+      },
+      "bestMove": "1c1d",
+      "bestScore": {
+        "type": "cp",
+        "value": 87
+      },
+      "pv": [
+        "1c1d",
+        "4h3i"
+      ],
+      "pvJa": [
+        "△1四歩",
+        "▲3九玉"
+      ],
+      "actualPv": [
+        "3a4b",
+        "4h3i",
+        "4b3c"
+      ],
+      "actualPvJa": [
+        "△4二銀",
+        "▲3九玉",
+        "△3三銀"
+      ]
+    },
+    {
+      "ply": 15,
+      "scorePerspective": "mover",
+      "scoreBefore": {
+        "type": "cp",
+        "value": -100
+      },
+      "actualMove": "4h3i",
+      "scoreAfterActual": {
+        "type": "cp",
+        "value": -147
+      },
+      "bestMove": "4h3i",
+      "bestScore": {
+        "type": "cp",
+        "value": -100
+      },
+      "pv": [
+        "4h3i",
+        "4b3c"
+      ],
+      "pvJa": [
+        "▲3九玉",
+        "△3三銀"
+      ],
+      "actualPv": [
+        "4h3i",
+        "4b3c"
+      ],
+      "actualPvJa": [
+        "▲3九玉",
+        "△3三銀"
+      ]
+    },
+    {
+      "ply": 16,
+      "scorePerspective": "mover",
+      "scoreBefore": {
+        "type": "cp",
+        "value": 147
+      },
+      "actualMove": "4a5b",
+      "scoreAfterActual": {
+        "type": "cp",
+        "value": 65
+      },
+      "bestMove": "4b3c",
+      "bestScore": {
+        "type": "cp",
+        "value": 147
+      },
+      "pv": [
+        "4b3c"
+      ],
+      "pvJa": [
+        "△3三銀"
+      ],
+      "actualPv": [
+        "4a5b",
+        "7i6h"
+      ],
+      "actualPvJa": [
+        "△5二金左",
+        "▲6八銀"
+      ]
+    },
+    {
+      "ply": 17,
+      "scorePerspective": "mover",
+      "scoreBefore": {
+        "type": "cp",
+        "value": -65
+      },
+      "actualMove": "3i2h",
+      "scoreAfterActual": {
+        "type": "cp",
+        "value": -94
+      },
+      "bestMove": "7i6h",
+      "bestScore": {
+        "type": "cp",
+        "value": -65
+      },
+      "pv": [
+        "7i6h"
+      ],
+      "pvJa": [
+        "▲6八銀"
+      ],
+      "actualPv": [
+        "3i2h",
+        "4b3c",
+        "7i6h",
+        "1c1d",
+        "8g8f",
+        "2b1c",
+        "4g4f"
+      ],
+      "actualPvJa": [
+        "▲2八玉",
+        "△3三銀",
+        "▲6八銀",
+        "△1四歩",
+        "▲8六歩",
+        "△1三角",
+        "▲4六歩"
+      ]
+    },
+    {
+      "ply": 18,
+      "scorePerspective": "mover",
+      "scoreBefore": {
+        "type": "cp",
+        "value": 94
+      },
+      "actualMove": "1c1d",
+      "scoreAfterActual": {
+        "type": "cp",
+        "value": 105
+      },
+      "bestMove": "4b3c",
+      "bestScore": {
+        "type": "cp",
+        "value": 94
+      },
+      "pv": [
+        "4b3c",
+        "7i6h",
+        "1c1d",
+        "8g8f",
+        "2b1c",
+        "4g4f"
+      ],
+      "pvJa": [
+        "△3三銀",
+        "▲6八銀",
+        "△1四歩",
+        "▲8六歩",
+        "△1三角",
+        "▲4六歩"
+      ],
+      "actualPv": [
+        "1c1d",
+        "6i5h",
+        "2a3c"
+      ],
+      "actualPvJa": [
+        "△1四歩",
+        "▲5八金左",
+        "△3三桂"
+      ]
+    },
+    {
+      "ply": 19,
+      "scorePerspective": "mover",
+      "scoreBefore": {
+        "type": "cp",
+        "value": -105
+      },
+      "actualMove": "9g9f",
+      "scoreAfterActual": {
+        "type": "cp",
+        "value": -114
+      },
+      "bestMove": "6i5h",
+      "bestScore": {
+        "type": "cp",
+        "value": -105
+      },
+      "pv": [
+        "6i5h",
+        "2a3c"
+      ],
+      "pvJa": [
+        "▲5八金左",
+        "△3三桂"
+      ],
+      "actualPv": [
+        "9g9f",
+        "2b1c",
+        "6i5h"
+      ],
+      "actualPvJa": [
+        "▲9六歩",
+        "△1三角",
+        "▲5八金左"
+      ]
+    },
+    {
+      "ply": 20,
+      "scorePerspective": "mover",
+      "scoreBefore": {
+        "type": "cp",
+        "value": 114
+      },
+      "actualMove": "4c4d",
+      "scoreAfterActual": {
+        "type": "cp",
+        "value": 82
+      },
+      "bestMove": "2b1c",
+      "bestScore": {
+        "type": "cp",
+        "value": 114
+      },
+      "pv": [
+        "2b1c",
+        "6i5h"
+      ],
+      "pvJa": [
+        "△1三角",
+        "▲5八金左"
+      ],
+      "actualPv": [
+        "4c4d",
+        "7i6h",
+        "4d4e"
+      ],
+      "actualPvJa": [
+        "△4四歩",
+        "▲6八銀",
+        "△4五歩"
+      ]
+    },
+    {
+      "ply": 21,
+      "scorePerspective": "mover",
+      "scoreBefore": {
+        "type": "cp",
+        "value": -82
+      },
+      "actualMove": "5e5d",
+      "scoreAfterActual": {
+        "type": "cp",
+        "value": -408
+      },
+      "bestMove": "7i6h",
+      "bestScore": {
+        "type": "cp",
+        "value": -82
+      },
+      "pv": [
+        "7i6h",
+        "4d4e"
+      ],
+      "pvJa": [
+        "▲6八銀",
+        "△4五歩"
+      ],
+      "actualPv": [
+        "5e5d",
+        "5c5d",
+        "5f5d"
+      ],
+      "actualPvJa": [
+        "▲5四歩",
+        "△同歩",
+        "▲同飛"
+      ],
+      "pvRefinement": {
+        "bestAttempted": true,
+        "bestImproved": false,
+        "actualAttempted": true,
+        "actualImproved": false
+      }
+    },
+    {
+      "ply": 22,
+      "scorePerspective": "mover",
+      "scoreBefore": {
+        "type": "cp",
+        "value": 408
+      },
+      "actualMove": "5c5d",
+      "scoreAfterActual": {
+        "type": "cp",
+        "value": 391
+      },
+      "bestMove": "5c5d",
+      "bestScore": {
+        "type": "cp",
+        "value": 408
+      },
+      "pv": [
+        "5c5d",
+        "5f5d"
+      ],
+      "pvJa": [
+        "△同歩",
+        "▲同飛"
+      ],
+      "actualPv": [
+        "5c5d",
+        "5f5d",
+        "4b4c"
+      ],
+      "actualPvJa": [
+        "△同歩",
+        "▲同飛",
+        "△4三銀"
+      ]
+    },
+    {
+      "ply": 23,
+      "scorePerspective": "mover",
+      "scoreBefore": {
+        "type": "cp",
+        "value": -391
+      },
+      "actualMove": "5f5d",
+      "scoreAfterActual": {
+        "type": "cp",
+        "value": -401
+      },
+      "bestMove": "5f5d",
+      "bestScore": {
+        "type": "cp",
+        "value": -391
+      },
+      "pv": [
+        "5f5d",
+        "4b4c"
+      ],
+      "pvJa": [
+        "▲同飛",
+        "△4三銀"
+      ],
+      "actualPv": [
+        "5f5d",
+        "5b4c"
+      ],
+      "actualPvJa": [
+        "▲同飛",
+        "△4三金"
+      ]
+    },
+    {
+      "ply": 24,
+      "scorePerspective": "mover",
+      "scoreBefore": {
+        "type": "cp",
+        "value": 401
+      },
+      "actualMove": "4b5c",
+      "scoreAfterActual": {
+        "type": "cp",
+        "value": 267
+      },
+      "bestMove": "5b4c",
+      "bestScore": {
+        "type": "cp",
+        "value": 401
+      },
+      "pv": [
+        "5b4c"
+      ],
+      "pvJa": [
+        "△4三金"
+      ],
+      "actualPv": [
+        "4b5c",
+        "5d5i"
+      ],
+      "actualPvJa": [
+        "△5三銀",
+        "▲5九飛"
+      ]
+    },
+    {
+      "ply": 25,
+      "scorePerspective": "mover",
+      "scoreBefore": {
+        "type": "cp",
+        "value": -267
+      },
+      "actualMove": "5d5f",
+      "scoreAfterActual": {
+        "type": "cp",
+        "value": -351
+      },
+      "bestMove": "5d5i",
+      "bestScore": {
+        "type": "cp",
+        "value": -267
+      },
+      "pv": [
+        "5d5i"
+      ],
+      "pvJa": [
+        "▲5九飛"
+      ],
+      "actualPv": [
+        "5d5f",
+        "2b1c",
+        "7i6h",
+        "2a3c",
+        "9f9e",
+        "7a6b",
+        "6h5g",
+        "5b4c",
+        "5g6f",
+        "1d1e"
+      ],
+      "actualPvJa": [
+        "▲5六飛",
+        "△1三角",
+        "▲6八銀",
+        "△3三桂",
+        "▲9五歩",
+        "△6二銀右",
+        "▲5七銀",
+        "△4三金",
+        "▲6六銀",
+        "△1五歩"
+      ]
+    },
+    {
+      "ply": 26,
+      "scorePerspective": "mover",
+      "scoreBefore": {
+        "type": "cp",
+        "value": 351
+      },
+      "actualMove": "2b3c",
+      "scoreAfterActual": {
+        "type": "cp",
+        "value": 206
+      },
+      "bestMove": "2b1c",
+      "bestScore": {
+        "type": "cp",
+        "value": 351
+      },
+      "pv": [
+        "2b1c",
+        "7i6h",
+        "2a3c",
+        "9f9e",
+        "7a6b",
+        "6h5g",
+        "5b4c",
+        "5g6f",
+        "1d1e"
+      ],
+      "pvJa": [
+        "△1三角",
+        "▲6八銀",
+        "△3三桂",
+        "▲9五歩",
+        "△6二銀右",
+        "▲5七銀",
+        "△4三金",
+        "▲6六銀",
+        "△1五歩"
+      ],
+      "actualPv": [
+        "2b3c",
+        "7i6h",
+        "7a6b"
+      ],
+      "actualPvJa": [
+        "△3三角",
+        "▲6八銀",
+        "△6二銀右"
+      ]
+    },
+    {
+      "ply": 27,
+      "scorePerspective": "mover",
+      "scoreBefore": {
+        "type": "cp",
+        "value": -206
+      },
+      "actualMove": "8g8f",
+      "scoreAfterActual": {
+        "type": "cp",
+        "value": -263
+      },
+      "bestMove": "7i6h",
+      "bestScore": {
+        "type": "cp",
+        "value": -206
+      },
+      "pv": [
+        "7i6h",
+        "7a6b"
+      ],
+      "pvJa": [
+        "▲6八銀",
+        "△6二銀右"
+      ],
+      "actualPv": [
+        "8g8f",
+        "3e3f"
+      ],
+      "actualPvJa": [
+        "▲8六歩",
+        "△3六歩"
+      ]
+    },
+    {
+      "ply": 28,
+      "scorePerspective": "mover",
+      "scoreBefore": {
+        "type": "cp",
+        "value": 263
+      },
+      "actualMove": "7b8b",
+      "scoreAfterActual": {
+        "type": "cp",
+        "value": 91
+      },
+      "bestMove": "3e3f",
+      "bestScore": {
+        "type": "cp",
+        "value": 263
+      },
+      "pv": [
+        "3e3f"
+      ],
+      "pvJa": [
+        "△3六歩"
+      ],
+      "actualPv": [
+        "7b8b",
+        "8f8e",
+        "7a7b"
+      ],
+      "actualPvJa": [
+        "△8二玉",
+        "▲8五歩",
+        "△7二銀"
+      ]
+    },
+    {
+      "ply": 29,
+      "scorePerspective": "mover",
+      "scoreBefore": {
+        "type": "cp",
+        "value": -91
+      },
+      "actualMove": "8f8e",
+      "scoreAfterActual": {
+        "type": "cp",
+        "value": -135
+      },
+      "bestMove": "8f8e",
+      "bestScore": {
+        "type": "cp",
+        "value": -91
+      },
+      "pv": [
+        "8f8e",
+        "7a7b"
+      ],
+      "pvJa": [
+        "▲8五歩",
+        "△7二銀"
+      ],
+      "actualPv": [
+        "8f8e",
+        "2a1c",
+        "7i6h"
+      ],
+      "actualPvJa": [
+        "▲8五歩",
+        "△1三桂",
+        "▲6八銀"
+      ]
+    },
+    {
+      "ply": 30,
+      "scorePerspective": "mover",
+      "scoreBefore": {
+        "type": "cp",
+        "value": 135
+      },
+      "actualMove": "7a7b",
+      "scoreAfterActual": {
+        "type": "cp",
+        "value": 142
+      },
+      "bestMove": "2a1c",
+      "bestScore": {
+        "type": "cp",
+        "value": 135
+      },
+      "pv": [
+        "2a1c",
+        "7i6h"
+      ],
+      "pvJa": [
+        "△1三桂",
+        "▲6八銀"
+      ],
+      "actualPv": [
+        "7a7b",
+        "8h9g",
+        "P*5d"
+      ],
+      "actualPvJa": [
+        "△7二銀",
+        "▲9七角",
+        "△5四歩打"
+      ]
+    },
+    {
+      "ply": 31,
+      "scorePerspective": "mover",
+      "scoreBefore": {
+        "type": "cp",
+        "value": -142
+      },
+      "actualMove": "7f7e",
+      "scoreAfterActual": {
+        "type": "cp",
+        "value": -363
+      },
+      "bestMove": "8h9g",
+      "bestScore": {
+        "type": "cp",
+        "value": -142
+      },
+      "pv": [
+        "8h9g",
+        "P*5d"
+      ],
+      "pvJa": [
+        "▲9七角",
+        "△5四歩打"
+      ],
+      "actualPv": [
+        "7f7e",
+        "4d4e",
+        "6i5h"
+      ],
+      "actualPvJa": [
+        "▲7五歩",
+        "△4五歩",
+        "▲5八金左"
+      ]
+    },
+    {
+      "ply": 32,
+      "scorePerspective": "mover",
+      "scoreBefore": {
+        "type": "cp",
+        "value": 363
+      },
+      "actualMove": "5c6d",
+      "scoreAfterActual": {
+        "type": "cp",
+        "value": -701
+      },
+      "bestMove": "4d4e",
+      "bestScore": {
+        "type": "cp",
+        "value": 363
+      },
+      "pv": [
+        "4d4e",
+        "6i5h"
+      ],
+      "pvJa": [
+        "△4五歩",
+        "▲5八金左"
+      ],
+      "actualPv": [
+        "5c6d",
+        "5f5b+",
+        "6a5b"
+      ],
+      "actualPvJa": [
+        "△6四銀",
+        "▲5二飛成",
+        "△同金"
+      ]
+    },
+    {
+      "ply": 33,
+      "scorePerspective": "mover",
+      "scoreBefore": {
+        "type": "cp",
+        "value": 701
+      },
+      "actualMove": "5f7f",
+      "scoreAfterActual": {
+        "type": "cp",
+        "value": -612
+      },
+      "bestMove": "5f5b+",
+      "bestScore": {
+        "type": "cp",
+        "value": 701
+      },
+      "pv": [
+        "5f5b+",
+        "6a5b"
+      ],
+      "pvJa": [
+        "▲5二飛成",
+        "△同金"
+      ],
+      "actualPv": [
+        "5f7f",
+        "4d4e",
+        "7f5f",
+        "3e3f",
+        "3g3f",
+        "6d6e",
+        "5f5i",
+        "P*5f",
+        "3h3g",
+        "3c8h+",
+        "7i8h",
+        "B*6d",
+        "8e8d"
+      ],
+      "actualPvJa": [
+        "▲7六飛",
+        "△4五歩",
+        "▲5六飛",
+        "△3六歩",
+        "▲同歩",
+        "△6五銀",
+        "▲5九飛",
+        "△5六歩打",
+        "▲3七銀",
+        "△8八角成",
+        "▲同銀",
+        "△6四角打",
+        "▲8四歩"
+      ],
+      "pvRefinement": {
+        "bestAttempted": true,
+        "bestImproved": false,
+        "actualAttempted": true,
+        "actualImproved": true
+      }
+    },
+    {
+      "ply": 34,
+      "scorePerspective": "mover",
+      "scoreBefore": {
+        "type": "cp",
+        "value": 612
+      },
+      "actualMove": "1d1e",
+      "scoreAfterActual": {
+        "type": "cp",
+        "value": 494
+      },
+      "bestMove": "4d4e",
+      "bestScore": {
+        "type": "cp",
+        "value": 612
+      },
+      "pv": [
+        "4d4e",
+        "7f5f"
+      ],
+      "pvJa": [
+        "△4五歩",
+        "▲5六飛"
+      ],
+      "actualPv": [
+        "1d1e",
+        "6i5h",
+        "4d4e",
+        "7f5f",
+        "3e3f",
+        "3g3f",
+        "9c9d",
+        "8h3c+",
+        "2a3c",
+        "B*3b",
+        "3d2d",
+        "3b8g+"
+      ],
+      "actualPvJa": [
+        "△1五歩",
+        "▲5八金左",
+        "△4五歩",
+        "▲5六飛",
+        "△3六歩",
+        "▲同歩",
+        "△9四歩",
+        "▲3三角成",
+        "△同桂",
+        "▲3二角打",
+        "△2四飛",
+        "▲8七角成"
+      ]
+    },
+    {
+      "ply": 35,
+      "scorePerspective": "mover",
+      "scoreBefore": {
+        "type": "cp",
+        "value": -494
+      },
+      "actualMove": "7i6h",
+      "scoreAfterActual": {
+        "type": "cp",
+        "value": -653
+      },
+      "bestMove": "6i5h",
+      "bestScore": {
+        "type": "cp",
+        "value": -494
+      },
+      "pv": [
+        "6i5h",
+        "4d4e",
+        "7f5f",
+        "3e3f",
+        "3g3f",
+        "9c9d",
+        "8h3c+",
+        "2a3c",
+        "B*3b",
+        "3d2d",
+        "3b8g+"
+      ],
+      "pvJa": [
+        "▲5八金左",
+        "△4五歩",
+        "▲5六飛",
+        "△3六歩",
+        "▲同歩",
+        "△9四歩",
+        "▲3三角成",
+        "△同桂",
+        "▲3二角打",
+        "△2四飛",
+        "▲8七角成"
+      ],
+      "actualPv": [
+        "7i6h",
+        "3e3f"
+      ],
+      "actualPvJa": [
+        "▲6八銀",
+        "△3六歩"
+      ]
+    },
+    {
+      "ply": 36,
+      "scorePerspective": "mover",
+      "scoreBefore": {
+        "type": "cp",
+        "value": 653
+      },
+      "actualMove": "4d4e",
+      "scoreAfterActual": {
+        "type": "cp",
+        "value": 451
+      },
+      "bestMove": "3e3f",
+      "bestScore": {
+        "type": "cp",
+        "value": 653
+      },
+      "pv": [
+        "3e3f"
+      ],
+      "pvJa": [
+        "△3六歩"
+      ],
+      "actualPv": [
+        "4d4e",
+        "8h3c+",
+        "2a3c"
+      ],
+      "actualPvJa": [
+        "△4五歩",
+        "▲3三角成",
+        "△同桂"
+      ]
+    },
+    {
+      "ply": 37,
+      "scorePerspective": "mover",
+      "scoreBefore": {
+        "type": "cp",
+        "value": -451
+      },
+      "actualMove": "8h7g",
+      "scoreAfterActual": {
+        "type": "cp",
+        "value": -847
+      },
+      "bestMove": "8h3c+",
+      "bestScore": {
+        "type": "cp",
+        "value": -451
+      },
+      "pv": [
+        "8h3c+",
+        "2a3c"
+      ],
+      "pvJa": [
+        "▲3三角成",
+        "△同桂"
+      ],
+      "actualPv": [
+        "8h7g",
+        "3c7g+",
+        "6h7g",
+        "B*8g",
+        "7f2f",
+        "8g3b+",
+        "B*9h",
+        "3b2b",
+        "7g6f",
+        "2a3c",
+        "6i5h",
+        "2c2d",
+        "2f5f",
+        "2d2e",
+        "9f9e",
+        "3d2d",
+        "8i7g"
+      ],
+      "actualPvJa": [
+        "▲7七角",
+        "△同角成",
+        "▲同銀",
+        "△8七角打",
+        "▲2六飛",
+        "△3二角成",
+        "▲9八角打",
+        "△2二馬",
+        "▲6六銀",
+        "△3三桂",
+        "▲5八金左",
+        "△2四歩",
+        "▲5六飛",
+        "△2五歩",
+        "▲9五歩",
+        "△2四飛",
+        "▲7七桂"
+      ],
+      "pvRefinement": {
+        "bestAttempted": true,
+        "bestImproved": false,
+        "actualAttempted": false,
+        "actualImproved": false
+      }
+    },
+    {
+      "ply": 38,
+      "scorePerspective": "mover",
+      "scoreBefore": {
+        "type": "cp",
+        "value": 847
+      },
+      "actualMove": "3c7g+",
+      "scoreAfterActual": {
+        "type": "cp",
+        "value": 920
+      },
+      "bestMove": "3c7g+",
+      "bestScore": {
+        "type": "cp",
+        "value": 847
+      },
+      "pv": [
+        "3c7g+",
+        "6h7g",
+        "B*8g",
+        "7f2f",
+        "8g3b+",
+        "B*9h",
+        "3b2b",
+        "7g6f",
+        "2a3c",
+        "6i5h",
+        "2c2d",
+        "2f5f",
+        "2d2e",
+        "9f9e",
+        "3d2d",
+        "8i7g"
+      ],
+      "pvJa": [
+        "△同角成",
+        "▲同銀",
+        "△8七角打",
+        "▲2六飛",
+        "△3二角成",
+        "▲9八角打",
+        "△2二馬",
+        "▲6六銀",
+        "△3三桂",
+        "▲5八金左",
+        "△2四歩",
+        "▲5六飛",
+        "△2五歩",
+        "▲9五歩",
+        "△2四飛",
+        "▲7七桂"
+      ],
+      "actualPv": [
+        "3c7g+",
+        "6h7g",
+        "B*8g",
+        "7f2f",
+        "8g3b+",
+        "6i5h",
+        "2c2d",
+        "B*9h",
+        "3b2b",
+        "7g6f",
+        "2a1c",
+        "8i7g",
+        "1c2e",
+        "2f5f",
+        "P*5e",
+        "5f5g",
+        "9c9d"
+      ],
+      "actualPvJa": [
+        "△同角成",
+        "▲同銀",
+        "△8七角打",
+        "▲2六飛",
+        "△3二角成",
+        "▲5八金左",
+        "△2四歩",
+        "▲9八角打",
+        "△2二馬",
+        "▲6六銀",
+        "△1三桂",
+        "▲7七桂",
+        "△2五桂",
+        "▲5六飛",
+        "△5五歩打",
+        "▲5七飛",
+        "△9四歩"
+      ]
+    },
+    {
+      "ply": 39,
+      "scorePerspective": "mover",
+      "scoreBefore": {
+        "type": "cp",
+        "value": -920
+      },
+      "actualMove": "8i7g",
+      "scoreAfterActual": {
+        "type": "cp",
+        "value": -1315
+      },
+      "bestMove": "6h7g",
+      "bestScore": {
+        "type": "cp",
+        "value": -920
+      },
+      "pv": [
+        "6h7g",
+        "B*8g",
+        "7f2f",
+        "8g3b+",
+        "6i5h",
+        "2c2d",
+        "B*9h",
+        "3b2b",
+        "7g6f",
+        "2a1c",
+        "8i7g",
+        "1c2e",
+        "2f5f",
+        "P*5e",
+        "5f5g",
+        "9c9d"
+      ],
+      "pvJa": [
+        "▲同銀",
+        "△8七角打",
+        "▲2六飛",
+        "△3二角成",
+        "▲5八金左",
+        "△2四歩",
+        "▲9八角打",
+        "△2二馬",
+        "▲6六銀",
+        "△1三桂",
+        "▲7七桂",
+        "△2五桂",
+        "▲5六飛",
+        "△5五歩打",
+        "▲5七飛",
+        "△9四歩"
+      ],
+      "actualPv": [
+        "8i7g",
+        "B*8g",
+        "7f2f",
+        "8g6i+",
+        "2f2c+",
+        "3d5d",
+        "B*3b",
+        "5d5e",
+        "8e8d",
+        "6i6h",
+        "8d8c+",
+        "7b8c",
+        "2c2a",
+        "P*5a",
+        "3b7f+",
+        "P*8d",
+        "7f6f"
+      ],
+      "actualPvJa": [
+        "▲同桂",
+        "△8七角打",
+        "▲2六飛",
+        "△6九角成",
+        "▲2三飛成",
+        "△5四飛",
+        "▲3二角打",
+        "△5五飛",
+        "▲8四歩",
+        "△6八馬",
+        "▲8三歩成",
+        "△同銀",
+        "▲2一龍",
+        "△5一歩打",
+        "▲7六角成",
+        "△8四歩打",
+        "▲6六馬"
+      ],
+      "pvRefinement": {
+        "bestAttempted": false,
+        "bestImproved": false,
+        "actualAttempted": false,
+        "actualImproved": false
+      }
+    },
+    {
+      "ply": 40,
+      "scorePerspective": "mover",
+      "scoreBefore": {
+        "type": "cp",
+        "value": 1315
+      },
+      "actualMove": "B*8g",
+      "scoreAfterActual": {
+        "type": "cp",
+        "value": 1375
+      },
+      "bestMove": "B*8g",
+      "bestScore": {
+        "type": "cp",
+        "value": 1315
+      },
+      "pv": [
+        "B*8g",
+        "7f2f",
+        "8g6i+",
+        "2f2c+",
+        "3d5d",
+        "B*3b",
+        "5d5e",
+        "8e8d",
+        "6i6h",
+        "8d8c+",
+        "7b8c",
+        "2c2a",
+        "P*5a",
+        "3b7f+",
+        "P*8d",
+        "7f6f"
+      ],
+      "pvJa": [
+        "△8七角打",
+        "▲2六飛",
+        "△6九角成",
+        "▲2三飛成",
+        "△5四飛",
+        "▲3二角打",
+        "△5五飛",
+        "▲8四歩",
+        "△6八馬",
+        "▲8三歩成",
+        "△同銀",
+        "▲2一龍",
+        "△5一歩打",
+        "▲7六角成",
+        "△8四歩打",
+        "▲6六馬"
+      ],
+      "actualPv": [
+        "B*8g",
+        "7f2f",
+        "8g6i+",
+        "2f2c+",
+        "3d5d",
+        "B*3b",
+        "5d5c",
+        "2c2a",
+        "6i6h",
+        "P*5d",
+        "5c3c",
+        "N*5c",
+        "6a7a",
+        "8e8d",
+        "8c8d",
+        "P*8c",
+        "7b8c",
+        "3b4a+",
+        "P*5a",
+        "4a5b",
+        "5a5b",
+        "5c6a+",
+        "7a6a",
+        "2a6a"
+      ],
+      "actualPvJa": [
+        "△8七角打",
+        "▲2六飛",
+        "△6九角成",
+        "▲2三飛成",
+        "△5四飛",
+        "▲3二角打",
+        "△5三飛",
+        "▲2一龍",
+        "△6八馬",
+        "▲5四歩打",
+        "△3三飛",
+        "▲5三桂打",
+        "△7一金",
+        "▲8四歩",
+        "△同歩",
+        "▲8三歩打",
+        "△同銀",
+        "▲4一角成",
+        "△5一歩打",
+        "▲5二馬",
+        "△同歩",
+        "▲6一桂成",
+        "△同金",
+        "▲同龍"
+      ]
+    },
+    {
+      "ply": 41,
+      "scorePerspective": "mover",
+      "scoreBefore": {
+        "type": "cp",
+        "value": -1375
+      },
+      "actualMove": "7f2f",
+      "scoreAfterActual": {
+        "type": "cp",
+        "value": -1480
+      },
+      "bestMove": "7f2f",
+      "bestScore": {
+        "type": "cp",
+        "value": -1375
+      },
+      "pv": [
+        "7f2f",
+        "8g6i+",
+        "2f2c+",
+        "3d5d",
+        "B*3b",
+        "5d5c",
+        "2c2a",
+        "6i6h",
+        "P*5d",
+        "5c3c",
+        "N*5c",
+        "6a7a",
+        "8e8d",
+        "8c8d",
+        "P*8c",
+        "7b8c",
+        "3b4a+",
+        "P*5a",
+        "4a5b",
+        "5a5b",
+        "5c6a+",
+        "7a6a",
+        "2a6a"
+      ],
+      "pvJa": [
+        "▲2六飛",
+        "△6九角成",
+        "▲2三飛成",
+        "△5四飛",
+        "▲3二角打",
+        "△5三飛",
+        "▲2一龍",
+        "△6八馬",
+        "▲5四歩打",
+        "△3三飛",
+        "▲5三桂打",
+        "△7一金",
+        "▲8四歩",
+        "△同歩",
+        "▲8三歩打",
+        "△同銀",
+        "▲4一角成",
+        "△5一歩打",
+        "▲5二馬",
+        "△同歩",
+        "▲6一桂成",
+        "△同金",
+        "▲同龍"
+      ],
+      "actualPv": [
+        "7f2f",
+        "8g6i+",
+        "2f2c+",
+        "3d5d",
+        "P*5e",
+        "5d5e",
+        "2c2a",
+        "6i6h",
+        "8e8d",
+        "6h7g",
+        "2a1a",
+        "P*5a",
+        "8d8c+",
+        "8b8c",
+        "1a1e",
+        "8c8b",
+        "P*8c",
+        "7b8c",
+        "N*9e",
+        "8c7b"
+      ],
+      "actualPvJa": [
+        "▲2六飛",
+        "△6九角成",
+        "▲2三飛成",
+        "△5四飛",
+        "▲5五歩打",
+        "△同飛",
+        "▲2一龍",
+        "△6八馬",
+        "▲8四歩",
+        "△7七馬",
+        "▲1一龍",
+        "△5一歩打",
+        "▲8三歩成",
+        "△同玉",
+        "▲1五龍",
+        "△8二玉",
+        "▲8三歩打",
+        "△同銀",
+        "▲9五桂打",
+        "△7二銀"
+      ]
+    },
+    {
+      "ply": 42,
+      "scorePerspective": "mover",
+      "scoreBefore": {
+        "type": "cp",
+        "value": 1480
+      },
+      "actualMove": "8g6i+",
+      "scoreAfterActual": {
+        "type": "cp",
+        "value": 1350
+      },
+      "bestMove": "8g6i+",
+      "bestScore": {
+        "type": "cp",
+        "value": 1480
+      },
+      "pv": [
+        "8g6i+",
+        "2f2c+",
+        "3d5d",
+        "P*5e",
+        "5d5e",
+        "2c2a",
+        "6i6h",
+        "8e8d",
+        "6h7g",
+        "2a1a",
+        "P*5a",
+        "8d8c+",
+        "8b8c",
+        "1a1e",
+        "8c8b",
+        "P*8c",
+        "7b8c",
+        "N*9e",
+        "8c7b"
+      ],
+      "pvJa": [
+        "△6九角成",
+        "▲2三飛成",
+        "△5四飛",
+        "▲5五歩打",
+        "△同飛",
+        "▲2一龍",
+        "△6八馬",
+        "▲8四歩",
+        "△7七馬",
+        "▲1一龍",
+        "△5一歩打",
+        "▲8三歩成",
+        "△同玉",
+        "▲1五龍",
+        "△8二玉",
+        "▲8三歩打",
+        "△同銀",
+        "▲9五桂打",
+        "△7二銀"
+      ],
+      "actualPv": [
+        "8g6i+",
+        "8e8d"
+      ],
+      "actualPvJa": [
+        "△6九角成",
+        "▲8四歩"
+      ]
+    },
+    {
+      "ply": 43,
+      "scorePerspective": "mover",
+      "scoreBefore": {
+        "type": "cp",
+        "value": -1350
+      },
+      "actualMove": "6h5g",
+      "scoreAfterActual": {
+        "type": "cp",
+        "value": -1753
+      },
+      "bestMove": "8e8d",
+      "bestScore": {
+        "type": "cp",
+        "value": -1350
+      },
+      "pv": [
+        "8e8d",
+        "6i6h"
+      ],
+      "pvJa": [
+        "▲8四歩",
+        "△6八馬"
+      ],
+      "actualPv": [
+        "6h5g",
+        "3e3f",
+        "3g3f",
+        "2c2d",
+        "8e8d",
+        "8c8d",
+        "P*8c",
+        "7b8c",
+        "B*2c",
+        "3d5d",
+        "5g4h",
+        "2a3c"
+      ],
+      "actualPvJa": [
+        "▲5七銀",
+        "△3六歩",
+        "▲同歩",
+        "△2四歩",
+        "▲8四歩",
+        "△同歩",
+        "▲8三歩打",
+        "△同銀",
+        "▲2三角打",
+        "△5四飛",
+        "▲4八銀",
+        "△3三桂"
+      ],
+      "pvRefinement": {
+        "bestAttempted": true,
+        "bestImproved": true,
+        "actualAttempted": false,
+        "actualImproved": false
+      }
+    },
+    {
+      "ply": 44,
+      "scorePerspective": "mover",
+      "scoreBefore": {
+        "type": "cp",
+        "value": 1753
+      },
+      "actualMove": "3d2d",
+      "scoreAfterActual": {
+        "type": "cp",
+        "value": 1696
+      },
+      "bestMove": "3e3f",
+      "bestScore": {
+        "type": "cp",
+        "value": 1753
+      },
+      "pv": [
+        "3e3f",
+        "3g3f",
+        "2c2d",
+        "8e8d",
+        "8c8d",
+        "P*8c",
+        "7b8c",
+        "B*2c",
+        "3d5d",
+        "5g4h",
+        "2a3c"
+      ],
+      "pvJa": [
+        "△3六歩",
+        "▲同歩",
+        "△2四歩",
+        "▲8四歩",
+        "△同歩",
+        "▲8三歩打",
+        "△同銀",
+        "▲2三角打",
+        "△5四飛",
+        "▲4八銀",
+        "△3三桂"
+      ],
+      "actualPv": [
+        "3d2d",
+        "2f2d",
+        "2c2d",
+        "R*3a",
+        "P*5a",
+        "P*5h",
+        "6i8g",
+        "B*2b",
+        "R*7i",
+        "2b1a+",
+        "7i9i+",
+        "3a2a+",
+        "8g2a",
+        "1a2a"
+      ],
+      "actualPvJa": [
+        "△2四飛",
+        "▲同飛",
+        "△同歩",
+        "▲3一飛打",
+        "△5一歩打",
+        "▲5八歩打",
+        "△8七馬",
+        "▲2二角打",
+        "△7九飛打",
+        "▲1一角成",
+        "△9九飛成",
+        "▲2一飛成",
+        "△同馬",
+        "▲同馬"
+      ]
+    },
+    {
+      "ply": 45,
+      "scorePerspective": "mover",
+      "scoreBefore": {
+        "type": "cp",
+        "value": -1696
+      },
+      "actualMove": "2f2d",
+      "scoreAfterActual": {
+        "type": "cp",
+        "value": -1606
+      },
+      "bestMove": "2f2d",
+      "bestScore": {
+        "type": "cp",
+        "value": -1696
+      },
+      "pv": [
+        "2f2d",
+        "2c2d",
+        "R*3a",
+        "P*5a",
+        "P*5h",
+        "6i8g",
+        "B*2b",
+        "R*7i",
+        "2b1a+",
+        "7i9i+",
+        "3a2a+",
+        "8g2a",
+        "1a2a"
+      ],
+      "pvJa": [
+        "▲同飛",
+        "△同歩",
+        "▲3一飛打",
+        "△5一歩打",
+        "▲5八歩打",
+        "△8七馬",
+        "▲2二角打",
+        "△7九飛打",
+        "▲1一角成",
+        "△9九飛成",
+        "▲2一飛成",
+        "△同馬",
+        "▲同馬"
+      ],
+      "actualPv": [
+        "2f2d",
+        "2c2d",
+        "R*3a",
+        "P*5a",
+        "3a2a+",
+        "G*5h",
+        "8e8d",
+        "8c8d",
+        "N*4d",
+        "5h4i",
+        "4d5b+",
+        "6a5b",
+        "3h4i"
+      ],
+      "actualPvJa": [
+        "▲同飛",
+        "△同歩",
+        "▲3一飛打",
+        "△5一歩打",
+        "▲2一飛成",
+        "△5八金打",
+        "▲8四歩",
+        "△同歩",
+        "▲4四桂打",
+        "△4九金",
+        "▲5二桂成",
+        "△同金",
+        "▲4九銀"
+      ]
+    },
+    {
+      "ply": 46,
+      "scorePerspective": "mover",
+      "scoreBefore": {
+        "type": "cp",
+        "value": 1606
+      },
+      "actualMove": "2c2d",
+      "scoreAfterActual": {
+        "type": "cp",
+        "value": 1806
+      },
+      "bestMove": "2c2d",
+      "bestScore": {
+        "type": "cp",
+        "value": 1606
+      },
+      "pv": [
+        "2c2d",
+        "R*3a",
+        "P*5a",
+        "3a2a+",
+        "G*5h",
+        "8e8d",
+        "8c8d",
+        "N*4d",
+        "5h4i",
+        "4d5b+",
+        "6a5b",
+        "3h4i"
+      ],
+      "pvJa": [
+        "△同歩",
+        "▲3一飛打",
+        "△5一歩打",
+        "▲2一飛成",
+        "△5八金打",
+        "▲8四歩",
+        "△同歩",
+        "▲4四桂打",
+        "△4九金",
+        "▲5二桂成",
+        "△同金",
+        "▲4九銀"
+      ],
+      "actualPv": [
+        "2c2d",
+        "R*3a",
+        "P*5a",
+        "P*5h",
+        "G*5i",
+        "8e8d",
+        "5i4i",
+        "3h4i",
+        "8c8d",
+        "3a2a+"
+      ],
+      "actualPvJa": [
+        "△同歩",
+        "▲3一飛打",
+        "△5一歩打",
+        "▲5八歩打",
+        "△5九金打",
+        "▲8四歩",
+        "△4九金",
+        "▲同銀",
+        "△8四歩",
+        "▲2一飛成"
+      ]
+    },
+    {
+      "ply": 47,
+      "scorePerspective": "mover",
+      "scoreBefore": {
+        "type": "cp",
+        "value": -1806
+      },
+      "actualMove": "R*2b",
+      "scoreAfterActual": {
+        "type": "cp",
+        "value": -2106
+      },
+      "bestMove": "R*3a",
+      "bestScore": {
+        "type": "cp",
+        "value": -1806
+      },
+      "pv": [
+        "R*3a",
+        "P*5a",
+        "P*5h",
+        "G*5i",
+        "8e8d",
+        "5i4i",
+        "3h4i",
+        "8c8d",
+        "3a2a+"
+      ],
+      "pvJa": [
+        "▲3一飛打",
+        "△5一歩打",
+        "▲5八歩打",
+        "△5九金打",
+        "▲8四歩",
+        "△4九金",
+        "▲同銀",
+        "△8四歩",
+        "▲2一飛成"
+      ],
+      "actualPv": [
+        "R*2b",
+        "6i8g",
+        "8e8d",
+        "8c8d",
+        "P*8c",
+        "7b8c",
+        "2b2d+",
+        "R*8i",
+        "B*2b",
+        "G*5i",
+        "4i4h",
+        "8i9i+",
+        "2b1a+"
+      ],
+      "actualPvJa": [
+        "▲2二飛打",
+        "△8七馬",
+        "▲8四歩",
+        "△同歩",
+        "▲8三歩打",
+        "△同銀",
+        "▲2四飛成",
+        "△8九飛打",
+        "▲2二角打",
+        "△5九金打",
+        "▲4八金",
+        "△9九飛成",
+        "▲1一角成"
+      ]
+    },
+    {
+      "ply": 48,
+      "scorePerspective": "mover",
+      "scoreBefore": {
+        "type": "cp",
+        "value": 2106
+      },
+      "actualMove": "4e4f",
+      "scoreAfterActual": {
+        "type": "cp",
+        "value": 1636
+      },
+      "bestMove": "6i8g",
+      "bestScore": {
+        "type": "cp",
+        "value": 2106
+      },
+      "pv": [
+        "6i8g",
+        "8e8d",
+        "8c8d",
+        "P*8c",
+        "7b8c",
+        "2b2d+",
+        "R*8i",
+        "B*2b",
+        "G*5i",
+        "4i4h",
+        "8i9i+",
+        "2b1a+"
+      ],
+      "pvJa": [
+        "△8七馬",
+        "▲8四歩",
+        "△同歩",
+        "▲8三歩打",
+        "△同銀",
+        "▲2四飛成",
+        "△8九飛打",
+        "▲2二角打",
+        "△5九金打",
+        "▲4八金",
+        "△9九飛成",
+        "▲1一角成"
+      ],
+      "actualPv": [
+        "4e4f",
+        "4g4f",
+        "G*3a",
+        "2b2d+",
+        "R*8i",
+        "8e8d",
+        "8c8d",
+        "P*8c",
+        "7b8c",
+        "P*8e",
+        "3e3f",
+        "8e8d",
+        "8c7b",
+        "3g3f",
+        "8i9i+"
+      ],
+      "actualPvJa": [
+        "△4六歩",
+        "▲同歩",
+        "△3一金打",
+        "▲2四飛成",
+        "△8九飛打",
+        "▲8四歩",
+        "△同歩",
+        "▲8三歩打",
+        "△同銀",
+        "▲8五歩打",
+        "△3六歩",
+        "▲8四歩",
+        "△7二銀",
+        "▲3六歩",
+        "△9九飛成"
+      ]
+    },
+    {
+      "ply": 49,
+      "scorePerspective": "mover",
+      "scoreBefore": {
+        "type": "cp",
+        "value": -1636
+      },
+      "actualMove": "5g4f",
+      "scoreAfterActual": {
+        "type": "cp",
+        "value": -2225
+      },
+      "bestMove": "4g4f",
+      "bestScore": {
+        "type": "cp",
+        "value": -1636
+      },
+      "pv": [
+        "4g4f",
+        "G*3a",
+        "2b2d+",
+        "R*8i",
+        "8e8d",
+        "8c8d",
+        "P*8c",
+        "7b8c",
+        "P*8e",
+        "3e3f",
+        "8e8d",
+        "8c7b",
+        "3g3f",
+        "8i9i+"
+      ],
+      "pvJa": [
+        "▲同歩",
+        "△3一金打",
+        "▲2四飛成",
+        "△8九飛打",
+        "▲8四歩",
+        "△同歩",
+        "▲8三歩打",
+        "△同銀",
+        "▲8五歩打",
+        "△3六歩",
+        "▲8四歩",
+        "△7二銀",
+        "▲3六歩",
+        "△9九飛成"
+      ],
+      "actualPv": [
+        "5g4f",
+        "P*4h",
+        "4i3i",
+        "G*4i",
+        "3h4i",
+        "4h4i+",
+        "3i4i",
+        "6i4g",
+        "8e8d",
+        "R*8i",
+        "G*4h",
+        "4g4h",
+        "8d8c+",
+        "8b8c",
+        "B*5f",
+        "8c8b",
+        "4i4h"
+      ],
+      "actualPvJa": [
+        "▲同銀",
+        "△4八歩打",
+        "▲3九金",
+        "△4九金打",
+        "▲同銀",
+        "△同歩成",
+        "▲同金",
+        "△4七馬",
+        "▲8四歩",
+        "△8九飛打",
+        "▲4八金打",
+        "△同馬",
+        "▲8三歩成",
+        "△同玉",
+        "▲5六角打",
+        "△8二玉",
+        "▲4八金"
+      ],
+      "pvRefinement": {
+        "bestAttempted": false,
+        "bestImproved": false,
+        "actualAttempted": false,
+        "actualImproved": false
+      }
+    },
+    {
+      "ply": 50,
+      "scorePerspective": "mover",
+      "scoreBefore": {
+        "type": "cp",
+        "value": 2225
+      },
+      "actualMove": "P*4h",
+      "scoreAfterActual": {
+        "type": "cp",
+        "value": 2254
+      },
+      "bestMove": "P*4h",
+      "bestScore": {
+        "type": "cp",
+        "value": 2225
+      },
+      "pv": [
+        "P*4h",
+        "4i3i",
+        "G*4i",
+        "3h4i",
+        "4h4i+",
+        "3i4i",
+        "6i4g",
+        "8e8d",
+        "R*8i",
+        "G*4h",
+        "4g4h",
+        "8d8c+",
+        "8b8c",
+        "B*5f",
+        "8c8b",
+        "4i4h"
+      ],
+      "pvJa": [
+        "△4八歩打",
+        "▲3九金",
+        "△4九金打",
+        "▲同銀",
+        "△同歩成",
+        "▲同金",
+        "△4七馬",
+        "▲8四歩",
+        "△8九飛打",
+        "▲4八金打",
+        "△同馬",
+        "▲8三歩成",
+        "△同玉",
+        "▲5六角打",
+        "△8二玉",
+        "▲4八金"
+      ],
+      "actualPv": [
+        "P*4h",
+        "4i3i",
+        "G*4i",
+        "3h4i",
+        "4h4i+",
+        "3i4i",
+        "6i4g",
+        "8e8d",
+        "P*4h",
+        "4i3i",
+        "R*8i",
+        "8d8c+",
+        "7b8c",
+        "G*3h",
+        "4g4f",
+        "P*8d",
+        "8c7b",
+        "2b2a+",
+        "4h4i+",
+        "N*9e"
+      ],
+      "actualPvJa": [
+        "△4八歩打",
+        "▲3九金",
+        "△4九金打",
+        "▲同銀",
+        "△同歩成",
+        "▲同金",
+        "△4七馬",
+        "▲8四歩",
+        "△4八歩打",
+        "▲3九金",
+        "△8九飛打",
+        "▲8三歩成",
+        "△同銀",
+        "▲3八金打",
+        "△4六馬",
+        "▲8四歩打",
+        "△7二銀",
+        "▲2一飛成",
+        "△4九歩成",
+        "▲9五桂打"
+      ]
+    },
+    {
+      "ply": 51,
+      "scorePerspective": "mover",
+      "scoreBefore": {
+        "type": "cp",
+        "value": -2254
+      },
+      "actualMove": "4i4h",
+      "scoreAfterActual": {
+        "type": "cp",
+        "value": -2271
+      },
+      "bestMove": "4i3i",
+      "bestScore": {
+        "type": "cp",
+        "value": -2254
+      },
+      "pv": [
+        "4i3i",
+        "G*4i",
+        "3h4i",
+        "4h4i+",
+        "3i4i",
+        "6i4g",
+        "8e8d",
+        "P*4h",
+        "4i3i",
+        "R*8i",
+        "8d8c+",
+        "7b8c",
+        "G*3h",
+        "4g4f",
+        "P*8d",
+        "8c7b",
+        "2b2a+",
+        "4h4i+",
+        "N*9e"
+      ],
+      "pvJa": [
+        "▲3九金",
+        "△4九金打",
+        "▲同銀",
+        "△同歩成",
+        "▲同金",
+        "△4七馬",
+        "▲8四歩",
+        "△4八歩打",
+        "▲3九金",
+        "△8九飛打",
+        "▲8三歩成",
+        "△同銀",
+        "▲3八金打",
+        "△4六馬",
+        "▲8四歩打",
+        "△7二銀",
+        "▲2一飛成",
+        "△4九歩成",
+        "▲9五桂打"
+      ],
+      "actualPv": [
+        "4i4h",
+        "G*5h",
+        "4f5g",
+        "R*7h",
+        "B*6f",
+        "5h5g",
+        "6f5g",
+        "S*5i",
+        "G*3i",
+        "5i4h+",
+        "5g4h"
+      ],
+      "actualPvJa": [
+        "▲同金",
+        "△5八金打",
+        "▲5七銀",
+        "△7八飛打",
+        "▲6六角打",
+        "△5七金",
+        "▲同角",
+        "△5九銀打",
+        "▲3九金打",
+        "△4八銀成",
+        "▲同角"
+      ]
+    },
+    {
+      "ply": 52,
+      "scorePerspective": "mover",
+      "scoreBefore": {
+        "type": "cp",
+        "value": 2271
+      },
+      "actualMove": "R*7h",
+      "scoreAfterActual": {
+        "type": "cp",
+        "value": 2497
+      },
+      "bestMove": "G*5h",
+      "bestScore": {
+        "type": "cp",
+        "value": 2271
+      },
+      "pv": [
+        "G*5h",
+        "4f5g",
+        "R*7h",
+        "B*6f",
+        "5h5g",
+        "6f5g",
+        "S*5i",
+        "G*3i",
+        "5i4h+",
+        "5g4h"
+      ],
+      "pvJa": [
+        "△5八金打",
+        "▲5七銀",
+        "△7八飛打",
+        "▲6六角打",
+        "△5七金",
+        "▲同角",
+        "△5九銀打",
+        "▲3九金打",
+        "△4八銀成",
+        "▲同角"
+      ],
+      "actualPv": [
+        "R*7h",
+        "B*6f",
+        "G*5f"
+      ],
+      "actualPvJa": [
+        "△7八飛打",
+        "▲6六角打",
+        "△5六金打"
+      ]
+    },
+    {
+      "ply": 53,
+      "scorePerspective": "mover",
+      "scoreBefore": {
+        "type": "cp",
+        "value": -2497
+      },
+      "actualMove": "P*5h",
+      "scoreAfterActual": {
+        "type": "cp",
+        "value": -2410
+      },
+      "bestMove": "B*6f",
+      "bestScore": {
+        "type": "cp",
+        "value": -2497
+      },
+      "pv": [
+        "B*6f",
+        "G*5f"
+      ],
+      "pvJa": [
+        "▲6六角打",
+        "△5六金打"
+      ],
+      "actualPv": [
+        "P*5h",
+        "6i5h",
+        "4h5h",
+        "7h5h+",
+        "B*6f",
+        "G*7f",
+        "2b5b+",
+        "5h5b",
+        "6f1a+",
+        "G*4h",
+        "G*4i",
+        "4h4i",
+        "3h4i"
+      ],
+      "actualPvJa": [
+        "▲5八歩打",
+        "△同馬",
+        "▲同金",
+        "△同飛成",
+        "▲6六角打",
+        "△7六金打",
+        "▲5二飛成",
+        "△同龍",
+        "▲1一角成",
+        "△4八金打",
+        "▲4九金打",
+        "△同金",
+        "▲同銀"
+      ]
+    },
+    {
+      "ply": 54,
+      "scorePerspective": "mover",
+      "scoreBefore": {
+        "type": "cp",
+        "value": 2410
+      },
+      "actualMove": "7h7g+",
+      "scoreAfterActual": {
+        "type": "cp",
+        "value": 1833
+      },
+      "bestMove": "6i5h",
+      "bestScore": {
+        "type": "cp",
+        "value": 2410
+      },
+      "pv": [
+        "6i5h",
+        "4h5h",
+        "7h5h+",
+        "B*6f",
+        "G*7f",
+        "2b5b+",
+        "5h5b",
+        "6f1a+",
+        "G*4h",
+        "G*4i",
+        "4h4i",
+        "3h4i"
+      ],
+      "pvJa": [
+        "△同馬",
+        "▲同金",
+        "△同飛成",
+        "▲6六角打",
+        "△7六金打",
+        "▲5二飛成",
+        "△同龍",
+        "▲1一角成",
+        "△4八金打",
+        "▲4九金打",
+        "△同金",
+        "▲同銀"
+      ],
+      "actualPv": [
+        "7h7g+",
+        "8e8d",
+        "7g7i"
+      ],
+      "actualPvJa": [
+        "△7七飛成",
+        "▲8四歩",
+        "△7九龍"
+      ]
+    },
+    {
+      "ply": 55,
+      "scorePerspective": "mover",
+      "scoreBefore": {
+        "type": "cp",
+        "value": -1833
+      },
+      "actualMove": "2b2a+",
+      "scoreAfterActual": {
+        "type": "cp",
+        "value": -1708
+      },
+      "bestMove": "8e8d",
+      "bestScore": {
+        "type": "cp",
+        "value": -1833
+      },
+      "pv": [
+        "8e8d",
+        "7g7i"
+      ],
+      "pvJa": [
+        "▲8四歩",
+        "△7九龍"
+      ],
+      "actualPv": [
+        "2b2a+",
+        "6i5i",
+        "B*5g",
+        "7g6g",
+        "8e8d",
+        "8c8d",
+        "N*9e"
+      ],
+      "actualPvJa": [
+        "▲2一飛成",
+        "△5九馬",
+        "▲5七角打",
+        "△6七龍",
+        "▲8四歩",
+        "△同歩",
+        "▲9五桂打"
+      ]
+    },
+    {
+      "ply": 56,
+      "scorePerspective": "mover",
+      "scoreBefore": {
+        "type": "cp",
+        "value": 1708
+      },
+      "actualMove": "7g6g",
+      "scoreAfterActual": {
+        "type": "cp",
+        "value": 816
+      },
+      "bestMove": "6i5i",
+      "bestScore": {
+        "type": "cp",
+        "value": 1708
+      },
+      "pv": [
+        "6i5i",
+        "B*5g",
+        "7g6g",
+        "8e8d",
+        "8c8d",
+        "N*9e"
+      ],
+      "pvJa": [
+        "△5九馬",
+        "▲5七角打",
+        "△6七龍",
+        "▲8四歩",
+        "△同歩",
+        "▲9五桂打"
+      ],
+      "actualPv": [
+        "7g6g",
+        "8e8d",
+        "6i5h",
+        "4h5h",
+        "6g5h",
+        "8d8c+",
+        "8b8c",
+        "B*7f",
+        "5h8h",
+        "N*9e",
+        "8c8b"
+      ],
+      "actualPvJa": [
+        "△6七龍",
+        "▲8四歩",
+        "△5八馬",
+        "▲同金",
+        "△同龍",
+        "▲8三歩成",
+        "△同玉",
+        "▲7六角打",
+        "△8八龍",
+        "▲9五桂打",
+        "△8二玉"
+      ]
+    },
+    {
+      "ply": 57,
+      "scorePerspective": "mover",
+      "scoreBefore": {
+        "type": "cp",
+        "value": -816
+      },
+      "actualMove": "8e8d",
+      "scoreAfterActual": {
+        "type": "cp",
+        "value": -751
+      },
+      "bestMove": "8e8d",
+      "bestScore": {
+        "type": "cp",
+        "value": -816
+      },
+      "pv": [
+        "8e8d",
+        "6i5h",
+        "4h5h",
+        "6g5h",
+        "8d8c+",
+        "8b8c",
+        "B*7f",
+        "5h8h",
+        "N*9e",
+        "8c8b"
+      ],
+      "pvJa": [
+        "▲8四歩",
+        "△5八馬",
+        "▲同金",
+        "△同龍",
+        "▲8三歩成",
+        "△同玉",
+        "▲7六角打",
+        "△8八龍",
+        "▲9五桂打",
+        "△8二玉"
+      ],
+      "actualPv": [
+        "8e8d",
+        "8c8d",
+        "N*9e",
+        "N*7a",
+        "P*8c",
+        "7a8c",
+        "B*3d",
+        "P*5f",
+        "3d5b+",
+        "6a5b",
+        "4h4i"
+      ],
+      "actualPvJa": [
+        "▲8四歩",
+        "△同歩",
+        "▲9五桂打",
+        "△7一桂打",
+        "▲8三歩打",
+        "△同桂",
+        "▲3四角打",
+        "△5六歩打",
+        "▲5二角成",
+        "△同金",
+        "▲4九金"
+      ]
+    },
+    {
+      "ply": 58,
+      "scorePerspective": "mover",
+      "scoreBefore": {
+        "type": "cp",
+        "value": 751
+      },
+      "actualMove": "8c8d",
+      "scoreAfterActual": {
+        "type": "cp",
+        "value": 846
+      },
+      "bestMove": "8c8d",
+      "bestScore": {
+        "type": "cp",
+        "value": 751
+      },
+      "pv": [
+        "8c8d",
+        "N*9e",
+        "N*7a",
+        "P*8c",
+        "7a8c",
+        "B*3d",
+        "P*5f",
+        "3d5b+",
+        "6a5b",
+        "4h4i"
+      ],
+      "pvJa": [
+        "△同歩",
+        "▲9五桂打",
+        "△7一桂打",
+        "▲8三歩打",
+        "△同桂",
+        "▲3四角打",
+        "△5六歩打",
+        "▲5二角成",
+        "△同金",
+        "▲4九金"
+      ],
+      "actualPv": [
+        "8c8d",
+        "N*9e",
+        "N*7a",
+        "2a1a",
+        "9c9d",
+        "B*3d",
+        "6g6h",
+        "4f5g",
+        "9d9e",
+        "5g6h",
+        "6i6h"
+      ],
+      "actualPvJa": [
+        "△同歩",
+        "▲9五桂打",
+        "△7一桂打",
+        "▲1一龍",
+        "△9四歩",
+        "▲3四角打",
+        "△6八龍",
+        "▲5七銀",
+        "△9五歩",
+        "▲6八銀",
+        "△同馬"
+      ]
+    },
+    {
+      "ply": 59,
+      "scorePerspective": "mover",
+      "scoreBefore": {
+        "type": "cp",
+        "value": -846
+      },
+      "actualMove": "P*8c",
+      "scoreAfterActual": {
+        "type": "cp",
+        "value": -967
+      },
+      "bestMove": "N*9e",
+      "bestScore": {
+        "type": "cp",
+        "value": -846
+      },
+      "pv": [
+        "N*9e",
+        "N*7a",
+        "2a1a",
+        "9c9d",
+        "B*3d",
+        "6g6h",
+        "4f5g",
+        "9d9e",
+        "5g6h",
+        "6i6h"
+      ],
+      "pvJa": [
+        "▲9五桂打",
+        "△7一桂打",
+        "▲1一龍",
+        "△9四歩",
+        "▲3四角打",
+        "△6八龍",
+        "▲5七銀",
+        "△9五歩",
+        "▲6八銀",
+        "△同馬"
+      ],
+      "actualPv": [
+        "P*8c",
+        "8b8c"
+      ],
+      "actualPvJa": [
+        "▲8三歩打",
+        "△同玉"
+      ]
+    },
+    {
+      "ply": 60,
+      "scorePerspective": "mover",
+      "scoreBefore": {
+        "type": "cp",
+        "value": 967
+      },
+      "actualMove": "8b7a",
+      "scoreAfterActual": {
+        "type": "cp",
+        "value": -1792
+      },
+      "bestMove": "8b8c",
+      "bestScore": {
+        "type": "cp",
+        "value": 967
+      },
+      "pv": [
+        "8b8c"
+      ],
+      "pvJa": [
+        "△同玉"
+      ],
+      "actualPv": [
+        "8b7a",
+        "B*3d",
+        "P*5a",
+        "3d6g",
+        "7b8c",
+        "N*4d",
+        "5b6b",
+        "6g3d",
+        "6d5c",
+        "3d6a+",
+        "6b6a",
+        "P*6b",
+        "7a6b",
+        "R*2b",
+        "N*5b",
+        "4d5b+",
+        "5a5b"
+      ],
+      "actualPvJa": [
+        "△7一玉",
+        "▲3四角打",
+        "△5一歩打",
+        "▲6七角",
+        "△8三銀",
+        "▲4四桂打",
+        "△6二金左",
+        "▲3四角",
+        "△5三銀",
+        "▲6一角成",
+        "△同金",
+        "▲6二歩打",
+        "△同玉",
+        "▲2二飛打",
+        "△5二桂打",
+        "▲同桂成",
+        "△同歩"
+      ]
+    },
+    {
+      "ply": 61,
+      "scorePerspective": "mover",
+      "scoreBefore": {
+        "type": "cp",
+        "value": 1792
+      },
+      "actualMove": "B*3d",
+      "scoreAfterActual": {
+        "type": "cp",
+        "value": 2037
+      },
+      "bestMove": "B*3d",
+      "bestScore": {
+        "type": "cp",
+        "value": 1792
+      },
+      "pv": [
+        "B*3d",
+        "P*5a",
+        "3d6g",
+        "7b8c",
+        "N*4d",
+        "5b6b",
+        "6g3d",
+        "6d5c",
+        "3d6a+",
+        "6b6a",
+        "P*6b",
+        "7a6b",
+        "R*2b",
+        "N*5b",
+        "4d5b+",
+        "5a5b"
+      ],
+      "pvJa": [
+        "▲3四角打",
+        "△5一歩打",
+        "▲6七角",
+        "△8三銀",
+        "▲4四桂打",
+        "△6二金左",
+        "▲3四角",
+        "△5三銀",
+        "▲6一角成",
+        "△同金",
+        "▲6二歩打",
+        "△同玉",
+        "▲2二飛打",
+        "△5二桂打",
+        "▲同桂成",
+        "△同歩"
+      ],
+      "actualPv": [
+        "B*3d",
+        "P*5a",
+        "3d6g",
+        "7b8c",
+        "N*4d",
+        "5b6b",
+        "6g3d",
+        "6d5c",
+        "R*3b",
+        "G*4b",
+        "3b3a+",
+        "6i5i",
+        "4h4i",
+        "5i7g",
+        "3d6a+",
+        "6b6a",
+        "3a5a",
+        "6a5a",
+        "2a5a",
+        "7a8b"
+      ],
+      "actualPvJa": [
+        "▲3四角打",
+        "△5一歩打",
+        "▲6七角",
+        "△8三銀",
+        "▲4四桂打",
+        "△6二金左",
+        "▲3四角",
+        "△5三銀",
+        "▲3二飛打",
+        "△4二金打",
+        "▲3一飛成",
+        "△5九馬",
+        "▲4九金",
+        "△7七馬",
+        "▲6一角成",
+        "△同金",
+        "▲5一龍",
+        "△同金",
+        "▲同龍",
+        "△8二玉"
+      ]
+    },
+    {
+      "ply": 62,
+      "scorePerspective": "mover",
+      "scoreBefore": {
+        "type": "cp",
+        "value": -2037
+      },
+      "actualMove": "P*5a",
+      "scoreAfterActual": {
+        "type": "cp",
+        "value": -1866
+      },
+      "bestMove": "P*5a",
+      "bestScore": {
+        "type": "cp",
+        "value": -2037
+      },
+      "pv": [
+        "P*5a",
+        "3d6g",
+        "7b8c",
+        "N*4d",
+        "5b6b",
+        "6g3d",
+        "6d5c",
+        "R*3b",
+        "G*4b",
+        "3b3a+",
+        "6i5i",
+        "4h4i",
+        "5i7g",
+        "3d6a+",
+        "6b6a",
+        "3a5a",
+        "6a5a",
+        "2a5a",
+        "7a8b"
+      ],
+      "pvJa": [
+        "△5一歩打",
+        "▲6七角",
+        "△8三銀",
+        "▲4四桂打",
+        "△6二金左",
+        "▲3四角",
+        "△5三銀",
+        "▲3二飛打",
+        "△4二金打",
+        "▲3一飛成",
+        "△5九馬",
+        "▲4九金",
+        "△7七馬",
+        "▲6一角成",
+        "△同金",
+        "▲5一龍",
+        "△同金",
+        "▲同龍",
+        "△8二玉"
+      ],
+      "actualPv": [
+        "P*5a",
+        "3d6g",
+        "6i8g",
+        "2a1a",
+        "8g7g",
+        "6g1b+",
+        "7b8c",
+        "N*9e",
+        "8c7b",
+        "P*8c",
+        "7g9i",
+        "4h4i",
+        "P*4h",
+        "4i3i",
+        "9i1a",
+        "1b1a"
+      ],
+      "actualPvJa": [
+        "△5一歩打",
+        "▲6七角",
+        "△8七馬",
+        "▲1一龍",
+        "△7七馬",
+        "▲1二角成",
+        "△8三銀",
+        "▲9五桂打",
+        "△7二銀",
+        "▲8三歩打",
+        "△9九馬",
+        "▲4九金",
+        "△4八歩打",
+        "▲3九金",
+        "△1一馬",
+        "▲同馬"
+      ]
+    },
+    {
+      "ply": 63,
+      "scorePerspective": "mover",
+      "scoreBefore": {
+        "type": "cp",
+        "value": 1866
+      },
+      "actualMove": "3d6g",
+      "scoreAfterActual": {
+        "type": "cp",
+        "value": 2131
+      },
+      "bestMove": "3d6g",
+      "bestScore": {
+        "type": "cp",
+        "value": 1866
+      },
+      "pv": [
+        "3d6g",
+        "6i8g",
+        "2a1a",
+        "8g7g",
+        "6g1b+",
+        "7b8c",
+        "N*9e",
+        "8c7b",
+        "P*8c",
+        "7g9i",
+        "4h4i",
+        "P*4h",
+        "4i3i",
+        "9i1a",
+        "1b1a"
+      ],
+      "pvJa": [
+        "▲6七角",
+        "△8七馬",
+        "▲1一龍",
+        "△7七馬",
+        "▲1二角成",
+        "△8三銀",
+        "▲9五桂打",
+        "△7二銀",
+        "▲8三歩打",
+        "△9九馬",
+        "▲4九金",
+        "△4八歩打",
+        "▲3九金",
+        "△1一馬",
+        "▲同馬"
+      ],
+      "actualPv": [
+        "3d6g",
+        "6i5i",
+        "4h4i",
+        "5i7g",
+        "6g2c+",
+        "P*4h",
+        "4i4h",
+        "7b8c",
+        "2c2d"
+      ],
+      "actualPvJa": [
+        "▲6七角",
+        "△5九馬",
+        "▲4九金",
+        "△7七馬",
+        "▲2三角成",
+        "△4八歩打",
+        "▲同金",
+        "△8三銀",
+        "▲2四馬"
+      ]
+    },
+    {
+      "ply": 64,
+      "scorePerspective": "mover",
+      "scoreBefore": {
+        "type": "cp",
+        "value": -2131
+      },
+      "actualMove": "7b8c",
+      "scoreAfterActual": {
+        "type": "cp",
+        "value": -2047
+      },
+      "bestMove": "6i5i",
+      "bestScore": {
+        "type": "cp",
+        "value": -2131
+      },
+      "pv": [
+        "6i5i",
+        "4h4i",
+        "5i7g",
+        "6g2c+",
+        "P*4h",
+        "4i4h",
+        "7b8c",
+        "2c2d"
+      ],
+      "pvJa": [
+        "△5九馬",
+        "▲4九金",
+        "△7七馬",
+        "▲2三角成",
+        "△4八歩打",
+        "▲同金",
+        "△8三銀",
+        "▲2四馬"
+      ],
+      "actualPv": [
+        "7b8c",
+        "6g3d",
+        "6i8g",
+        "2a1a",
+        "8g7g",
+        "P*6b",
+        "6a6b",
+        "1a1b",
+        "7g3c",
+        "R*3a",
+        "3c3d",
+        "3a3d+",
+        "B*6g",
+        "4f4e",
+        "7a8b",
+        "N*9e",
+        "8c7b"
+      ],
+      "actualPvJa": [
+        "△8三銀",
+        "▲3四角",
+        "△8七馬",
+        "▲1一龍",
+        "△7七馬",
+        "▲6二歩打",
+        "△同金直",
+        "▲1二龍",
+        "△3三馬",
+        "▲3一飛打",
+        "△3四馬",
+        "▲同飛成",
+        "△6七角打",
+        "▲4五銀",
+        "△8二玉",
+        "▲9五桂打",
+        "△7二銀"
+      ]
+    },
+    {
+      "ply": 65,
+      "scorePerspective": "mover",
+      "scoreBefore": {
+        "type": "cp",
+        "value": 2047
+      },
+      "actualMove": "2a1a",
+      "scoreAfterActual": {
+        "type": "cp",
+        "value": 2125
+      },
+      "bestMove": "6g3d",
+      "bestScore": {
+        "type": "cp",
+        "value": 2047
+      },
+      "pv": [
+        "6g3d",
+        "6i8g",
+        "2a1a",
+        "8g7g",
+        "P*6b",
+        "6a6b",
+        "1a1b",
+        "7g3c",
+        "R*3a",
+        "3c3d",
+        "3a3d+",
+        "B*6g",
+        "4f4e",
+        "7a8b",
+        "N*9e",
+        "8c7b"
+      ],
+      "pvJa": [
+        "▲3四角",
+        "△8七馬",
+        "▲1一龍",
+        "△7七馬",
+        "▲6二歩打",
+        "△同金直",
+        "▲1二龍",
+        "△3三馬",
+        "▲3一飛打",
+        "△3四馬",
+        "▲同飛成",
+        "△6七角打",
+        "▲4五銀",
+        "△8二玉",
+        "▲9五桂打",
+        "△7二銀"
+      ],
+      "actualPv": [
+        "2a1a",
+        "6i5i",
+        "4h4i",
+        "5i7g",
+        "P*6b",
+        "5b6b",
+        "6g5f",
+        "8c7b",
+        "1a1e",
+        "7g9i",
+        "P*8c",
+        "9c9d",
+        "L*5d",
+        "P*4h",
+        "4i3i",
+        "9i6f"
+      ],
+      "actualPvJa": [
+        "▲1一龍",
+        "△5九馬",
+        "▲4九金",
+        "△7七馬",
+        "▲6二歩打",
+        "△同金左",
+        "▲5六角",
+        "△7二銀",
+        "▲1五龍",
+        "△9九馬",
+        "▲8三歩打",
+        "△9四歩",
+        "▲5四香打",
+        "△4八歩打",
+        "▲3九金",
+        "△6六馬"
+      ]
+    },
+    {
+      "ply": 66,
+      "scorePerspective": "mover",
+      "scoreBefore": {
+        "type": "cp",
+        "value": -2125
+      },
+      "actualMove": "6i6h",
+      "scoreAfterActual": {
+        "type": "cp",
+        "value": -2603
+      },
+      "bestMove": "6i5i",
+      "bestScore": {
+        "type": "cp",
+        "value": -2125
+      },
+      "pv": [
+        "6i5i",
+        "4h4i",
+        "5i7g",
+        "P*6b",
+        "5b6b",
+        "6g5f",
+        "8c7b",
+        "1a1e",
+        "7g9i",
+        "P*8c",
+        "9c9d",
+        "L*5d",
+        "P*4h",
+        "4i3i",
+        "9i6f"
+      ],
+      "pvJa": [
+        "△5九馬",
+        "▲4九金",
+        "△7七馬",
+        "▲6二歩打",
+        "△同金左",
+        "▲5六角",
+        "△7二銀",
+        "▲1五龍",
+        "△9九馬",
+        "▲8三歩打",
+        "△9四歩",
+        "▲5四香打",
+        "△4八歩打",
+        "▲3九金",
+        "△6六馬"
+      ],
+      "actualPv": [
+        "6i6h",
+        "6g5f",
+        "8c7b",
+        "N*8c",
+        "7b8c",
+        "5f8c+",
+        "G*7b",
+        "8c8d",
+        "P*8c"
+      ],
+      "actualPvJa": [
+        "△6八馬",
+        "▲5六角",
+        "△7二銀",
+        "▲8三桂打",
+        "△同銀",
+        "▲同角成",
+        "△7二金打",
+        "▲8四馬",
+        "△8三歩打"
+      ]
+    },
+    {
+      "ply": 67,
+      "scorePerspective": "mover",
+      "scoreBefore": {
+        "type": "cp",
+        "value": 2603
+      },
+      "actualMove": "6g3d",
+      "scoreAfterActual": {
+        "type": "cp",
+        "value": 2295
+      },
+      "bestMove": "6g5f",
+      "bestScore": {
+        "type": "cp",
+        "value": 2603
+      },
+      "pv": [
+        "6g5f",
+        "8c7b",
+        "N*8c",
+        "7b8c",
+        "5f8c+",
+        "G*7b",
+        "8c8d",
+        "P*8c"
+      ],
+      "pvJa": [
+        "▲5六角",
+        "△7二銀",
+        "▲8三桂打",
+        "△同銀",
+        "▲同角成",
+        "△7二金打",
+        "▲8四馬",
+        "△8三歩打"
+      ],
+      "actualPv": [
+        "6g3d",
+        "6h7g",
+        "1a1b",
+        "7g3c",
+        "R*3a",
+        "3c3d",
+        "3a3d+",
+        "B*6g",
+        "4f4e",
+        "N*5c",
+        "N*9e",
+        "8c7b",
+        "P*8c",
+        "5c4e",
+        "B*8b"
+      ],
+      "actualPvJa": [
+        "▲3四角",
+        "△7七馬",
+        "▲1二龍",
+        "△3三馬",
+        "▲3一飛打",
+        "△3四馬",
+        "▲同飛成",
+        "△6七角打",
+        "▲4五銀",
+        "△5三桂打",
+        "▲9五桂打",
+        "△7二銀",
+        "▲8三歩打",
+        "△4五桂",
+        "▲8二角打"
+      ]
+    }
+  ],
+  "verifiedIssues": [
+    {
+      "ply": 21,
+      "played": "5e5d",
+      "best": "7i6h",
+      "beforeCp": -82,
+      "afterCp": -408,
+      "lossCp": 326,
+      "scorePerspective": "mover",
+      "scoreBefore": {
+        "type": "cp",
+        "value": -82
+      },
+      "scoreAfterActual": {
+        "type": "cp",
+        "value": -408
+      },
+      "bestScore": {
+        "type": "cp",
+        "value": -82
+      },
+      "playedJa": "▲5四歩",
+      "bestJa": "▲6八銀",
+      "pv": [
+        "7i6h",
+        "4d4e"
+      ],
+      "pvJa": [
+        "▲6八銀",
+        "△4五歩"
+      ],
+      "actualPv": [
+        "5e5d",
+        "5c5d",
+        "5f5d"
+      ],
+      "actualPvJa": [
+        "▲5四歩",
+        "△同歩",
+        "▲同飛"
+      ],
+      "pvRefinement": {
+        "bestAttempted": true,
+        "bestImproved": false,
+        "actualAttempted": true,
+        "actualImproved": false
+      },
+      "points": []
+    },
+    {
+      "ply": 33,
+      "played": "5f7f",
+      "best": "5f5b+",
+      "beforeCp": 701,
+      "afterCp": -612,
+      "lossCp": 1313,
+      "scorePerspective": "mover",
+      "scoreBefore": {
+        "type": "cp",
+        "value": 701
+      },
+      "scoreAfterActual": {
+        "type": "cp",
+        "value": -612
+      },
+      "bestScore": {
+        "type": "cp",
+        "value": 701
+      },
+      "playedJa": "▲7六飛",
+      "bestJa": "▲5二飛成",
+      "pv": [
+        "5f5b+",
+        "6a5b"
+      ],
+      "pvJa": [
+        "▲5二飛成",
+        "△同金"
+      ],
+      "actualPv": [
+        "5f7f",
+        "4d4e",
+        "7f5f",
+        "3e3f",
+        "3g3f",
+        "6d6e",
+        "5f5i",
+        "P*5f",
+        "3h3g",
+        "3c8h+",
+        "7i8h",
+        "B*6d",
+        "8e8d"
+      ],
+      "actualPvJa": [
+        "▲7六飛",
+        "△4五歩",
+        "▲5六飛",
+        "△3六歩",
+        "▲同歩",
+        "△6五銀",
+        "▲5九飛",
+        "△5六歩打",
+        "▲3七銀",
+        "△8八角成",
+        "▲同銀",
+        "△6四角打",
+        "▲8四歩"
+      ],
+      "pvRefinement": {
+        "bestAttempted": true,
+        "bestImproved": false,
+        "actualAttempted": true,
+        "actualImproved": true
+      },
+      "points": [
+        "推奨手は飛を成る手です。",
+        "推奨手は金を取る手です。"
+      ]
+    },
+    {
+      "ply": 37,
+      "played": "8h7g",
+      "best": "8h3c+",
+      "beforeCp": -451,
+      "afterCp": -847,
+      "lossCp": 396,
+      "scorePerspective": "mover",
+      "scoreBefore": {
+        "type": "cp",
+        "value": -451
+      },
+      "scoreAfterActual": {
+        "type": "cp",
+        "value": -847
+      },
+      "bestScore": {
+        "type": "cp",
+        "value": -451
+      },
+      "playedJa": "▲7七角",
+      "bestJa": "▲3三角成",
+      "pv": [
+        "8h3c+",
+        "2a3c"
+      ],
+      "pvJa": [
+        "▲3三角成",
+        "△同桂"
+      ],
+      "actualPv": [
+        "8h7g",
+        "3c7g+",
+        "6h7g",
+        "B*8g",
+        "7f2f",
+        "8g3b+",
+        "B*9h",
+        "3b2b",
+        "7g6f",
+        "2a3c",
+        "6i5h",
+        "2c2d",
+        "2f5f",
+        "2d2e",
+        "9f9e",
+        "3d2d",
+        "8i7g"
+      ],
+      "actualPvJa": [
+        "▲7七角",
+        "△同角成",
+        "▲同銀",
+        "△8七角打",
+        "▲2六飛",
+        "△3二角成",
+        "▲9八角打",
+        "△2二馬",
+        "▲6六銀",
+        "△3三桂",
+        "▲5八金左",
+        "△2四歩",
+        "▲5六飛",
+        "△2五歩",
+        "▲9五歩",
+        "△2四飛",
+        "▲7七桂"
+      ],
+      "pvRefinement": {
+        "bestAttempted": true,
+        "bestImproved": false,
+        "actualAttempted": false,
+        "actualImproved": false
+      },
+      "points": [
+        "推奨手は角を成る手です。",
+        "推奨手は角を取る手です。"
+      ]
+    },
+    {
+      "ply": 39,
+      "played": "8i7g",
+      "best": "6h7g",
+      "beforeCp": -920,
+      "afterCp": -1315,
+      "lossCp": 395,
+      "scorePerspective": "mover",
+      "scoreBefore": {
+        "type": "cp",
+        "value": -920
+      },
+      "scoreAfterActual": {
+        "type": "cp",
+        "value": -1315
+      },
+      "bestScore": {
+        "type": "cp",
+        "value": -920
+      },
+      "playedJa": "▲同桂",
+      "bestJa": "▲同銀",
+      "pv": [
+        "6h7g",
+        "B*8g",
+        "7f2f",
+        "8g3b+",
+        "6i5h",
+        "2c2d",
+        "B*9h",
+        "3b2b",
+        "7g6f",
+        "2a1c",
+        "8i7g",
+        "1c2e",
+        "2f5f",
+        "P*5e",
+        "5f5g",
+        "9c9d"
+      ],
+      "pvJa": [
+        "▲同銀",
+        "△8七角打",
+        "▲2六飛",
+        "△3二角成",
+        "▲5八金左",
+        "△2四歩",
+        "▲9八角打",
+        "△2二馬",
+        "▲6六銀",
+        "△1三桂",
+        "▲7七桂",
+        "△2五桂",
+        "▲5六飛",
+        "△5五歩打",
+        "▲5七飛",
+        "△9四歩"
+      ],
+      "actualPv": [
+        "8i7g",
+        "B*8g",
+        "7f2f",
+        "8g6i+",
+        "2f2c+",
+        "3d5d",
+        "B*3b",
+        "5d5e",
+        "8e8d",
+        "6i6h",
+        "8d8c+",
+        "7b8c",
+        "2c2a",
+        "P*5a",
+        "3b7f+",
+        "P*8d",
+        "7f6f"
+      ],
+      "actualPvJa": [
+        "▲同桂",
+        "△8七角打",
+        "▲2六飛",
+        "△6九角成",
+        "▲2三飛成",
+        "△5四飛",
+        "▲3二角打",
+        "△5五飛",
+        "▲8四歩",
+        "△6八馬",
+        "▲8三歩成",
+        "△同銀",
+        "▲2一龍",
+        "△5一歩打",
+        "▲7六角成",
+        "△8四歩打",
+        "▲6六馬"
+      ],
+      "pvRefinement": {
+        "bestAttempted": false,
+        "bestImproved": false,
+        "actualAttempted": false,
+        "actualImproved": false
+      },
+      "points": [
+        "推奨手は馬を取る手です。"
+      ]
+    },
+    {
+      "ply": 43,
+      "played": "6h5g",
+      "best": "8e8d",
+      "beforeCp": -1350,
+      "afterCp": -1753,
+      "lossCp": 403,
+      "scorePerspective": "mover",
+      "scoreBefore": {
+        "type": "cp",
+        "value": -1350
+      },
+      "scoreAfterActual": {
+        "type": "cp",
+        "value": -1753
+      },
+      "bestScore": {
+        "type": "cp",
+        "value": -1350
+      },
+      "playedJa": "▲5七銀",
+      "bestJa": "▲8四歩",
+      "pv": [
+        "8e8d",
+        "6i6h"
+      ],
+      "pvJa": [
+        "▲8四歩",
+        "△6八馬"
+      ],
+      "actualPv": [
+        "6h5g",
+        "3e3f",
+        "3g3f",
+        "2c2d",
+        "8e8d",
+        "8c8d",
+        "P*8c",
+        "7b8c",
+        "B*2c",
+        "3d5d",
+        "5g4h",
+        "2a3c"
+      ],
+      "actualPvJa": [
+        "▲5七銀",
+        "△3六歩",
+        "▲同歩",
+        "△2四歩",
+        "▲8四歩",
+        "△同歩",
+        "▲8三歩打",
+        "△同銀",
+        "▲2三角打",
+        "△5四飛",
+        "▲4八銀",
+        "△3三桂"
+      ],
+      "pvRefinement": {
+        "bestAttempted": true,
+        "bestImproved": true,
+        "actualAttempted": false,
+        "actualImproved": false
+      },
+      "points": [
+        "読み筋の2手目は銀を取る手です。"
+      ]
+    },
+    {
+      "ply": 49,
+      "played": "5g4f",
+      "best": "4g4f",
+      "beforeCp": -1636,
+      "afterCp": -2225,
+      "lossCp": 589,
+      "scorePerspective": "mover",
+      "scoreBefore": {
+        "type": "cp",
+        "value": -1636
+      },
+      "scoreAfterActual": {
+        "type": "cp",
+        "value": -2225
+      },
+      "bestScore": {
+        "type": "cp",
+        "value": -1636
+      },
+      "playedJa": "▲同銀",
+      "bestJa": "▲同歩",
+      "pv": [
+        "4g4f",
+        "G*3a",
+        "2b2d+",
+        "R*8i",
+        "8e8d",
+        "8c8d",
+        "P*8c",
+        "7b8c",
+        "P*8e",
+        "3e3f",
+        "8e8d",
+        "8c7b",
+        "3g3f",
+        "8i9i+"
+      ],
+      "pvJa": [
+        "▲同歩",
+        "△3一金打",
+        "▲2四飛成",
+        "△8九飛打",
+        "▲8四歩",
+        "△同歩",
+        "▲8三歩打",
+        "△同銀",
+        "▲8五歩打",
+        "△3六歩",
+        "▲8四歩",
+        "△7二銀",
+        "▲3六歩",
+        "△9九飛成"
+      ],
+      "actualPv": [
+        "5g4f",
+        "P*4h",
+        "4i3i",
+        "G*4i",
+        "3h4i",
+        "4h4i+",
+        "3i4i",
+        "6i4g",
+        "8e8d",
+        "R*8i",
+        "G*4h",
+        "4g4h",
+        "8d8c+",
+        "8b8c",
+        "B*5f",
+        "8c8b",
+        "4i4h"
+      ],
+      "actualPvJa": [
+        "▲同銀",
+        "△4八歩打",
+        "▲3九金",
+        "△4九金打",
+        "▲同銀",
+        "△同歩成",
+        "▲同金",
+        "△4七馬",
+        "▲8四歩",
+        "△8九飛打",
+        "▲4八金打",
+        "△同馬",
+        "▲8三歩成",
+        "△同玉",
+        "▲5六角打",
+        "△8二玉",
+        "▲4八金"
+      ],
+      "pvRefinement": {
+        "bestAttempted": false,
+        "bestImproved": false,
+        "actualAttempted": false,
+        "actualImproved": false
+      },
+      "points": [
+        "推奨手は歩を取る手です。",
+        "読み筋の3手目は歩を取る手です。"
+      ]
+    }
+  ],
+  "currentTasks": [
+    {
+      "id": "ct1-30b6c78dc677eb05",
+      "title": "取れる駒を確認する",
+      "nextCheck": {
+        "schema": "current-task-check-v1",
+        "theme": "capture",
+        "description": "次の解析で駒を取る候補がある局面を観測し、候補確認の有無を○/×/－判定する。",
+        "observation": {
+          "scope": "nextAnalyzedGame",
+          "opportunitySource": "moveAnalyses.bestMove",
+          "playedSource": "moveAnalyses.actualMove",
+          "failureSource": "verifiedIssues",
+          "feature": "capture"
+        },
+        "passWhen": "opportunity-and-played-feature",
+        "failWhen": "opportunity-and-verified-miss",
+        "resultValues": [
+          "○",
+          "×",
+          "－"
+        ],
+        "noOpportunityResult": "－"
+      },
+      "evidence": {
+        "kind": "verifiedIssue",
+        "fact": "推奨手は全を取る手です。",
+        "played": "5e6g+",
+        "best": "5a5b",
+        "playedJa": "△6七桂成",
+        "bestJa": "△同香",
+        "lossCp": 1086,
+        "points": [
+          "推奨手は全を取る手です。"
+        ]
+      },
+      "sourceGame": "20260915_bikken75",
+      "sourcePly": 102,
+      "occurrences": 1,
+      "priority": 3,
+      "ranking": {
+        "importanceLossCp": 1086,
+        "reproducibilityOccurrences": 1,
+        "evidenceStrength": "HIGH"
+      }
+    },
+    {
+      "id": "ct1-c79e278e9906f75a",
+      "title": "成る手を候補に入れる",
+      "nextCheck": {
+        "schema": "current-task-check-v1",
+        "theme": "promotion",
+        "description": "次の解析で成れる局面を観測し、成る候補を比較したか○/×/－判定する。",
+        "observation": {
+          "scope": "nextAnalyzedGame",
+          "opportunitySource": "moveAnalyses.bestMove",
+          "playedSource": "moveAnalyses.actualMove",
+          "failureSource": "verifiedIssues",
+          "feature": "promotion"
+        },
+        "passWhen": "opportunity-and-played-feature",
+        "failWhen": "opportunity-and-verified-miss",
+        "resultValues": [
+          "○",
+          "×",
+          "－"
+        ],
+        "noOpportunityResult": "－"
+      },
+      "evidence": {
+        "kind": "verifiedIssue",
+        "fact": "推奨手は飛を成る手です。",
+        "played": "5f7f",
+        "best": "5f5b+",
+        "playedJa": "▲7六飛",
+        "bestJa": "▲5二飛成",
+        "lossCp": 1313,
+        "points": [
+          "推奨手は飛を成る手です。"
+        ]
+      },
+      "sourceGame": "20260916_seriseri",
+      "sourcePly": 33,
+      "occurrences": 2,
+      "priority": 2,
+      "ranking": {
+        "importanceLossCp": 1313,
+        "reproducibilityOccurrences": 2,
+        "evidenceStrength": "HIGH"
+      }
+    },
+    {
+      "id": "ct1-f3e7926d29346047",
+      "title": "王手候補を確認する",
+      "nextCheck": {
+        "schema": "current-task-check-v1",
+        "theme": "check",
+        "description": "次の解析で王手候補がある局面を観測し、候補確認の有無を○/×/－判定する。",
+        "observation": {
+          "scope": "nextAnalyzedGame",
+          "opportunitySource": "moveAnalyses.bestMove",
+          "playedSource": "moveAnalyses.actualMove",
+          "failureSource": "verifiedIssues",
+          "feature": "check"
+        },
+        "passWhen": "opportunity-and-played-feature",
+        "failWhen": "opportunity-and-verified-miss",
+        "resultValues": [
+          "○",
+          "×",
+          "－"
+        ],
+        "noOpportunityResult": "－"
+      },
+      "evidence": {
+        "kind": "verifiedIssue",
+        "fact": "推奨手は王手です。",
+        "played": "L*5a",
+        "best": "N*8e",
+        "playedJa": "△5一香打",
+        "bestJa": "△8五桂打",
+        "lossCp": 24661,
+        "points": [
+          "推奨手は王手です。"
+        ]
+      },
+      "sourceGame": "20260914_招きネコ",
+      "sourcePly": 118,
+      "occurrences": 4,
+      "priority": 4,
+      "ranking": {
+        "importanceLossCp": 24661,
+        "reproducibilityOccurrences": 4,
+        "evidenceStrength": "HIGH"
+      }
+    }
+  ],
+  "taskResults": [
+    {
+      "id": "tr1-aee582b8e363449d",
+      "taskId": "ct1-7d9bfe15e1a3ca0b",
+      "status": "pass",
+      "label": "○",
+      "evidence": {
+        "schema": "task-result-evidence-v1",
+        "verification": "legal-move-feature",
+        "theme": "drop",
+        "opportunity": {
+          "source": "moveAnalyses.bestMove",
+          "move": "R*3a",
+          "featureVerified": true
+        },
+        "played": {
+          "source": "moveAnalyses.actualMove",
+          "move": "R*2b",
+          "featureVerified": true
+        }
+      },
+      "gameId": "20260916_seriseri",
+      "ply": 47,
+      "reason": {
+        "code": "opportunity_satisfied",
+        "text": "観測機会があり、実戦手でも課題の特徴を確認できました。"
+      },
+      "title": "駒打ちの候補を確認する",
+      "theme": "drop",
+      "taskSource": {
+        "gameId": "20260915_kiyo0823",
+        "ply": 112
+      }
+    },
+    {
+      "id": "tr1-f8fb692283ece762",
+      "taskId": "ct1-f3e7926d29346047",
+      "status": "no_opportunity",
+      "label": "－",
+      "evidence": {
+        "schema": "task-result-evidence-v1",
+        "verification": "none",
+        "theme": "check"
+      },
+      "gameId": "20260916_seriseri",
+      "ply": null,
+      "reason": {
+        "code": "no_opportunity",
+        "text": "この対局には課題を確認できる観測機会がありませんでした。"
+      },
+      "title": "王手候補を確認する",
+      "theme": "check",
+      "taskSource": {
+        "gameId": "20260914_招きネコ",
+        "ply": 118
+      }
+    },
+    {
+      "id": "tr1-4ea1ded1bbb443cb",
+      "taskId": "ct1-30b6c78dc677eb05",
+      "status": "fail",
+      "label": "×",
+      "evidence": {
+        "schema": "task-result-evidence-v1",
+        "verification": "legal-move-feature",
+        "theme": "capture",
+        "opportunity": {
+          "source": "moveAnalyses.bestMove",
+          "move": "5f5b+",
+          "featureVerified": true
+        },
+        "played": {
+          "source": "moveAnalyses.actualMove",
+          "move": "5f7f",
+          "featureVerified": false
+        },
+        "verifiedIssue": {
+          "source": "verifiedIssues",
+          "ply": 33,
+          "played": "5f7f",
+          "best": "5f5b+"
+        }
+      },
+      "gameId": "20260916_seriseri",
+      "ply": 33,
+      "reason": {
+        "code": "verified_repeated_issue",
+        "text": "観測機会があり、同じテーマの見落としが課題局面として確認されました。"
+      },
+      "title": "取れる駒を確認する",
+      "theme": "capture",
+      "taskSource": {
+        "gameId": "20260915_bikken75",
+        "ply": 102
+      }
+    }
+  ]
+}

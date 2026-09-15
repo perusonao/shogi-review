@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "gameId": "20260916_seriseri",
+  "analyzedAt": "2026-09-15T17:49:43.373366Z",
+  "positions": 68,
+  "problemPositions": 6,
+  "baseAnalysisSeconds": 2.51,
+  "extraPvSearchSeconds": 0.8,
+  "totalAnalysisSeconds": 3.31,
+  "shortPvCandidates": 6,
+  "extraSearchExecuted": 6,
+  "pvLengthBeforeAverage": 2.167,
+  "pvLengthAfterAverage": 4.0,
+  "pvLengthsBefore": [
+    2,
+    3,
+    2,
+    3,
+    2,
+    1
+  ],
+  "pvLengthsAfter": [
+    2,
+    3,
+    2,
+    13,
+    2,
+    2
+  ],
+  "improvedPvCount": 2,
+  "unchangedPvCount": 4
+}
