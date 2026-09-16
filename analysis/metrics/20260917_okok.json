@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "gameId": "20260917_okok",
+  "analyzedAt": "2026-09-16T15:25:22.055448Z",
+  "positions": 36,
+  "problemPositions": 1,
+  "baseAnalysisSeconds": 1.336,
+  "extraPvSearchSeconds": 0.137,
+  "totalAnalysisSeconds": 1.473,
+  "shortPvCandidates": 1,
+  "extraSearchExecuted": 1,
+  "pvLengthBeforeAverage": 3.0,
+  "pvLengthAfterAverage": 3.0,
+  "pvLengthsBefore": [
+    3
+  ],
+  "pvLengthsAfter": [
+    3
+  ],
+  "improvedPvCount": 0,
+  "unchangedPvCount": 1
+}

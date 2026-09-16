@@ -2,6 +2,19 @@
   "schemaVersion": 1,
   "games": [
     {
+      "id": "20260917_okok",
+      "date": "2026/09/17",
+      "title": "ぺるそなお vs okok",
+      "side": "先手",
+      "result": "先手・ぺるそなお 勝利",
+      "moves": 35,
+      "kif": "games/20260917_okok.kif",
+      "gameData": "games/20260917_okok.json",
+      "analysisData": "analysis/20260917_okok.json",
+      "analyzed": true,
+      "status": "YaneuraOu V9.00 + 水匠5解析済み"
+    },
+    {
       "id": "20260916_雑baker",
       "date": "2026/09/16",
       "title": "ぺるそなお vs 雑Baker",
