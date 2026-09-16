@@ -150,7 +150,7 @@
 
 if (typeof document !== "undefined") {
   const style = document.createElement("style");
-  style.textContent = "#home.active{height:100%;overflow-y:auto;overscroll-behavior:contain;padding-bottom:8px}.growthDashboard{font-size:10px}.growthPanel{margin:5px 0;padding:7px;background:#292117;border:1px solid #5c4933;border-radius:8px}.growthPanel h2{margin:0 0 4px;color:#ffd590;font-size:11px}.growthLead{margin:0 0 5px;color:#c8b99e;font-size:9px}.growthTask,.growthEvidence{display:grid;grid-template-columns:22px minmax(0,1fr);gap:1px 4px;width:100%;min-height:38px;padding:5px 2px;border:0;border-top:1px solid #4c4438;background:transparent;color:#fff3df;text-align:left;font:inherit}.growthTask strong,.growthEvidence strong{grid-row:1/3;display:flex;align-items:center;justify-content:center;color:#f1c679}.growthTask b,.growthEvidence b{font-size:10px}.growthTask span,.growthEvidence span{font-size:8px;color:#c7ebc9;overflow-wrap:anywhere}.growthEmpty{margin:5px 0;color:#b9aa96;line-height:1.4}.growthAchievement{display:grid;grid-template-columns:88px 1fr;gap:7px;align-items:center}.growthRate{font-size:22px;font-weight:800;color:#a8efb3}.growthRate small{display:block;font-size:8px;color:#c8b99e}.growthCounts{line-height:1.65;color:#d7c8b2}.growthLatest{display:flex;gap:4px;flex-wrap:wrap;margin-top:5px}.growthResult{border:1px solid #6d5437;border-radius:99px;background:#211a13;color:#fff3df;padding:4px 7px;font:inherit}.growthResult.pass{border-color:#62d17d}.growthResult.fail{border-color:#e85a49}.growthResult.no_opportunity{border-color:#867a6b}.growthDetails summary{cursor:pointer;color:#ffd590;font-weight:700}.growthInsightGroup{margin-top:6px}.growthInsightGroup h3{margin:0;font-size:9px;color:#c8b99e}.growthInsight{display:flex;justify-content:space-between;width:100%;min-height:30px;border:0;border-top:1px solid #4c4438;background:transparent;color:#fff3df;padding:4px 2px;font:inherit;text-align:left}.growthInsight span{color:#e9c98f}.growthFooter{display:grid;grid-template-columns:1fr 1fr;gap:5px}.growthFooter button{min-height:34px;border:1px solid #6d5437;border-radius:7px;background:#423426;color:#ffe0a5;font:700 9px inherit}.growthTask:focus-visible,.growthEvidence:focus-visible,.growthResult:focus-visible,.growthInsight:focus-visible,.growthFooter button:focus-visible{outline:2px solid #f1c679;outline-offset:-2px}@media(max-width:390px){.growthPanel{padding:6px}.growthTask,.growthEvidence{min-height:40px}.growthAchievement{grid-template-columns:82px minmax(0,1fr)}}";
+  style.textContent = "#home.active{height:100%;overflow-y:auto;overscroll-behavior:contain;padding-bottom:8px}.growthDashboard{font-size:10px}.growthPanel{margin:5px 0;padding:7px;background:#292117;border:1px solid #5c4933;border-radius:8px}.growthPanel h2{margin:0 0 4px;color:#ffd590;font-size:11px}.growthLead{margin:0 0 5px;color:#c8b99e;font-size:9px}.growthTaskDetails>summary{cursor:pointer;color:#ffd590;font-weight:700}.growthTask,.growthEvidence{display:grid;grid-template-columns:22px minmax(0,1fr);gap:1px 4px;width:100%;min-height:38px;padding:5px 2px;border:0;border-top:1px solid #4c4438;background:transparent;color:#fff3df;text-align:left;font:inherit}.growthTask strong,.growthEvidence strong{grid-row:1/3;display:flex;align-items:center;justify-content:center;color:#f1c679}.growthTask b,.growthEvidence b{font-size:10px}.growthTask span,.growthEvidence span{font-size:8px;color:#c7ebc9;overflow-wrap:anywhere}.growthEmpty{margin:5px 0;color:#b9aa96;line-height:1.4}.growthAchievement{display:grid;grid-template-columns:88px 1fr;gap:7px;align-items:center}.growthRate{font-size:22px;font-weight:800;color:#a8efb3}.growthRate small{display:block;font-size:8px;color:#c8b99e}.growthCounts{line-height:1.65;color:#d7c8b2}.growthLatest{display:flex;gap:4px;flex-wrap:wrap;margin-top:5px}.growthResult{border:1px solid #6d5437;border-radius:99px;background:#211a13;color:#fff3df;padding:4px 7px;font:inherit}.growthResult.pass{border-color:#62d17d}.growthResult.fail{border-color:#e85a49}.growthResult.no_opportunity{border-color:#867a6b}.growthDetails summary{cursor:pointer;color:#ffd590;font-weight:700}.growthInsightGroup{margin-top:6px}.growthInsightGroup h3{margin:0;font-size:9px;color:#c8b99e}.growthInsight{display:flex;justify-content:space-between;width:100%;min-height:30px;border:0;border-top:1px solid #4c4438;background:transparent;color:#fff3df;padding:4px 2px;font:inherit;text-align:left}.growthInsight span{color:#e9c98f}.growthFooter{display:grid;grid-template-columns:1fr 1fr;gap:5px}.growthFooter button{min-height:34px;border:1px solid #6d5437;border-radius:7px;background:#423426;color:#ffe0a5;font:700 9px inherit}.growthTask:focus-visible,.growthEvidence:focus-visible,.growthResult:focus-visible,.growthInsight:focus-visible,.growthFooter button:focus-visible{outline:2px solid #f1c679;outline-offset:-2px}@media(max-width:390px){.growthPanel{padding:6px}.growthTask,.growthEvidence{min-height:40px}.growthAchievement{grid-template-columns:82px minmax(0,1fr)}}";
   style.textContent += ".growthProgress{margin-top:7px;border-top:1px solid #5c4933;padding-top:6px}.growthProgress summary{cursor:pointer;color:#ffd590;font-weight:700}.growthProgressRow{display:grid;grid-template-columns:minmax(60px,.8fr) minmax(0,1.4fr) auto;gap:3px 6px;align-items:center;width:100%;min-height:38px;padding:5px 2px;border:0;border-top:1px solid #4c4438;background:transparent;color:#fff3df;text-align:left;font:inherit}.growthProgressRow:disabled{opacity:1}.growthProgressRow b,.growthProgressHistory,.growthProgressRate{white-space:nowrap}.growthProgressHistory{letter-spacing:1px;color:#f5d49c}.growthProgressRate{color:#a8efb3;font-weight:700}.growthProgressCompare{grid-column:1/-1;color:#c8b99e;font-size:8px;overflow-wrap:anywhere}.growthProgressRow:not(:disabled) .growthProgressCompare::after{content:'  根拠を見る ›';color:#e9c98f}.growthProgressRow:focus-visible{outline:2px solid #f1c679;outline-offset:-2px}@media(max-width:390px){.growthProgressRow{grid-template-columns:minmax(56px,.75fr) minmax(0,1.25fr) auto;gap:3px 4px}.growthProgressHistory{letter-spacing:0}}";
   document.head.appendChild(style);
 
@@ -175,12 +175,13 @@ if (typeof document !== "undefined") {
   }
 
   function evidenceButton(parent, item, gameId, index) {
+    const taskView = window.ShogiCoachingFocus?.buildHumanTaskView(item, null);
     const button = document.createElement("button");
     button.type = "button";
     button.className = "growthTask";
     appendText(button, "strong", String(index + 1));
-    appendText(button, "b", item.title || "現在の課題");
-    appendText(button, "span", item.nextCheck?.description || "次局の解析で○/×/－を判定します。");
+    appendText(button, "b", taskView?.headline || item.title || "現在の課題");
+    appendText(button, "span", taskView?.action || "指す前に、現在の課題を1回確認する");
     button.addEventListener("click", () => jumpToEvidence(item.sourceGame || gameId, item.sourcePly));
     parent.appendChild(button);
   }
@@ -240,11 +241,14 @@ if (typeof document !== "undefined") {
 
     const tasks = document.createElement("section");
     tasks.className = "growthPanel";
-    appendText(tasks, "h2", `現在の課題（${model.currentTasks.length}/3）`);
-    appendText(tasks, "p", model.latestDate ? `${model.latestDate} の解析から、次局で意識すること` : "解析済み対局はまだありません。", "growthLead");
-    if (!model.currentTasks.length) appendText(tasks, "p", "根拠のある現在の課題はありません。", "growthEmpty");
-    model.currentTasks.forEach((task, index) => evidenceButton(tasks, task, model.latestGameId, index));
-    renderThemeProgress(tasks, model.themeProgress);
+    const taskDetails = document.createElement("details");
+    taskDetails.className = "growthTaskDetails";
+    appendText(taskDetails, "summary", `詳細な現在の課題（${model.currentTasks.length}/3）`);
+    appendText(taskDetails, "p", model.latestDate ? `${model.latestDate} の解析から、次局で意識すること` : "解析済み対局はまだありません。", "growthLead");
+    if (!model.currentTasks.length) appendText(taskDetails, "p", "根拠のある現在の課題はありません。", "growthEmpty");
+    model.currentTasks.forEach((task, index) => evidenceButton(taskDetails, task, model.latestGameId, index));
+    renderThemeProgress(taskDetails, model.themeProgress);
+    tasks.appendChild(taskDetails);
     container.appendChild(tasks);
 
     const achievement = document.createElement("section");
@@ -269,10 +273,11 @@ if (typeof document !== "undefined") {
     latest.className = "growthLatest";
     if (!model.latestResults.length) appendText(latest, "span", "判定履歴はまだありません。", "growthEmpty");
     for (const result of model.latestResults) {
+      const resultView = window.ShogiCoachingFocus?.buildHumanTaskView(result, null);
       const button = document.createElement("button");
       button.type = "button";
       button.className = `growthResult ${result.status}`;
-      button.textContent = `${window.ShogiGrowthDashboard.STATUS_LABELS[result.status]} ${result.title || "課題"}`;
+      button.textContent = `${window.ShogiGrowthDashboard.STATUS_LABELS[result.status]} ${resultView?.headline || result.title || "課題"}`;
       button.addEventListener("click", () => jumpToEvidence(model.latestGameId, result.ply));
       latest.appendChild(button);
     }

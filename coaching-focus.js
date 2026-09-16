@@ -7,6 +7,18 @@
 
   const THEMES = ["check", "capture", "promotion", "drop"];
   const ROUTINE_LABELS = { check: "王手", capture: "取れる駒", promotion: "成る手", drop: "駒打ち" };
+  const HUMAN_TASK_LABELS = {
+    check: "王手になる手を見落とさない",
+    capture: "取れる駒を見落とさない",
+    promotion: "成れる場面で、成る手も比べる",
+    drop: "持ち駒を使う手を見落とさない",
+  };
+  const NEXT_GAME_ACTIONS = {
+    check: "指す前に、王手になる手がないか確認する",
+    capture: "指す前に、取れる駒がないか確認する",
+    promotion: "敵陣へ入る手では、成る手も候補に入れる",
+    drop: "指す前に、持ち駒から使える手がないか1回確認する",
+  };
 
   function inferredTheme(title) {
     if (typeof title !== "string") return null;
@@ -32,6 +44,7 @@
     const row = (Array.isArray(summary?.themes) ? summary.themes : []).find((item) => item?.theme === theme);
     const pass = validCount(row?.pass);
     const fail = validCount(row?.fail);
+    const noOpportunity = validCount(row?.noOpportunity);
     const refs = Array.isArray(row?.evidenceRefs) ? row.evidenceRefs : [];
     const comparable = refs.filter((ref) => ref?.status === "pass" || ref?.status === "fail");
     let failStreak = 0;
@@ -43,11 +56,57 @@
     return {
       pass,
       fail,
+      noOpportunity,
       comparable: pass + fail,
       failStreak,
       latestFail: comparable.at(-1)?.status === "fail",
       recurring,
     };
+  }
+
+  function humanTaskLabel(task) {
+    const theme = taskTheme(task);
+    return HUMAN_TASK_LABELS[theme] || (typeof task?.title === "string" && task.title.trim()) || "現在の課題";
+  }
+
+  function nextGameAction(task) {
+    const theme = taskTheme(task);
+    if (NEXT_GAME_ACTIONS[theme]) return NEXT_GAME_ACTIONS[theme];
+    const title = typeof task?.title === "string" ? task.title.trim() : "";
+    return title ? `指す前に「${title}」を1回確認する` : "指す前に、現在の課題を1回確認する";
+  }
+
+  function humanReason(stats) {
+    if (!stats || !Number.isInteger(stats.comparable) || stats.comparable <= 0) {
+      return "まだ十分な対局データがありません。現在の課題順を表示しています。";
+    }
+    const counts = `直近${stats.comparable}回の対象機会で○${stats.pass} / ×${stats.fail}です。`;
+    return stats.recurring && stats.fail > 0 ? `${counts} 複数局で×を確認しています。` : counts;
+  }
+
+  function buildHumanTaskView(task, recentSummary) {
+    const theme = taskTheme(task);
+    const stats = themeStats(recentSummary, theme);
+    return {
+      theme,
+      headline: humanTaskLabel(task),
+      reason: humanReason(stats),
+      action: nextGameAction(task),
+      stats,
+    };
+  }
+
+  function buildRoutineActions(currentTasks) {
+    const actions = [];
+    const seen = new Set();
+    for (const task of (Array.isArray(currentTasks) ? currentTasks : []).slice(0, 3)) {
+      if (!task || typeof task !== "object") continue;
+      const key = taskTheme(task) || normalizedLabel(task?.title);
+      if (!key || seen.has(key)) continue;
+      seen.add(key);
+      actions.push(nextGameAction(task));
+    }
+    return actions;
   }
 
   function reasonText(stats) {
@@ -109,5 +168,18 @@
     return labels.length ? `指す前に確認: ${labels.join(" → ")}` : null;
   }
 
-  return { ROUTINE_LABELS, buildNextGameRoutine, selectCoachingFocus, taskTheme, themeStats };
+  return {
+    HUMAN_TASK_LABELS,
+    NEXT_GAME_ACTIONS,
+    ROUTINE_LABELS,
+    buildHumanTaskView,
+    buildNextGameRoutine,
+    buildRoutineActions,
+    humanReason,
+    humanTaskLabel,
+    nextGameAction,
+    selectCoachingFocus,
+    taskTheme,
+    themeStats,
+  };
 });

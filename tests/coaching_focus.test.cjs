@@ -101,3 +101,65 @@ test("theme欠落時は既存titleだけを使い新しい推測を追加しな�
   assert.equal(coaching.selectCoachingFocus([legacy], null).task, legacy);
   assert.doesNotMatch(coaching.selectCoachingFocus([legacy], null).detail, /苦手|最弱/);
 });
+
+test("4 themeを固定の人間向け課題と次局行動へ変換する", () => {
+  const expected = {
+    check: ["王手になる手を見落とさない", "指す前に、王手になる手がないか確認する"],
+    capture: ["取れる駒を見落とさない", "指す前に、取れる駒がないか確認する"],
+    promotion: ["成れる場面で、成る手も比べる", "敵陣へ入る手では、成る手も候補に入れる"],
+    drop: ["持ち駒を使う手を見落とさない", "指す前に、持ち駒から使える手がないか1回確認する"],
+  };
+  for (const [theme, [headline, action]] of Object.entries(expected)) {
+    const current = task(theme, theme, `${theme} internal check`);
+    assert.equal(coaching.humanTaskLabel(current), headline);
+    assert.equal(coaching.nextGameAction(current), action);
+    assert.deepEqual(coaching.buildHumanTaskView(current, null), {
+      theme,
+      headline,
+      reason: "まだ十分な対局データがありません。現在の課題順を表示しています。",
+      action,
+      stats: coaching.themeStats(null, theme),
+    });
+  }
+});
+
+test("なぜこの課題は○のみ・×のみ・mixedを既存集計だけで説明し、－のみは安全fallback", () => {
+  const cases = [
+    [["pass", "pass"], "直近2回の対象機会で○2 / ×0です。"],
+    [["fail", "fail"], "直近2回の対象機会で○0 / ×2です。"],
+    [["pass", "no_opportunity", "fail"], "直近2回の対象機会で○1 / ×1です。"],
+    [["no_opportunity"], "まだ十分な対局データがありません。現在の課題順を表示しています。"],
+  ];
+  for (const [statuses, expected] of cases) {
+    assert.equal(coaching.buildHumanTaskView(task("drop", "drop"), summary({ drop: statuses })).reason, expected);
+  }
+  assert.equal(coaching.buildHumanTaskView(task("drop", "drop"), summary({ drop: ["fail", "fail"] }, ["drop"])).reason,
+    "直近2回の対象機会で○0 / ×2です。 複数局で×を確認しています。");
+});
+
+test("Human Replayの駒打ちfocusと3件routineを行動へ変換し入力を変更しない", () => {
+  const tasks = [task("drop", "drop"), task("check", "check"), task("capture", "capture")];
+  const before = structuredClone(tasks);
+  const recent = summary({ drop: ["fail", "fail", "fail"], check: ["fail"], capture: ["pass"] }, ["drop"]);
+  const focus = coaching.selectCoachingFocus(tasks, recent);
+  const view = coaching.buildHumanTaskView(focus.task, recent);
+  assert.equal(view.headline, "持ち駒を使う手を見落とさない");
+  assert.equal(view.reason, "直近3回の対象機会で○0 / ×3です。 複数局で×を確認しています。");
+  assert.equal(view.action, "指す前に、持ち駒から使える手がないか1回確認する");
+  assert.deepEqual(coaching.buildRoutineActions(tasks), [
+    "指す前に、持ち駒から使える手がないか1回確認する",
+    "指す前に、王手になる手がないか確認する",
+    "指す前に、取れる駒がないか確認する",
+  ]);
+  assert.deepEqual(tasks, before);
+});
+
+test("legacy/missing fieldsとlong Japanese textを安全に表示する", () => {
+  const title = "終盤で候補手を比較してから着手するという非常に長い既存課題名";
+  const legacy = { id: "legacy", title };
+  const view = coaching.buildHumanTaskView(legacy, null);
+  assert.equal(view.headline, title);
+  assert.equal(view.action, `指す前に「${title}」を1回確認する`);
+  assert.match(view.reason, /十分な対局データ/);
+  assert.equal(coaching.buildHumanTaskView({}, null).headline, "現在の課題");
+});
