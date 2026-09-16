@@ -209,10 +209,12 @@ test("390px UI、折りたたみ、10/30、evidence navigationを備える", () 
   const html = fs.readFileSync(path.join(root, "index.html"), "utf8");
   const ui = fs.readFileSync(path.join(root, "growth-dashboard.js"), "utf8");
   assert.match(html, /id="growthDashboard"/);
-  assert.match(html, /growth-dashboard\.js\?v=36/);
+  assert.match(html, /growth-dashboard\.js\?v=37/);
   assert.match(ui, /max-width:390px/);
   assert.match(ui, /document\.createElement\("details"\)/);
   assert.match(ui, /課題の推移/);
+  assert.match(ui, /詳細な現在の課題/);
+  assert.doesNotMatch(ui, /taskDetails\.open\s*=/);
   assert.match(ui, /10\/30比較: データ不足/);
   assert.match(ui, /for \(const windowSize of \[10, 30\]\)/);
   assert.match(ui, /jumpToEvidence\(ref\.gameId, ref\.ply\)/);

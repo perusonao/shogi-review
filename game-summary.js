@@ -598,11 +598,13 @@ if (typeof document !== "undefined" && typeof render === "function") {
     const focus = window.ShogiCoachingFocus?.selectCoachingFocus(tasks, window.shogiRecentSummaries?.[10]);
     const routine = window.ShogiCoachingFocus?.buildNextGameRoutine(tasks);
     if (focus) {
+      const focusView = window.ShogiCoachingFocus?.buildHumanTaskView(focus.task, window.shogiRecentSummaries?.[10]);
       const focusButton = document.createElement("button");
       focusButton.type = "button";
       focusButton.className = "coachingFocus";
-      appendText(focusButton, "strong", `最優先: ${focus.task.title || "現在の課題"}`);
-      appendText(focusButton, "span", focus.detail);
+      appendText(focusButton, "strong", `いま一番直したいこと: ${focusView?.headline || focus.task.title || "現在の課題"}`);
+      appendText(focusButton, "span", `なぜこの課題？ ${focusView?.reason || "まだ十分な対局データがありません。"}`);
+      appendText(focusButton, "span", `次局でやること: ${focusView?.action || "指す前に、現在の課題を1回確認する"}`);
       focusButton.addEventListener("click", async () => {
         if (focus.task.sourceGame && focus.task.sourceGame !== currentGameId) {
           await loadGame(focus.task.sourceGame, true);
@@ -613,12 +615,13 @@ if (typeof document !== "undefined" && typeof render === "function") {
     }
     if (routine) appendText(container, "p", routine, "nextGameRoutine");
     tasks.forEach((task, index) => {
+      const taskView = window.ShogiCoachingFocus?.buildHumanTaskView(task, null);
       const button = document.createElement("button");
       button.type = "button";
       button.className = "currentTask";
       appendText(button, "strong", `${index + 1}`, "currentTaskIndex");
-      appendText(button, "b", task.title);
-      appendText(button, "span", task.nextCheck?.description || "次局の解析で○/×/－を判定します。");
+      appendText(button, "b", taskView?.headline || task.title || "現在の課題");
+      appendText(button, "span", taskView?.action || "指す前に、現在の課題を1回確認する");
       appendText(button, "small", `${task.sourcePly}手目へ戻る：${task.evidence?.fact || "verified evidence"}`);
       button.addEventListener("click", async () => {
         if (task.sourceGame && task.sourceGame !== currentGameId) {
@@ -642,10 +645,11 @@ if (typeof document !== "undefined" && typeof render === "function") {
     heading.textContent = `前回の課題（${results.length}件）`;
     container.replaceChildren(heading);
     results.forEach((result) => {
+      const resultView = window.ShogiCoachingFocus?.buildHumanTaskView(result, null);
       const item = document.createElement("article");
       item.className = `taskResult ${result.status || "no_opportunity"}`;
       appendText(item, "strong", result.label || "－", "taskResultLabel");
-      appendText(item, "b", result.title || "前回の課題");
+      appendText(item, "b", resultView?.headline || result.title || "前回の課題");
       appendText(item, "span", result.reason?.text || "判定できる証拠が不足しています。");
       if (Number.isInteger(result.ply)) {
         const button = document.createElement("button");

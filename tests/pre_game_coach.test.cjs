@@ -19,7 +19,9 @@ function summary(recurringTheme = null) {
 }
 
 test("tasks 0/1/2/3件で既存focus/routineをそのまま再利用する", () => {
-  assert.deepEqual(coach.buildModel([], null), { tasks: [], focus: null, routine: null, empty: true });
+  assert.deepEqual(coach.buildModel([], null), {
+    tasks: [], focus: null, focusView: null, routine: null, routineActions: [], empty: true,
+  });
   const tasks = [task("check", "check"), task("capture", "capture"), task("drop", "drop")];
   assert.equal(coach.buildModel(tasks.slice(0, 1), summary()).routine, "指す前に確認: 王手");
   assert.equal(coach.buildModel(tasks.slice(0, 2), summary()).routine, "指す前に確認: 王手 → 取れる駒");
@@ -27,6 +29,10 @@ test("tasks 0/1/2/3件で既存focus/routineをそのまま再利用する", () 
   assert.equal(three.focus.task, tasks[2]);
   assert.equal(three.focus.basis, "recurring_challenge");
   assert.equal(three.routine, "指す前に確認: 王手 → 取れる駒 → 駒打ち");
+  assert.equal(three.focusView.headline, "持ち駒を使う手を見落とさない");
+  assert.equal(three.focusView.reason, "直近2回の対象機会で○0 / ×2です。 複数局で×を確認しています。");
+  assert.equal(three.focusView.action, "指す前に、持ち駒から使える手がないか1回確認する");
+  assert.equal(three.routineActions.length, 3);
   assert.equal(three.empty, false);
 });
 
@@ -63,13 +69,19 @@ test("ホーム上部のカード、2行routine、横overflow防止、主要CTA�
   const ctaIndex = html.indexOf('onclick="showView(\'submitView\')"');
   const dashboardIndex = html.indexOf('id="growthDashboard"');
   assert.ok(coachIndex >= 0 && coachIndex < ctaIndex && ctaIndex < dashboardIndex);
-  assert.match(html, /pre-game-coach\.js\?v=1/);
-  assert.match(html, /growth-dashboard\.js\?v=36/);
+  assert.match(html, /coaching-focus\.js\?v=2/);
+  assert.match(html, /pre-game-coach\.js\?v=2/);
+  assert.match(html, /growth-dashboard\.js\?v=37/);
   assert.match(ui, /max-width:390px/);
-  assert.match(ui, /-webkit-line-clamp:2/);
   assert.match(ui, /overflow-wrap:anywhere/);
+  assert.match(ui, /いま一番直したいこと/);
+  assert.match(ui, /なぜこの課題？/);
+  assert.match(ui, /次局でやること/);
   assert.match(ui, /次の解析で対局前の課題を作ります/);
   assert.doesNotMatch(ui, /taskResults|achievement|localStorage/);
   assert.match(dashboard, /details\.className = "growthProgress"/);
+  assert.match(dashboard, /taskDetails\.className = "growthTaskDetails"/);
+  assert.match(dashboard, /詳細な現在の課題/);
   assert.doesNotMatch(dashboard, /details\.open\s*=/);
+  assert.doesNotMatch(dashboard, /taskDetails\.open\s*=/);
 });
