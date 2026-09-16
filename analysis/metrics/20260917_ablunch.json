@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "gameId": "20260917_ablunch",
+  "analyzedAt": "2026-09-16T15:47:59.163963Z",
+  "positions": 126,
+  "problemPositions": 6,
+  "baseAnalysisSeconds": 4.947,
+  "extraPvSearchSeconds": 0.906,
+  "totalAnalysisSeconds": 5.853,
+  "shortPvCandidates": 1,
+  "extraSearchExecuted": 1,
+  "pvLengthBeforeAverage": 2.0,
+  "pvLengthAfterAverage": 13.0,
+  "pvLengthsBefore": [
+    2
+  ],
+  "pvLengthsAfter": [
+    13
+  ],
+  "improvedPvCount": 1,
+  "unchangedPvCount": 0
+}
