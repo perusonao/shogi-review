@@ -2,6 +2,19 @@
   "schemaVersion": 1,
   "games": [
     {
+      "id": "20260916_ヨシ",
+      "date": "2026/09/16",
+      "title": "ぺるそなお vs ヨシ",
+      "side": "先手",
+      "result": "後手・ヨシ 勝利",
+      "moves": 94,
+      "kif": "games/20260916_ヨシ.kif",
+      "gameData": "games/20260916_ヨシ.json",
+      "analysisData": "analysis/20260916_ヨシ.json",
+      "analyzed": true,
+      "status": "YaneuraOu V9.00 + 水匠5解析済み"
+    },
+    {
       "id": "20260916_butadonlion",
       "date": "2026/09/16",
       "title": "ButadonLion vs sonao81",
