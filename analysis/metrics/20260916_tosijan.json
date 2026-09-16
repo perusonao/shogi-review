@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "gameId": "20260916_tosijan",
+  "analyzedAt": "2026-09-16T13:27:43.147570Z",
+  "positions": 132,
+  "problemPositions": 6,
+  "baseAnalysisSeconds": 5.153,
+  "extraPvSearchSeconds": 1.028,
+  "totalAnalysisSeconds": 6.181,
+  "shortPvCandidates": 4,
+  "extraSearchExecuted": 4,
+  "pvLengthBeforeAverage": 1.75,
+  "pvLengthAfterAverage": 10.5,
+  "pvLengthsBefore": [
+    1,
+    2,
+    1,
+    3
+  ],
+  "pvLengthsAfter": [
+    2,
+    19,
+    18,
+    3
+  ],
+  "improvedPvCount": 3,
+  "unchangedPvCount": 1
+}

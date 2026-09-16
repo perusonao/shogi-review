@@ -2,6 +2,19 @@
   "schemaVersion": 1,
   "games": [
     {
+      "id": "20260916_tosijan",
+      "date": "2026/09/16",
+      "title": "tosijan vs ぺるそなお",
+      "side": "後手",
+      "result": "先手・tosijan 勝利",
+      "moves": 131,
+      "kif": "games/20260916_tosijan.kif",
+      "gameData": "games/20260916_tosijan.json",
+      "analysisData": "analysis/20260916_tosijan.json",
+      "analyzed": true,
+      "status": "YaneuraOu V9.00 + 水匠5解析済み"
+    },
+    {
       "id": "20260916_tess",
       "date": "2026/09/16",
       "title": "ぺるそなお vs tess",
