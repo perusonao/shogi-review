@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "gameId": "20260916_butadonlion",
+  "analyzedAt": "2026-09-16T05:51:20.301828Z",
+  "positions": 70,
+  "problemPositions": 6,
+  "baseAnalysisSeconds": 2.487,
+  "extraPvSearchSeconds": 0.706,
+  "totalAnalysisSeconds": 3.193,
+  "shortPvCandidates": 3,
+  "extraSearchExecuted": 3,
+  "pvLengthBeforeAverage": 1.333,
+  "pvLengthAfterAverage": 13.0,
+  "pvLengthsBefore": [
+    1,
+    1,
+    2
+  ],
+  "pvLengthsAfter": [
+    1,
+    13,
+    25
+  ],
+  "improvedPvCount": 2,
+  "unchangedPvCount": 1
+}

@@ -2,6 +2,19 @@
   "schemaVersion": 1,
   "games": [
     {
+      "id": "20260916_butadonlion",
+      "date": "2026/09/16",
+      "title": "ButadonLion vs sonao81",
+      "side": "後手",
+      "result": "先手・ButadonLion 勝利",
+      "moves": 69,
+      "kif": "games/20260916_butadonlion.kif",
+      "gameData": "games/20260916_butadonlion.json",
+      "analysisData": "analysis/20260916_butadonlion.json",
+      "analyzed": true,
+      "status": "YaneuraOu V9.00 + 水匠5解析済み"
+    },
+    {
       "id": "20260916_wwowwoww",
       "date": "2026/09/16",
       "title": "sonao81 vs wwowwoww",
