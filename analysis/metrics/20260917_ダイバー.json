@@ -1,0 +1,32 @@
+{
+  "schemaVersion": 1,
+  "gameId": "20260917_ダイバー",
+  "analyzedAt": "2026-09-16T16:49:00.112616Z",
+  "positions": 92,
+  "problemPositions": 6,
+  "baseAnalysisSeconds": 3.463,
+  "extraPvSearchSeconds": 0.905,
+  "totalAnalysisSeconds": 4.368,
+  "shortPvCandidates": 6,
+  "extraSearchExecuted": 6,
+  "pvLengthBeforeAverage": 2.333,
+  "pvLengthAfterAverage": 7.667,
+  "pvLengthsBefore": [
+    3,
+    3,
+    2,
+    2,
+    2,
+    2
+  ],
+  "pvLengthsAfter": [
+    3,
+    3,
+    19,
+    2,
+    2,
+    17
+  ],
+  "improvedPvCount": 2,
+  "unchangedPvCount": 4
+}
