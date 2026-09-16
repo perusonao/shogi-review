@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "gameId": "20260916_tess",
+  "analyzedAt": "2026-09-16T12:59:01.653685Z",
+  "positions": 199,
+  "problemPositions": 6,
+  "baseAnalysisSeconds": 7.854,
+  "extraPvSearchSeconds": 0.693,
+  "totalAnalysisSeconds": 8.547,
+  "shortPvCandidates": 1,
+  "extraSearchExecuted": 1,
+  "pvLengthBeforeAverage": 3.0,
+  "pvLengthAfterAverage": 3.0,
+  "pvLengthsBefore": [
+    3
+  ],
+  "pvLengthsAfter": [
+    3
+  ],
+  "improvedPvCount": 0,
+  "unchangedPvCount": 1
+}

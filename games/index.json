@@ -2,6 +2,19 @@
   "schemaVersion": 1,
   "games": [
     {
+      "id": "20260916_tess",
+      "date": "2026/09/16",
+      "title": "ぺるそなお vs tess",
+      "side": "先手",
+      "result": "後手・tess 勝利",
+      "moves": 198,
+      "kif": "games/20260916_tess.kif",
+      "gameData": "games/20260916_tess.json",
+      "analysisData": "analysis/20260916_tess.json",
+      "analyzed": true,
+      "status": "YaneuraOu V9.00 + 水匠5解析済み"
+    },
+    {
       "id": "20260916_ヨシ",
       "date": "2026/09/16",
       "title": "ぺるそなお vs ヨシ",
