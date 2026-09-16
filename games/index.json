@@ -2,6 +2,19 @@
   "schemaVersion": 1,
   "games": [
     {
+      "id": "20260916_wwowwoww",
+      "date": "2026/09/16",
+      "title": "sonao81 vs wwowwoww",
+      "side": "先手",
+      "result": "後手・wwowwoww 勝利",
+      "moves": 100,
+      "kif": "games/20260916_wwowwoww.kif",
+      "gameData": "games/20260916_wwowwoww.json",
+      "analysisData": "analysis/20260916_wwowwoww.json",
+      "analyzed": true,
+      "status": "YaneuraOu V9.00 + 水匠5解析済み"
+    },
+    {
       "id": "20260916_gtmdtmtmtj",
       "date": "2026/09/16",
       "title": "gtmdtmtmtj vs sonao81",
