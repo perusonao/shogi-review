@@ -1,0 +1,38 @@
+{
+  "schemaVersion": 1,
+  "gameId": "20260916_雑baker",
+  "analyzedAt": "2026-09-16T13:44:05.915825Z",
+  "positions": 110,
+  "problemPositions": 6,
+  "baseAnalysisSeconds": 4.142,
+  "extraPvSearchSeconds": 0.969,
+  "totalAnalysisSeconds": 5.111,
+  "shortPvCandidates": 9,
+  "extraSearchExecuted": 9,
+  "pvLengthBeforeAverage": 2.0,
+  "pvLengthAfterAverage": 6.333,
+  "pvLengthsBefore": [
+    2,
+    2,
+    2,
+    2,
+    2,
+    2,
+    3,
+    1,
+    2
+  ],
+  "pvLengthsAfter": [
+    2,
+    2,
+    2,
+    2,
+    11,
+    2,
+    3,
+    19,
+    14
+  ],
+  "improvedPvCount": 3,
+  "unchangedPvCount": 6
+}

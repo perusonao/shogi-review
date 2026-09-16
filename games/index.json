@@ -2,6 +2,19 @@
   "schemaVersion": 1,
   "games": [
     {
+      "id": "20260916_雑baker",
+      "date": "2026/09/16",
+      "title": "ぺるそなお vs 雑Baker",
+      "side": "先手",
+      "result": "先手・ぺるそなお 勝利",
+      "moves": 109,
+      "kif": "games/20260916_雑baker.kif",
+      "gameData": "games/20260916_雑baker.json",
+      "analysisData": "analysis/20260916_雑baker.json",
+      "analyzed": true,
+      "status": "YaneuraOu V9.00 + 水匠5解析済み"
+    },
+    {
       "id": "20260916_tosijan",
       "date": "2026/09/16",
       "title": "tosijan vs ぺるそなお",
