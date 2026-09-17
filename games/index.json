@@ -2,6 +2,19 @@
   "schemaVersion": 1,
   "games": [
     {
+      "id": "20260917_hyde",
+      "date": "2026/09/17",
+      "title": "ぺるそなお vs hyde",
+      "side": "先手",
+      "result": "先手・ぺるそなお 勝利",
+      "moves": 123,
+      "kif": "games/20260917_hyde.kif",
+      "gameData": "games/20260917_hyde.json",
+      "analysisData": "analysis/20260917_hyde.json",
+      "analyzed": true,
+      "status": "YaneuraOu V9.00 + 水匠5解析済み"
+    },
+    {
       "id": "20260917_isa",
       "date": "2026/09/17",
       "title": "ISA vs ぺるそなお",
