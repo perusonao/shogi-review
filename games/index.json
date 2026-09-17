@@ -2,6 +2,19 @@
   "schemaVersion": 1,
   "games": [
     {
+      "id": "20260917_てつとくるみ",
+      "date": "2026/09/17",
+      "title": "てつとくるみ vs ぺるそなお",
+      "side": "後手",
+      "result": "後手・ぺるそなお 勝利",
+      "moves": 106,
+      "kif": "games/20260917_てつとくるみ.kif",
+      "gameData": "games/20260917_てつとくるみ.json",
+      "analysisData": "analysis/20260917_てつとくるみ.json",
+      "analyzed": true,
+      "status": "YaneuraOu V9.00 + 水匠5解析済み"
+    },
+    {
       "id": "20260917_ablunch_aacf76ec",
       "date": "2026/09/17",
       "title": "ablunch vs ぺるそなお",
