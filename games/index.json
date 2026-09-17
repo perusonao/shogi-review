@@ -2,6 +2,19 @@
   "schemaVersion": 1,
   "games": [
     {
+      "id": "20260917_nekodaisukichan",
+      "date": "2026/09/17",
+      "title": "nekodaisukiChan vs sonao81",
+      "side": "後手",
+      "result": "先手・nekodaisukiChan 勝利",
+      "moves": 107,
+      "kif": "games/20260917_nekodaisukichan.kif",
+      "gameData": "games/20260917_nekodaisukichan.json",
+      "analysisData": "analysis/20260917_nekodaisukichan.json",
+      "analyzed": true,
+      "status": "YaneuraOu V9.00 + 水匠5解析済み"
+    },
+    {
       "id": "20260917_chunbeamer",
       "date": "2026/09/17",
       "title": "chunbeamer vs sonao81",
