@@ -2,6 +2,19 @@
   "schemaVersion": 1,
   "games": [
     {
+      "id": "20260917_84mura",
+      "date": "2026/09/17",
+      "title": "sonao81 vs 84mura",
+      "side": "先手",
+      "result": "先手・sonao81 勝利",
+      "moves": 87,
+      "kif": "games/20260917_84mura.kif",
+      "gameData": "games/20260917_84mura.json",
+      "analysisData": "analysis/20260917_84mura.json",
+      "analyzed": true,
+      "status": "YaneuraOu V9.00 + 水匠5解析済み"
+    },
+    {
       "id": "20260917_nekodaisukichan",
       "date": "2026/09/17",
       "title": "nekodaisukiChan vs sonao81",
