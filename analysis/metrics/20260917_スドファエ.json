@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "gameId": "20260917_スドファエ",
+  "analyzedAt": "2026-09-17T14:53:17.021242Z",
+  "positions": 124,
+  "problemPositions": 6,
+  "baseAnalysisSeconds": 5.225,
+  "extraPvSearchSeconds": 0.698,
+  "totalAnalysisSeconds": 5.923,
+  "shortPvCandidates": 2,
+  "extraSearchExecuted": 2,
+  "pvLengthBeforeAverage": 1.0,
+  "pvLengthAfterAverage": 7.5,
+  "pvLengthsBefore": [
+    1,
+    1
+  ],
+  "pvLengthsAfter": [
+    14,
+    1
+  ],
+  "improvedPvCount": 1,
+  "unchangedPvCount": 1
+}

@@ -2,6 +2,19 @@
   "schemaVersion": 1,
   "games": [
     {
+      "id": "20260917_スドファエ",
+      "date": "2026/09/17",
+      "title": "スドファエ vs ぺるそなお",
+      "side": "後手",
+      "result": "先手・スドファエ 勝利",
+      "moves": 123,
+      "kif": "games/20260917_スドファエ.kif",
+      "gameData": "games/20260917_スドファエ.json",
+      "analysisData": "analysis/20260917_スドファエ.json",
+      "analyzed": true,
+      "status": "YaneuraOu V9.00 + 水匠5解析済み"
+    },
+    {
       "id": "20260917_セフィア",
       "date": "2026/09/17",
       "title": "セフィア vs ぺるそなお",
