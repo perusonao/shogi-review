@@ -1,0 +1,148 @@
+{
+  "schemaVersion": 1,
+  "game": {
+    "id": "20260917_isa",
+    "title": "ISA vs ぺるそなお",
+    "result": "後手・ぺるそなお 勝利",
+    "moves": 20,
+    "date": "2026/09/17",
+    "side": "後手"
+  },
+  "positions": [
+    {
+      "ply": 0,
+      "sfen": "lnsgkgsnl/1r5b1/ppppppppp/9/9/9/PPPPPPPPP/1B5R1/LNSGKGSNL b - 1",
+      "last": "開始局面"
+    },
+    {
+      "ply": 1,
+      "sfen": "lnsgkgsnl/1r5b1/ppppppppp/9/9/2P6/PP1PPPPPP/1B5R1/LNSGKGSNL w - 2",
+      "last": "７六歩(77)",
+      "usi": "7g7f"
+    },
+    {
+      "ply": 2,
+      "sfen": "lnsgkgsnl/1r5b1/pppppp1pp/6p2/9/2P6/PP1PPPPPP/1B5R1/LNSGKGSNL b - 3",
+      "last": "３四歩(33)",
+      "usi": "3c3d"
+    },
+    {
+      "ply": 3,
+      "sfen": "lnsgkgsnl/1r5B1/pppppp1pp/6p2/9/2P6/PP1PPPPPP/7R1/LNSGKGSNL w B 4",
+      "last": "２二角(88)",
+      "usi": "8h2b"
+    },
+    {
+      "ply": 4,
+      "sfen": "lnsgkg1nl/1r5s1/pppppp1pp/6p2/9/2P6/PP1PPPPPP/7R1/LNSGKGSNL b Bb 5",
+      "last": "同　銀(31)",
+      "usi": "3a2b"
+    },
+    {
+      "ply": 5,
+      "sfen": "lnsgkg1nl/1r5s1/pppppp1pp/6p2/5B3/2P6/PP1PPPPPP/7R1/LNSGKGSNL w b 6",
+      "last": "４五角打",
+      "usi": "B*4e"
+    },
+    {
+      "ply": 6,
+      "sfen": "lnsgkg1nl/1r5s1/pppppp1pp/4b1p2/5B3/2P6/PP1PPPPPP/7R1/LNSGKGSNL b - 7",
+      "last": "５四角打",
+      "usi": "B*5d"
+    },
+    {
+      "ply": 7,
+      "sfen": "lnsgkg1nl/1r5s1/pppppp1pp/4b1B2/9/2P6/PP1PPPPPP/7R1/LNSGKGSNL w P 8",
+      "last": "３四角(45)",
+      "usi": "4e3d"
+    },
+    {
+      "ply": 8,
+      "sfen": "lnsgkg1nl/1r5s1/pppppp1pp/6B2/9/2b6/PP1PPPPPP/7R1/LNSGKGSNL b Pp 9",
+      "last": "７六角(54)",
+      "usi": "5d7f"
+    },
+    {
+      "ply": 9,
+      "sfen": "lnsgkg1nl/1r5s1/pppppp1pp/6B2/9/2b6/PP1PPPPPP/2G4R1/LNS1KGSNL w Pp 10",
+      "last": "７八金(69)",
+      "usi": "6i7h"
+    },
+    {
+      "ply": 10,
+      "sfen": "lnsgk2nl/1r4gs1/pppppp1pp/6B2/9/2b6/PP1PPPPPP/2G4R1/LNS1KGSNL b Pp 11",
+      "last": "３二金(41)",
+      "usi": "4a3b"
+    },
+    {
+      "ply": 11,
+      "sfen": "lnsgk2nl/1r4gs1/pppppp1pp/6B2/9/2b6/PPGPPPPPP/7R1/LNS1KGSNL w Pp 12",
+      "last": "７七金(78)",
+      "usi": "7h7g"
+    },
+    {
+      "ply": 12,
+      "sfen": "lnsgk2nl/1r4gs1/pppppp1pp/4b1B2/9/9/PPGPPPPPP/7R1/LNS1KGSNL b Pp 13",
+      "last": "５四角(76)",
+      "usi": "7f5d"
+    },
+    {
+      "ply": 13,
+      "sfen": "lnsgk2nl/1r4gs1/pppppp1pp/4b4/9/4B4/PPGPPPPPP/7R1/LNS1KGSNL w Pp 14",
+      "last": "５六角(34)",
+      "usi": "3d5f"
+    },
+    {
+      "ply": 14,
+      "sfen": "lnsgk2nl/1r4g2/ppppppspp/4b4/9/4B4/PPGPPPPPP/7R1/LNS1KGSNL b Pp 15",
+      "last": "３三銀(22)",
+      "usi": "2b3c"
+    },
+    {
+      "ply": 15,
+      "sfen": "lnsgk2nl/1r4g2/ppppppspp/4b4/9/4B4/PPGPPPPPP/5S1R1/LNS1KG1NL w Pp 16",
+      "last": "４八銀(39)",
+      "usi": "3i4h"
+    },
+    {
+      "ply": 16,
+      "sfen": "lnsgk2nl/1r4g2/pppppp1pp/4bs3/9/4B4/PPGPPPPPP/5S1R1/LNS1KG1NL b Pp 17",
+      "last": "４四銀(33)",
+      "usi": "3c4d"
+    },
+    {
+      "ply": 17,
+      "sfen": "lnsgk2nl/1r4g2/pppppp1pp/4bs3/9/4BP3/PPGPP1PPP/5S1R1/LNS1KG1NL w Pp 18",
+      "last": "４六歩(47)",
+      "usi": "4g4f"
+    },
+    {
+      "ply": 18,
+      "sfen": "lnsgk2nl/1r4g2/pppppp1pp/4b4/4s4/4BP3/PPGPP1PPP/5S1R1/LNS1KG1NL b Pp 19",
+      "last": "５五銀(44)",
+      "usi": "4d5e"
+    },
+    {
+      "ply": 19,
+      "sfen": "lnsgk2nl/1r4g2/pppppp1pp/4b4/4s4/5P3/PPGPPBPPP/5S1R1/LNS1KG1NL w Pp 20",
+      "last": "４七角(56)",
+      "usi": "5f4g"
+    },
+    {
+      "ply": 20,
+      "sfen": "lnsgk2nl/1r4g2/pppppp1pp/4b4/9/5s3/PPGPPBPPP/5S1R1/LNS1KG1NL b P2p 21",
+      "last": "４六銀(55)",
+      "usi": "5e4f"
+    }
+  ],
+  "issues": [
+    {
+      "ply": 6,
+      "move": "△5四角打",
+      "best": "6a5b",
+      "loss": 510,
+      "category": "序盤",
+      "comment": "水匠5は実戦手より△5二金右を高く評価しています。まず読み筋を比較してみましょう。"
+    }
+  ]
+}
