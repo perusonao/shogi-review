@@ -1,0 +1,30 @@
+{
+  "schemaVersion": 1,
+  "gameId": "20260918_シルバーボンバー",
+  "analyzedAt": "2026-09-17T16:48:40.666707Z",
+  "positions": 81,
+  "problemPositions": 6,
+  "baseAnalysisSeconds": 2.966,
+  "extraPvSearchSeconds": 0.843,
+  "totalAnalysisSeconds": 3.809,
+  "shortPvCandidates": 5,
+  "extraSearchExecuted": 5,
+  "pvLengthBeforeAverage": 1.6,
+  "pvLengthAfterAverage": 7.2,
+  "pvLengthsBefore": [
+    1,
+    2,
+    1,
+    2,
+    2
+  ],
+  "pvLengthsAfter": [
+    13,
+    2,
+    17,
+    2,
+    2
+  ],
+  "improvedPvCount": 2,
+  "unchangedPvCount": 3
+}

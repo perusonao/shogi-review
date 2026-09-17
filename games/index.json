@@ -2,6 +2,19 @@
   "schemaVersion": 1,
   "games": [
     {
+      "id": "20260918_シルバーボンバー",
+      "date": "2026/09/18",
+      "title": "ぺるそなお vs シルバーボンバー",
+      "side": "先手",
+      "result": "後手・シルバーボンバー 勝利",
+      "moves": 80,
+      "kif": "games/20260918_シルバーボンバー.kif",
+      "gameData": "games/20260918_シルバーボンバー.json",
+      "analysisData": "analysis/20260918_シルバーボンバー.json",
+      "analyzed": true,
+      "status": "YaneuraOu V9.00 + 水匠5解析済み"
+    },
+    {
       "id": "20260918_あああああ",
       "date": "2026/09/18",
       "title": "あああああ vs ぺるそなお",
