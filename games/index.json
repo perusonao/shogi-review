@@ -2,6 +2,19 @@
   "schemaVersion": 1,
   "games": [
     {
+      "id": "20260918_あああああ",
+      "date": "2026/09/18",
+      "title": "あああああ vs ぺるそなお",
+      "side": "後手",
+      "result": "先手・あああああ 勝利",
+      "moves": 135,
+      "kif": "games/20260918_あああああ.kif",
+      "gameData": "games/20260918_あああああ.json",
+      "analysisData": "analysis/20260918_あああああ.json",
+      "analyzed": true,
+      "status": "YaneuraOu V9.00 + 水匠5解析済み"
+    },
+    {
       "id": "20260917_スドファエ",
       "date": "2026/09/17",
       "title": "スドファエ vs ぺるそなお",
