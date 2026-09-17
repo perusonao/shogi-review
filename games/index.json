@@ -2,6 +2,19 @@
   "schemaVersion": 1,
   "games": [
     {
+      "id": "20260917_ほのたん",
+      "date": "2026/09/17",
+      "title": "ほのたん vs ぺるそなお",
+      "side": "後手",
+      "result": "先手・ほのたん 勝利",
+      "moves": 133,
+      "kif": "games/20260917_ほのたん.kif",
+      "gameData": "games/20260917_ほのたん.json",
+      "analysisData": "analysis/20260917_ほのたん.json",
+      "analyzed": true,
+      "status": "YaneuraOu V9.00 + 水匠5解析済み"
+    },
+    {
       "id": "20260917_てつとくるみ",
       "date": "2026/09/17",
       "title": "てつとくるみ vs ぺるそなお",
