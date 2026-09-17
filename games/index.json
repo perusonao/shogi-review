@@ -2,6 +2,19 @@
   "schemaVersion": 1,
   "games": [
     {
+      "id": "20260917_あいうえお",
+      "date": "2026/09/17",
+      "title": "あいうえお vs ぺるそなお",
+      "side": "後手",
+      "result": "先手・あいうえお 勝利",
+      "moves": 95,
+      "kif": "games/20260917_あいうえお.kif",
+      "gameData": "games/20260917_あいうえお.json",
+      "analysisData": "analysis/20260917_あいうえお.json",
+      "analyzed": true,
+      "status": "YaneuraOu V9.00 + 水匠5解析済み"
+    },
+    {
       "id": "20260917_虎金紀_笑虎_ホロdev",
       "date": "2026/09/17",
       "title": "ぺるそなお vs 虎金紀　笑虎　ホロDEV",
