@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "gameId": "20260917_カイシー将棋",
+  "analyzedAt": "2026-09-17T12:04:01.751919Z",
+  "positions": 38,
+  "problemPositions": 3,
+  "baseAnalysisSeconds": 1.211,
+  "extraPvSearchSeconds": 0.383,
+  "totalAnalysisSeconds": 1.594,
+  "shortPvCandidates": 4,
+  "extraSearchExecuted": 4,
+  "pvLengthBeforeAverage": 2.0,
+  "pvLengthAfterAverage": 4.75,
+  "pvLengthsBefore": [
+    2,
+    2,
+    2,
+    2
+  ],
+  "pvLengthsAfter": [
+    13,
+    2,
+    2,
+    2
+  ],
+  "improvedPvCount": 1,
+  "unchangedPvCount": 3
+}
