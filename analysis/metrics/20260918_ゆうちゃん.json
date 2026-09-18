@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "gameId": "20260918_ゆうちゃん",
+  "analyzedAt": "2026-09-18T14:49:48.498422Z",
+  "positions": 59,
+  "problemPositions": 4,
+  "baseAnalysisSeconds": 1.938,
+  "extraPvSearchSeconds": 0.277,
+  "totalAnalysisSeconds": 2.215,
+  "shortPvCandidates": 2,
+  "extraSearchExecuted": 2,
+  "pvLengthBeforeAverage": 1.5,
+  "pvLengthAfterAverage": 6.5,
+  "pvLengthsBefore": [
+    1,
+    2
+  ],
+  "pvLengthsAfter": [
+    11,
+    2
+  ],
+  "improvedPvCount": 1,
+  "unchangedPvCount": 1
+}
