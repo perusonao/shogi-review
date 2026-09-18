@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "gameId": "20260918_amazake100",
+  "analyzedAt": "2026-09-18T05:00:06.108395Z",
+  "positions": 129,
+  "problemPositions": 6,
+  "baseAnalysisSeconds": 4.998,
+  "extraPvSearchSeconds": 0.74,
+  "totalAnalysisSeconds": 5.738,
+  "shortPvCandidates": 1,
+  "extraSearchExecuted": 1,
+  "pvLengthBeforeAverage": 2.0,
+  "pvLengthAfterAverage": 11.0,
+  "pvLengthsBefore": [
+    2
+  ],
+  "pvLengthsAfter": [
+    11
+  ],
+  "improvedPvCount": 1,
+  "unchangedPvCount": 0
+}
