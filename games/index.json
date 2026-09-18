@@ -2,6 +2,19 @@
   "schemaVersion": 1,
   "games": [
     {
+      "id": "20260918_梅干し",
+      "date": "2026/09/18",
+      "title": "ぺるそなお vs 梅干し",
+      "side": "先手",
+      "result": "後手・梅干し 勝利",
+      "moves": 92,
+      "kif": "games/20260918_梅干し.kif",
+      "gameData": "games/20260918_梅干し.json",
+      "analysisData": "analysis/20260918_梅干し.json",
+      "analyzed": true,
+      "status": "YaneuraOu V9.00 + 水匠5解析済み"
+    },
+    {
       "id": "20260918_あらたすせんむ",
       "date": "2026/09/18",
       "title": "あらたすせんむ vs ぺるそなお",
