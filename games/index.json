@@ -2,6 +2,19 @@
   "schemaVersion": 1,
   "games": [
     {
+      "id": "20260918_あらたすせんむ",
+      "date": "2026/09/18",
+      "title": "あらたすせんむ vs ぺるそなお",
+      "side": "後手",
+      "result": "後手・ぺるそなお 勝利",
+      "moves": 108,
+      "kif": "games/20260918_あらたすせんむ.kif",
+      "gameData": "games/20260918_あらたすせんむ.json",
+      "analysisData": "analysis/20260918_あらたすせんむ.json",
+      "analyzed": true,
+      "status": "YaneuraOu V9.00 + 水匠5解析済み"
+    },
+    {
       "id": "20260918_メンチテテツフライ",
       "date": "2026/09/18",
       "title": "メンチテテツフライ vs ぺるそなお",
