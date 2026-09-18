@@ -2,6 +2,19 @@
   "schemaVersion": 1,
   "games": [
     {
+      "id": "20260918_めも",
+      "date": "2026/09/18",
+      "title": "めも vs ぺるそなお",
+      "side": "後手",
+      "result": "後手・ぺるそなお 勝利",
+      "moves": 86,
+      "kif": "games/20260918_めも.kif",
+      "gameData": "games/20260918_めも.json",
+      "analysisData": "analysis/20260918_めも.json",
+      "analyzed": true,
+      "status": "YaneuraOu V9.00 + 水匠5解析済み"
+    },
+    {
       "id": "20260918_cgshogi",
       "date": "2026/09/18",
       "title": "ぺるそなお vs cgshogi",
