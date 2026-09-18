@@ -1,0 +1,26 @@
+{
+  "schemaVersion": 1,
+  "gameId": "20260918_メンチテテツフライ",
+  "analyzedAt": "2026-09-18T05:40:59.414326Z",
+  "positions": 122,
+  "problemPositions": 6,
+  "baseAnalysisSeconds": 4.621,
+  "extraPvSearchSeconds": 0.682,
+  "totalAnalysisSeconds": 5.303,
+  "shortPvCandidates": 3,
+  "extraSearchExecuted": 3,
+  "pvLengthBeforeAverage": 2.667,
+  "pvLengthAfterAverage": 7.333,
+  "pvLengthsBefore": [
+    3,
+    3,
+    2
+  ],
+  "pvLengthsAfter": [
+    3,
+    3,
+    16
+  ],
+  "improvedPvCount": 1,
+  "unchangedPvCount": 2
+}

@@ -2,6 +2,19 @@
   "schemaVersion": 1,
   "games": [
     {
+      "id": "20260918_メンチテテツフライ",
+      "date": "2026/09/18",
+      "title": "メンチテテツフライ vs ぺるそなお",
+      "side": "後手",
+      "result": "先手・メンチテテツフライ 勝利",
+      "moves": 121,
+      "kif": "games/20260918_メンチテテツフライ.kif",
+      "gameData": "games/20260918_メンチテテツフライ.json",
+      "analysisData": "analysis/20260918_メンチテテツフライ.json",
+      "analyzed": true,
+      "status": "YaneuraOu V9.00 + 水匠5解析済み"
+    },
+    {
       "id": "20260918_amazake100",
       "date": "2026/09/18",
       "title": "sonao81 vs amazake100",
