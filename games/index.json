@@ -2,6 +2,19 @@
   "schemaVersion": 1,
   "games": [
     {
+      "id": "20260918_majiska",
+      "date": "2026/09/18",
+      "title": "ぺるそなお vs majiska",
+      "side": "先手",
+      "result": "後手・majiska 勝利",
+      "moves": 152,
+      "kif": "games/20260918_majiska.kif",
+      "gameData": "games/20260918_majiska.json",
+      "analysisData": "analysis/20260918_majiska.json",
+      "analyzed": true,
+      "status": "YaneuraOu V9.00 + 水匠5解析済み"
+    },
+    {
       "id": "20260918_梅干し",
       "date": "2026/09/18",
       "title": "ぺるそなお vs 梅干し",
