@@ -2,6 +2,19 @@
   "schemaVersion": 1,
   "games": [
     {
+      "id": "20260918_harinezumi00123",
+      "date": "2026/09/18",
+      "title": "harinezumi00123 vs sonao81",
+      "side": "後手",
+      "result": "後手・sonao81 勝利",
+      "moves": 80,
+      "kif": "games/20260918_harinezumi00123.kif",
+      "gameData": "games/20260918_harinezumi00123.json",
+      "analysisData": "analysis/20260918_harinezumi00123.json",
+      "analyzed": true,
+      "status": "YaneuraOu V9.00 + 水匠5解析済み"
+    },
+    {
       "id": "20260918_つまがり",
       "date": "2026/09/18",
       "title": "つまがり vs ぺるそなお",
