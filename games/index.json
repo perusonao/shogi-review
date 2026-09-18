@@ -2,6 +2,19 @@
   "schemaVersion": 1,
   "games": [
     {
+      "id": "20260919_nisshii_b",
+      "date": "2026/09/19",
+      "title": "nisshii_b vs ぺるそなお",
+      "side": "後手",
+      "result": "後手・ぺるそなお 勝利",
+      "moves": 124,
+      "kif": "games/20260919_nisshii_b.kif",
+      "gameData": "games/20260919_nisshii_b.json",
+      "analysisData": "analysis/20260919_nisshii_b.json",
+      "analyzed": true,
+      "status": "YaneuraOu V9.00 + 水匠5解析済み"
+    },
+    {
       "id": "20260919_ファンタジスタ",
       "date": "2026/09/19",
       "title": "ぺるそなお vs ファンタジスタ",

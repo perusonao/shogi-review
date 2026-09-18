@@ -1,0 +1,24 @@
+{
+  "schemaVersion": 1,
+  "gameId": "20260919_nisshii_b",
+  "analyzedAt": "2026-09-18T15:20:26.071266Z",
+  "positions": 125,
+  "problemPositions": 6,
+  "baseAnalysisSeconds": 4.715,
+  "extraPvSearchSeconds": 0.745,
+  "totalAnalysisSeconds": 5.46,
+  "shortPvCandidates": 2,
+  "extraSearchExecuted": 2,
+  "pvLengthBeforeAverage": 1.5,
+  "pvLengthAfterAverage": 1.5,
+  "pvLengthsBefore": [
+    2,
+    1
+  ],
+  "pvLengthsAfter": [
+    2,
+    1
+  ],
+  "improvedPvCount": 0,
+  "unchangedPvCount": 2
+}
