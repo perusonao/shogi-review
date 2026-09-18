@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "gameId": "20260918_cgshogi",
+  "analyzedAt": "2026-09-18T14:28:36.296008Z",
+  "positions": 74,
+  "problemPositions": 6,
+  "baseAnalysisSeconds": 2.689,
+  "extraPvSearchSeconds": 0.607,
+  "totalAnalysisSeconds": 3.296,
+  "shortPvCandidates": 1,
+  "extraSearchExecuted": 1,
+  "pvLengthBeforeAverage": 1.0,
+  "pvLengthAfterAverage": 16.0,
+  "pvLengthsBefore": [
+    1
+  ],
+  "pvLengthsAfter": [
+    16
+  ],
+  "improvedPvCount": 1,
+  "unchangedPvCount": 0
+}

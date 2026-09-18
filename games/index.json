@@ -2,6 +2,19 @@
   "schemaVersion": 1,
   "games": [
     {
+      "id": "20260918_cgshogi",
+      "date": "2026/09/18",
+      "title": "ぺるそなお vs cgshogi",
+      "side": "先手",
+      "result": "先手・ぺるそなお 勝利",
+      "moves": 73,
+      "kif": "games/20260918_cgshogi.kif",
+      "gameData": "games/20260918_cgshogi.json",
+      "analysisData": "analysis/20260918_cgshogi.json",
+      "analyzed": true,
+      "status": "YaneuraOu V9.00 + 水匠5解析済み"
+    },
+    {
       "id": "20260918_majiska",
       "date": "2026/09/18",
       "title": "ぺるそなお vs majiska",
