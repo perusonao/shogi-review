@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "gameId": "20260918_inochiro",
+  "analyzedAt": "2026-09-18T04:41:18.118967Z",
+  "positions": 59,
+  "problemPositions": 2,
+  "baseAnalysisSeconds": 2.101,
+  "extraPvSearchSeconds": 0.213,
+  "totalAnalysisSeconds": 2.314,
+  "shortPvCandidates": 1,
+  "extraSearchExecuted": 1,
+  "pvLengthBeforeAverage": 2.0,
+  "pvLengthAfterAverage": 2.0,
+  "pvLengthsBefore": [
+    2
+  ],
+  "pvLengthsAfter": [
+    2
+  ],
+  "improvedPvCount": 0,
+  "unchangedPvCount": 1
+}

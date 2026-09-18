@@ -2,6 +2,19 @@
   "schemaVersion": 1,
   "games": [
     {
+      "id": "20260918_inochiro",
+      "date": "2026/09/18",
+      "title": "inochiro vs sonao81",
+      "side": "後手",
+      "result": "後手・sonao81 勝利",
+      "moves": 58,
+      "kif": "games/20260918_inochiro.kif",
+      "gameData": "games/20260918_inochiro.json",
+      "analysisData": "analysis/20260918_inochiro.json",
+      "analyzed": true,
+      "status": "YaneuraOu V9.00 + 水匠5解析済み"
+    },
+    {
       "id": "20260918_harinezumi00123",
       "date": "2026/09/18",
       "title": "harinezumi00123 vs sonao81",
