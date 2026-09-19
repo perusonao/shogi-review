@@ -1,0 +1,40 @@
+{
+  "schemaVersion": 1,
+  "gameId": "20260919_italia4452",
+  "analyzedAt": "2026-09-19T07:54:58.093764Z",
+  "positions": 106,
+  "problemPositions": 6,
+  "baseAnalysisSeconds": 4.102,
+  "extraPvSearchSeconds": 0.933,
+  "totalAnalysisSeconds": 5.035,
+  "shortPvCandidates": 10,
+  "extraSearchExecuted": 10,
+  "pvLengthBeforeAverage": 2.0,
+  "pvLengthAfterAverage": 3.0,
+  "pvLengthsBefore": [
+    1,
+    3,
+    1,
+    3,
+    1,
+    3,
+    1,
+    2,
+    3,
+    2
+  ],
+  "pvLengthsAfter": [
+    1,
+    3,
+    2,
+    3,
+    9,
+    3,
+    2,
+    2,
+    3,
+    2
+  ],
+  "improvedPvCount": 3,
+  "unchangedPvCount": 7
+}
