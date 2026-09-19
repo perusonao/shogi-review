@@ -1,0 +1,28 @@
+{
+  "schemaVersion": 1,
+  "gameId": "20260919_hryopiyo",
+  "analyzedAt": "2026-09-19T08:10:39.584106Z",
+  "positions": 112,
+  "problemPositions": 6,
+  "baseAnalysisSeconds": 4.457,
+  "extraPvSearchSeconds": 0.808,
+  "totalAnalysisSeconds": 5.265,
+  "shortPvCandidates": 4,
+  "extraSearchExecuted": 4,
+  "pvLengthBeforeAverage": 2.25,
+  "pvLengthAfterAverage": 6.0,
+  "pvLengthsBefore": [
+    1,
+    3,
+    3,
+    2
+  ],
+  "pvLengthsAfter": [
+    1,
+    18,
+    3,
+    2
+  ],
+  "improvedPvCount": 1,
+  "unchangedPvCount": 3
+}

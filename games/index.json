@@ -2,6 +2,19 @@
   "schemaVersion": 1,
   "games": [
     {
+      "id": "20260919_hryopiyo",
+      "date": "2026/09/19",
+      "title": "HRyopiyo vs sonao81",
+      "side": "後手",
+      "result": "先手・HRyopiyo 勝利",
+      "moves": 111,
+      "kif": "games/20260919_hryopiyo.kif",
+      "gameData": "games/20260919_hryopiyo.json",
+      "analysisData": "analysis/20260919_hryopiyo.json",
+      "analyzed": true,
+      "status": "YaneuraOu V9.00 + 水匠5解析済み"
+    },
+    {
       "id": "20260919_italia4452",
       "date": "2026/09/19",
       "title": "sonao81 vs Italia4452",
