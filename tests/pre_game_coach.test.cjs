@@ -70,8 +70,8 @@ test("ホーム上部のカード、2行routine、横overflow防止、主要CTA�
   const dashboardIndex = html.indexOf('id="growthDashboard"');
   assert.ok(coachIndex >= 0 && coachIndex < ctaIndex && ctaIndex < dashboardIndex);
   assert.match(html, /coaching-focus\.js\?v=2/);
-  assert.match(html, /pre-game-coach\.js\?v=2/);
-  assert.match(html, /growth-dashboard\.js\?v=37/);
+  assert.match(html, /pre-game-coach\.js\?v=3/);
+  assert.match(html, /growth-dashboard\.js\?v=38/);
   assert.match(ui, /max-width:390px/);
   assert.match(ui, /overflow-wrap:anywhere/);
   assert.match(ui, /いま一番直したいこと/);

@@ -235,7 +235,7 @@ if (typeof document !== "undefined") {
     if (!container || !summaries) return;
     const model = window.ShogiGrowthDashboard.buildModel(records, summaries[activeWindow], summaries);
     if (typeof window.renderPreGameCoach === "function") {
-      window.renderPreGameCoach(model.currentTasks, summaries[activeWindow]);
+      window.renderPreGameCoach(model.currentTasks, summaries[10], model.latestGameId);
     }
     container.replaceChildren();
 

@@ -1,0 +1,26 @@
+[
+  {
+    "width": 390,
+    "height": 844,
+    "count": 90,
+    "label": "全90局",
+    "scrollTop": 4028,
+    "clientHeight": 782,
+    "scrollHeight": 4810,
+    "lastBottom": 767,
+    "navTop": 786,
+    "overflow": "auto"
+  },
+  {
+    "width": 360,
+    "height": 800,
+    "count": 90,
+    "label": "全90局",
+    "scrollTop": 4072,
+    "clientHeight": 738,
+    "scrollHeight": 4810,
+    "lastBottom": 723,
+    "navTop": 742,
+    "overflow": "auto"
+  }
+]
