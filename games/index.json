@@ -2,6 +2,19 @@
   "schemaVersion": 1,
   "games": [
     {
+      "id": "20260920_tomsan",
+      "date": "2026/09/20",
+      "title": "ぺるそなお vs tomsan",
+      "side": "先手",
+      "result": "後手・tomsan 勝利",
+      "moves": 106,
+      "kif": "games/20260920_tomsan.kif",
+      "gameData": "games/20260920_tomsan.json",
+      "analysisData": "analysis/20260920_tomsan.json",
+      "analyzed": true,
+      "status": "YaneuraOu V9.00 + 水匠5解析済み"
+    },
+    {
       "id": "20260919_hryopiyo",
       "date": "2026/09/19",
       "title": "HRyopiyo vs sonao81",
