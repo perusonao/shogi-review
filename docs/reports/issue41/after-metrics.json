@@ -9,7 +9,23 @@
     "scrollHeight": 4810,
     "lastBottom": 767,
     "navTop": 786,
-    "overflow": "auto"
+    "overflow": "auto",
+    "detailsNavigation": {
+      "before": {
+        "scrollTop": 0,
+        "targetTop": 338.5,
+        "tabsBottom": 370.5,
+        "navTop": 786,
+        "focused": null
+      },
+      "after": {
+        "scrollTop": 39,
+        "targetTop": 299.5,
+        "tabsBottom": 331.5,
+        "navTop": 786,
+        "focused": "直近10局"
+      }
+    }
   },
   {
     "width": 360,
@@ -21,6 +37,22 @@
     "scrollHeight": 4810,
     "lastBottom": 723,
     "navTop": 742,
-    "overflow": "auto"
+    "overflow": "auto",
+    "detailsNavigation": {
+      "before": {
+        "scrollTop": 0,
+        "targetTop": 338.5,
+        "tabsBottom": 370.5,
+        "navTop": 742,
+        "focused": null
+      },
+      "after": {
+        "scrollTop": 83,
+        "targetTop": 255.5,
+        "tabsBottom": 287.5,
+        "navTop": 742,
+        "focused": "直近10局"
+      }
+    }
   }
 ]

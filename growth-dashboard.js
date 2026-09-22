@@ -308,7 +308,12 @@ if (typeof document !== "undefined") {
     const detailsButton = document.createElement("button");
     detailsButton.type = "button";
     detailsButton.textContent = "10/30詳細を見る";
-    detailsButton.addEventListener("click", () => window.showView?.("analysis"));
+    detailsButton.addEventListener("click", () => {
+      const target = document.getElementById("recentAnalysis");
+      if (!target) return;
+      target.scrollIntoView({ block: "start", behavior: "instant" });
+      target.querySelector('.recentTab[aria-pressed="true"]')?.focus({ preventScroll: true });
+    });
     footer.appendChild(detailsButton);
     container.appendChild(footer);
   }

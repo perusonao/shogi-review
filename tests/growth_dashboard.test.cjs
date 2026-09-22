@@ -209,7 +209,7 @@ test("390px UI、折りたたみ、10/30、evidence navigationを備える", () 
   const html = fs.readFileSync(path.join(root, "index.html"), "utf8");
   const ui = fs.readFileSync(path.join(root, "growth-dashboard.js"), "utf8");
   assert.match(html, /id="growthDashboard"/);
-  assert.match(html, /growth-dashboard\.js\?v=38/);
+  assert.match(html, /growth-dashboard\.js\?v=39/);
   assert.match(ui, /max-width:390px/);
   assert.match(ui, /document\.createElement\("details"\)/);
   assert.match(ui, /課題の推移/);

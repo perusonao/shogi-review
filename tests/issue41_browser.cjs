@@ -67,6 +67,47 @@ const server = http.createServer((req,res) => {
         assert(await page.locator('#analysis #growthDashboard').count());
         await page.getByRole('button',{name:'直近30局に切替',exact:true}).click();
         assert.equal(await page.locator('#preGameCoach').textContent(),originalCard);
+        const analysisMetrics = () => page.evaluate(() => ({
+          scrollTop: document.querySelector('#analysis').scrollTop,
+          targetTop: document.querySelector('#recentAnalysis').getBoundingClientRect().top,
+          tabsBottom: document.querySelector('.recentTabs').getBoundingClientRect().bottom,
+          navTop: document.querySelector('.tabs').getBoundingClientRect().top,
+          focused: document.activeElement?.matches('.recentTab') ? document.activeElement.textContent : null,
+        }));
+        // Measure after bringing the button into view, so Playwright's own
+        // actionability scrolling cannot satisfy the navigation assertion.
+        const details = page.getByRole('button', {name:'10/30詳細を見る',exact:true});
+        await details.scrollIntoViewIfNeeded();
+        const detailBefore = await analysisMetrics();
+        await page.screenshot({path:path.join(out,`p2-${width}x${height}-before-tap.png`)});
+        await details.tap();
+        const detailAfter = await analysisMetrics();
+        assert(detailAfter.scrollTop > detailBefore.scrollTop + 20);
+        assert(detailAfter.targetTop < detailBefore.targetTop - 20);
+        assert(detailAfter.targetTop >= 0);
+        assert(detailAfter.tabsBottom < detailAfter.navTop);
+        assert.equal(detailAfter.focused, '直近10局');
+        await page.screenshot({path:path.join(out,`p2-${width}x${height}-after-tap.png`)});
+        results.at(-1).detailsNavigation = {before:detailBefore,after:detailAfter};
+        for (const windowSize of [30,10]) {
+          await page.locator('#recentAnalysis').getByRole('button',{name:`直近${windowSize}局`,exact:true}).tap();
+          assert.equal(await page.locator('#recentAnalysis .recentTab.active').textContent(),`直近${windowSize}局`);
+          assert.match(await page.locator('.recentSample').textContent(),new RegExp(`最大${windowSize}局`));
+          assert.equal(await page.locator('.recentThemes tbody tr').count(),4);
+          await details.tap();
+          assert.equal((await analysisMetrics()).focused,`直近${windowSize}局`);
+        }
+        await page.getByRole('button',{name:'直近10局に切替',exact:true}).tap();
+        assert.equal(await page.locator('#preGameCoach').textContent(),originalCard);
+        await page.locator('.growthTaskDetails > summary').tap();
+        await page.locator('.growthProgress > summary').tap();
+        assert(await page.locator('.growthProgressRow').count()>0);
+        await page.locator('.recentThemes').scrollIntoViewIfNeeded();
+        assert(await page.evaluate(()=>{
+          const a=document.querySelector('#analysis'),t=document.querySelector('.recentThemes').getBoundingClientRect();
+          return a.scrollTop>0 && a.scrollWidth<=a.clientWidth && t.bottom<=document.querySelector('.tabs').getBoundingClientRect().top;
+        }));
+
         await page.evaluate(()=>renderPreGameCoach([],null));
         assert.match(await page.locator('#preGameCoach').textContent(),/次の解析/);
         await page.evaluate(()=>{catalog=[...catalog,...catalog.slice(0,11).map((g,i)=>({...g,id:`fixture-${i}`}))];renderGameList();showView('games');document.querySelector('#games').scrollTop=100000;});
@@ -84,6 +125,9 @@ const server = http.createServer((req,res) => {
           showView('games');document.querySelector('#games').scrollTop=100000;
         });
         assert(await page.evaluate(()=>document.querySelector('.gameRow:last-child').getBoundingClientRect().bottom<=document.querySelector('.tabs').getBoundingClientRect().top));
+        await page.locator('.tab[data-v="analysis"]').tap();
+        await details.tap();
+        assert((await analysisMetrics()).tabsBottom < (await analysisMetrics()).navTop);
         assert.deepEqual(errors,[]);
       }
       await page.close();

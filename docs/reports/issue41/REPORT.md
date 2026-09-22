@@ -118,3 +118,26 @@ Raw geometry: [before](before-metrics.json), [after](after-metrics.json).
 ## Remaining work
 
 P0-A needs authorized D1 access and actual pending/failed request evidence before recovery can be claimed. A real newly submitted KIF has not been run end-to-end through production in this audit. The 90→91 path is verified in isolation, not by creating a fictional production game. Physical iPhone/Safari confirmation and post-merge Pages validation remain.
+
+## PR #44 Codex P2 follow-up
+
+- Starting PR HEAD: `6fc9efffbe5ff2d08fd4ebece2231ae9a7e69f84`.
+- Fresh origin/main: `462ab2c5a67c0000573f169c38207b1ac9bfc220`.
+- Fresh GitHub check: PR OPEN, unmerged; branch clean and matched GitHub HEAD. Review: [P2 comment](https://github.com/perusonao/shogi-review/pull/44#discussion_r4066947402).
+- Cause: growthDashboard moved into Analysis, but its footer still called only showView("analysis"). That operation toggles the view; it does not scroll to the following recentAnalysis section. Both sections retain their own 10/30 window controls; HOME's separate analysis link still legitimately changes views.
+- UX choice A: keep the shortcut to the longer detailed area. Scroll recentAnalysis into view and focus its currently selected 10/30 button without a second implicit scroll. An explicit gold focus outline identifies the destination on touch input too. No artificial spacer is added to force top alignment when the content is shorter than the viewport.
+- Code: growth-dashboard.js handler, recent-analysis.js focus outline, index.html asset versions; corresponding three asset-version test expectations updated.
+- Browser regression: tests/issue41_browser.cjs now measures position immediately before actual tap (after actionability scrolling), asserts scroll delta >20px and target top moves >20px, verifies selected-tab focus and position above bottom nav, exercises both detail windows and focus after each selection, opens task progress and reaches the theme table. The old handler was temporarily restored: this test failed at the scroll-delta assertion. Restoring the fix passes.
+
+| Viewport | Analysis scrollTop before → after tap | Detail top before → after | Selected-tab bottom / nav top |
+| --- | --- | --- | --- |
+| 390×844 | 0 → 39 | 338.5 → 299.5 | 331.5 / 786 |
+| 360×800 | 0 → 83 | 338.5 → 255.5 | 287.5 / 742 |
+
+Both viewports passed actual Playwright touch taps. Selected detail tab receives focus with a visible gold outline; the entire theme table can be reached above navigation. HOME remains one task based on recent 10 games; exact source game/ply CTA, empty state, 90 actual games / 101-row fixture, last-row click, game/analysis scrolling, horizontal containment, and simulated 34px safe area all passed. This remains Edge mobile emulation, not physical iPhone Safari.
+
+- [390 before tap](p2-390x844-before-tap.png) / [390 after tap](p2-390x844-after-tap.png)
+- [360 before tap](p2-360x800-before-tap.png) / [360 after tap](p2-360x800-after-tap.png)
+- [Measured geometry](after-metrics.json)
+
+Validation rerun: JavaScript/Cloudflare **116/116 PASS**; full Python **90/93 PASS** with the same three known dataset count failures listed above (53 vs 30, 55 vs 32, 53 vs 30); Issue #41 browser suite **both viewports PASS**; git diff --check **PASS**. No Python/data change or new failure. D1, production recovery, and other issues remain outside this follow-up. Commit and re-review request are recorded on PR #44; no merge.
