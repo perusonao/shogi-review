@@ -1,0 +1,36 @@
+{
+  "schemaVersion": 1,
+  "gameId": "20260920_よっつぁ",
+  "analyzedAt": "2026-09-25T06:30:51.882220Z",
+  "positions": 67,
+  "problemPositions": 6,
+  "baseAnalysisSeconds": 2.463,
+  "extraPvSearchSeconds": 0.81,
+  "totalAnalysisSeconds": 3.273,
+  "shortPvCandidates": 8,
+  "extraSearchExecuted": 8,
+  "pvLengthBeforeAverage": 2.0,
+  "pvLengthAfterAverage": 4.0,
+  "pvLengthsBefore": [
+    1,
+    2,
+    2,
+    2,
+    3,
+    2,
+    2,
+    2
+  ],
+  "pvLengthsAfter": [
+    2,
+    2,
+    17,
+    2,
+    3,
+    2,
+    2,
+    2
+  ],
+  "improvedPvCount": 2,
+  "unchangedPvCount": 6
+}
