@@ -2,6 +2,19 @@
   "schemaVersion": 1,
   "games": [
     {
+      "id": "20260920_gasin",
+      "date": "2026/09/20",
+      "title": "gasin vs ぺるそなお",
+      "side": "後手",
+      "result": "先手・gasin 勝利",
+      "moves": 75,
+      "kif": "games/20260920_gasin.kif",
+      "gameData": "games/20260920_gasin.json",
+      "analysisData": "analysis/20260920_gasin.json",
+      "analyzed": true,
+      "status": "YaneuraOu V9.00 + 水匠5解析済み"
+    },
+    {
       "id": "20260920_tomsan",
       "date": "2026/09/20",
       "title": "ぺるそなお vs tomsan",
