@@ -2,6 +2,19 @@
   "schemaVersion": 1,
   "games": [
     {
+      "id": "20260920_あさひ",
+      "date": "2026/09/20",
+      "title": "あさひ vs ぺるそなお",
+      "side": "後手",
+      "result": "後手・ぺるそなお 勝利",
+      "moves": 94,
+      "kif": "games/20260920_あさひ.kif",
+      "gameData": "games/20260920_あさひ.json",
+      "analysisData": "analysis/20260920_あさひ.json",
+      "analyzed": true,
+      "status": "YaneuraOu V9.00 + 水匠5解析済み"
+    },
+    {
       "id": "20260920_よっつぁ",
       "date": "2026/09/20",
       "title": "よっつぁ vs ぺるそなお",
