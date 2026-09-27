@@ -13,6 +13,7 @@ import time
 import urllib.error
 import urllib.request
 import uuid
+import unicodedata
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -26,6 +27,47 @@ SAFE_FAILURE = "解析処理に失敗しました。Windows workerのログを�
 
 class WorkerError(RuntimeError):
     pass
+
+
+DEFAULT_USER_NAMES = ("ぺるそなお", "sonao81")
+USER_NAMES_SCHEMA = "worker-aliases-v1"
+
+
+def normalize_user_name(value: str) -> str:
+    """Normalize only compatibility forms and outer whitespace for exact matching."""
+    return unicodedata.normalize("NFKC", value).strip()
+
+
+def load_user_names(root: Path, users: str | None = None,
+                    users_file: Path | None = None) -> tuple[str, ...]:
+    """Load non-secret aliases from UTF-8 JSON, with legacy env/CLI fallback."""
+    if users is not None:
+        raw_names = users.split(",")
+    else:
+        path = users_file or root / "config" / "worker-aliases.json"
+        if not path.is_absolute():
+            path = root / path
+        if path.is_file():
+            try:
+                payload = json.loads(path.read_text(encoding="utf-8"))
+            except (OSError, UnicodeDecodeError, json.JSONDecodeError) as exc:
+                raise WorkerError(f"worker alias config is not valid UTF-8 JSON: {path}") from exc
+            if (not isinstance(payload, dict) or payload.get("schemaVersion") != USER_NAMES_SCHEMA
+                    or not isinstance(payload.get("userNames"), list)):
+                raise WorkerError("worker alias config schema is invalid")
+            raw_names = payload["userNames"]
+        else:
+            legacy = os.environ.get("SHOGI_USER_NAMES")
+            raw_names = legacy.split(",") if legacy is not None else list(DEFAULT_USER_NAMES)
+    if not all(isinstance(name, str) for name in raw_names):
+        raise WorkerError("worker aliases must be strings")
+    names = tuple(name.strip() for name in raw_names if name.strip())
+    if not names:
+        raise WorkerError("worker alias list is empty")
+    normalized = [normalize_user_name(name) for name in names]
+    if any(not name for name in normalized) or len(normalized) != len(set(normalized)):
+        raise WorkerError("worker aliases are empty or duplicate after normalization")
+    return names
 
 
 def safe_output_summary(value: str | None, limit: int = 2000) -> str:
@@ -79,10 +121,16 @@ class QueueClient:
 
 
 def choose_user(parsed: dict, user_names: tuple[str, ...]) -> str:
-    players = {parsed["game"].get("sente"), parsed["game"].get("gote")}
-    for name in user_names:
-        if name in players:
-            return name
+    players = tuple(parsed["game"].get(side) for side in ("sente", "gote"))
+    aliases = {normalize_user_name(name) for name in user_names}
+    for player in players:
+        if isinstance(player, str) and normalize_user_name(player) in aliases:
+            return player
+    logging.error(
+        "configured user is not a player parsed_players=%r configured_alias_count=%d normalized_match=false",
+        players,
+        len(user_names),
+    )
     raise WorkerError("configured user is not a player")
 
 
@@ -271,7 +319,10 @@ def main() -> int:
     parser.add_argument("--root", type=Path, default=ROOT)
     parser.add_argument("--url", default=os.environ.get("SHOGI_QUEUE_URL", ""))
     parser.add_argument("--secret", default=os.environ.get("SHOGI_WORKER_SECRET", ""))
-    parser.add_argument("--users", default=os.environ.get("SHOGI_USER_NAMES", "ぺるそなお,sonao81"))
+    parser.add_argument("--users", help="legacy comma-separated aliases; overrides the UTF-8 alias file")
+    parser.add_argument("--users-file", type=Path,
+                        default=Path(os.environ["SHOGI_USER_NAMES_FILE"])
+                        if os.environ.get("SHOGI_USER_NAMES_FILE") else None)
     parser.add_argument("--poll-seconds", type=int, default=int(os.environ.get("SHOGI_POLL_SECONDS", "45")))
     parser.add_argument("--once", action="store_true")
     args = parser.parse_args()
@@ -282,12 +333,13 @@ def main() -> int:
     if not 30 <= args.poll_seconds <= 60:
         logging.error("poll interval must be 30-60 seconds")
         return 2
-    users = tuple(name.strip() for name in args.users.split(",") if name.strip())
-    if not users:
-        logging.error("SHOGI_USER_NAMES is empty")
+    try:
+        users = load_user_names(args.root.resolve(), args.users, args.users_file)
+    except WorkerError as exc:
+        logging.error("%s", exc)
         return 2
     client = QueueClient(args.url, args.secret)
-    logging.info("analysis worker started (poll=%ss)", args.poll_seconds)
+    logging.info("analysis worker started (poll=%ss aliases=%d)", args.poll_seconds, len(users))
     while True:
         try:
             head, updated = refresh_worker_checkout(args.root.resolve())

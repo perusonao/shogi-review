@@ -14,7 +14,11 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "tools"))
 
 from analysis_worker import (  # noqa: E402
+    WorkerError,
+    choose_user,
     find_existing_game_id,
+    load_user_names,
+    normalize_user_name,
     process_claim,
     refresh_worker_checkout,
     safe_output_summary,
@@ -79,6 +83,63 @@ class Phase2Tests(unittest.TestCase):
         claim["fingerprint"] = "0" * 64
         with self.assertRaisesRegex(RuntimeError, "fingerprint mismatch"):
             validate_claim(claim, ("ぺるそなお", "sonao81"))
+
+    def test_worker_aliases_load_from_utf8_json(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            path = root / "config" / "worker-aliases.json"
+            path.parent.mkdir()
+            path.write_text(json.dumps({
+                "schemaVersion": "worker-aliases-v1",
+                "userNames": ["ぺるそなお", "sonao81"],
+            }, ensure_ascii=False), encoding="utf-8")
+            self.assertEqual(load_user_names(root), ("ぺるそなお", "sonao81"))
+
+    def test_worker_alias_file_precedes_legacy_mojibake_environment(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            path = root / "config" / "worker-aliases.json"
+            path.parent.mkdir()
+            path.write_text(json.dumps({
+                "schemaVersion": "worker-aliases-v1",
+                "userNames": ["ぺるそなお", "sonao81"],
+            }, ensure_ascii=False), encoding="utf-8")
+            with patch.dict("os.environ", {"SHOGI_USER_NAMES": "縺ｺ繧九◎縺ｪ縺・,sonao81"}):
+                self.assertEqual(load_user_names(root), ("ぺるそなお", "sonao81"))
+
+    def test_choose_user_uses_normalized_exact_match(self) -> None:
+        self.assertEqual(choose_user({"game": {"sente": "ぺるそなお", "gote": "opponent"}},
+                                     ("ぺるそなお", "sonao81")), "ぺるそなお")
+        self.assertEqual(choose_user({"game": {"sente": "opponent", "gote": "sonao81"}},
+                                     ("ぺるそなお", "sonao81")), "sonao81")
+        self.assertEqual(choose_user({"game": {"sente": " ペルソナオ ", "gote": "opponent"}},
+                                     ("ペルソナオ",)), " ペルソナオ ")
+        self.assertEqual(normalize_user_name("  ｓｏｎａｏ８１  "), "sonao81")
+
+    def test_choose_user_rejects_unrelated_and_mojibake_players(self) -> None:
+        with self.assertLogs(level="ERROR") as logs:
+            with self.assertRaisesRegex(WorkerError, "configured user is not a player"):
+                choose_user({"game": {"sente": "unrelated", "gote": "opponent"}}, ("ぺるそなお", "sonao81"))
+        diagnostic = "\n".join(logs.output)
+        self.assertIn("parsed_players=('unrelated', 'opponent')", diagnostic)
+        self.assertIn("configured_alias_count=2", diagnostic)
+        self.assertIn("normalized_match=false", diagnostic)
+        with self.assertRaisesRegex(WorkerError, "configured user is not a player"):
+            choose_user({"game": {"sente": "縺ｺ繧九◎縺ｪ縺・", "gote": "opponent"}}, ("ぺるそなお",))
+
+    def test_worker_cli_keeps_once_contract(self) -> None:
+        completed = subprocess.run(
+            [sys.executable, str(ROOT / "tools" / "analysis_worker.py"), "--help"],
+            cwd=ROOT, check=True, capture_output=True, text=True, encoding="utf-8",
+        )
+        self.assertIn("--once", completed.stdout)
+        self.assertIn("--users-file", completed.stdout)
+
+    def test_windows_launcher_uses_utf8_alias_file_not_legacy_environment(self) -> None:
+        launcher = (ROOT / "start-analysis-worker.bat").read_text(encoding="utf-8")
+        example = (ROOT / "worker-config.bat.example").read_text(encoding="utf-8")
+        self.assertIn('--users-file "%SHOGI_WORKER_ROOT%\\config\\worker-aliases.json"', launcher)
+        self.assertNotIn("SHOGI_USER_NAMES=", example)
 
     def test_xss_content_is_not_inserted_as_html(self) -> None:
         dangerous = self.higure_text.replace("先手：ひぐれ", "先手：<svg onload=alert(1)>")

@@ -1,9 +1,11 @@
 @echo off
-rem Copy this file to worker-config.bat and fill in the two secrets locally.
+rem Copy this file to worker-config.bat and fill in the local connection settings.
 rem worker-config.bat is ignored by Git.
 set "SHOGI_QUEUE_URL=https://YOUR-WORKER.YOUR-SUBDOMAIN.workers.dev"
 set "SHOGI_WORKER_SECRET=PASTE_A_LONG_RANDOM_WORKER_SECRET"
-set "SHOGI_USER_NAMES=ぺるそなお,sonao81"
 set "SHOGI_POLL_SECONDS=45"
+rem Non-secret player aliases are read as UTF-8 from config\worker-aliases.json.
+rem Optional: set an alternate UTF-8 JSON path using ASCII characters only.
+rem set "SHOGI_USER_NAMES_FILE=C:\path\to\worker-aliases.json"
 rem Optional: dedicated detached worktree path. Default is %LOCALAPPDATA%\shogi-review-worker.
 rem set "SHOGI_WORKER_ROOT=C:\path\to\shogi-review-worker"
