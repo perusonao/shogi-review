@@ -21,5 +21,5 @@ set "PYTHONUTF8=1"
 python "tools\prepare_worker_workspace.py" --source "%~dp0" --workspace "%SHOGI_WORKER_ROOT%"
 if errorlevel 1 exit /b %errorlevel%
 
-python "%SHOGI_WORKER_ROOT%\tools\analysis_worker.py" --root "%SHOGI_WORKER_ROOT%"
+python "%SHOGI_WORKER_ROOT%\tools\analysis_worker.py" --root "%SHOGI_WORKER_ROOT%" --users-file "%SHOGI_WORKER_ROOT%\config\worker-aliases.json"
 exit /b %errorlevel%

@@ -57,7 +57,11 @@ npx wrangler deploy
 
 ## 6. Windows workerを設定
 
-リポジトリ直下の `worker-config.bat.example` を `worker-config.bat` にコピーする。ファイル内へWorker URL、worker用の平文secret、対象ユーザー名を設定する。このファイルはGit対象外である。
+リポジトリ直下の `worker-config.bat.example` を `worker-config.bat` にコピーする。ファイル内へWorker URLとworker用の平文secretを設定する。このファイルはGit対象外である。
+
+対象ユーザー名は、非secretの `config/worker-aliases.json` にUTF-8で保存する。Python workerが `encoding="utf-8"` を明示して直接読むため、日本語aliasを `worker-config.bat` に書かないこと。既定では `ぺるそなお` と `sonao81` を登録している。aliasを変更する場合は `userNames` 配列を編集し、曖昧一致や部分一致ではなく、NFKC正規化と外側空白除去後の完全一致で本人判定されることを確認する。
+
+旧環境との互換用に `analysis_worker.py --users` と `SHOGI_USER_NAMES` は残しているが、通常のlauncherはUTF-8 JSONを明示して起動する。既存のlocal `worker-config.bat` に `SHOGI_USER_NAMES` が残っていてもlauncherでは使用されない。別ファイルを使う場合だけ、ASCII pathの `SHOGI_USER_NAMES_FILE` を設定する。
 
 まず `start-analysis-worker.bat` を実行してpoll開始を確認する。起動時に最新 `origin/main` から専用のdetached worktree（既定: `%LOCALAPPDATA%\shogi-review-worker`）を作成・更新するため、開発用checkoutが別branchやdirty状態でも解析へ混入しない。保存先を変える場合だけ、`worker-config.bat` に `SHOGI_WORKER_ROOT` を設定する。常駐を自動化する場合は `setup-worker-task.bat` を管理者権限なしで1回実行する。次回以降、Windowsログオン時にworkerが起動する。
 
@@ -75,6 +79,7 @@ GitHub PagesのPWAを開き、「棋譜を追加」を選ぶ。Worker URLとPWA�
 
 - PWA送信用とworker用に同じsecretを使わない。
 - `worker-config.bat` と `wrangler.toml` はcommitしない。
+- `worker-config.bat` には日本語aliasを置かない。非secret aliasはUTF-8の `config/worker-aliases.json` で管理する。
 - Worker URLだけでは認証できない。secretを第三者へ共有しない。
 - KIFは公開PWAのHTMLへ挿入せず、previewは文字列として表示する。
 - Windows側はqueueからcommandや引数を受け取らず、固定された解析コマンドだけを `shell=False` で起動する。
