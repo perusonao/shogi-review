@@ -125,7 +125,7 @@ test("PWAは390px、10/30切替、4主要表示、根拠導線を持つ", () => 
   const root = path.join(__dirname, "..");
   const html = fs.readFileSync(path.join(root, "index.html"), "utf8");
   const ui = fs.readFileSync(path.join(root, "recent-analysis.js"), "utf8");
-  assert.match(html, /recent-analysis\.js\?v=1/);
+  assert.match(html, /recent-analysis\.js\?v=2/);
   assert.match(ui, /container\.id = "recentAnalysis"/);
   assert.match(ui, /直近\$\{windowSize\}局/);
   for (const label of ["対象", "繰り返す課題", "改善傾向", "強み"]) assert.ok(ui.includes(label));
