@@ -9,8 +9,7 @@ if not exist "worker-config.bat" (
   exit /b 2
 )
 
-set "WORKER_LAUNCHER=%~dp0start-analysis-worker.bat"
-schtasks /Create /F /SC ONLOGON /RL LIMITED /TN "ShogiReviewAnalysisWorker" /TR "%WORKER_LAUNCHER%"
+powershell.exe -NoProfile -ExecutionPolicy Bypass -File "%~dp0register-worker-task.ps1"
 if errorlevel 1 (
   echo ERROR: Task Scheduler registration failed.
   pause

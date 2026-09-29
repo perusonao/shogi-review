@@ -9,7 +9,10 @@ CREATE TABLE IF NOT EXISTS analysis_requests (
   game_id TEXT,
   error_message TEXT,
   claim_token TEXT,
-  lease_until TEXT
+  lease_until TEXT,
+  attempt_count INTEGER NOT NULL DEFAULT 0,
+  failure_stage TEXT,
+  last_error_at TEXT
 );
 
 CREATE INDEX IF NOT EXISTS analysis_requests_status_created

@@ -3,6 +3,8 @@ import { canTransition } from "./state.mjs";
 
 const JSON_HEADERS = { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" };
 const SAFE_ERROR = "原棋譜は保存済みです。解析処理に失敗しました。再試行できます。";
+export const LEASE_DURATION_MS = 5 * 60 * 1000;
+const FAILURE_STAGE_PATTERN = /^[a-z0-9_]{1,80}$/;
 
 function response(body, status = 200, origin = "") {
   const headers = { ...JSON_HEADERS };
@@ -73,6 +75,9 @@ function publicRequest(row, duplicate = false) {
     metadata: JSON.parse(row.metadata_json),
     gameId: row.game_id || null,
     error: row.error_message || null,
+    attemptCount: Number(row.attempt_count || 0),
+    failureStage: row.failure_stage || null,
+    lastErrorAt: row.last_error_at || null,
     duplicate,
   };
 }
@@ -135,11 +140,12 @@ async function submit(request, env, origin) {
 
 async function claim(env, origin) {
   const now = new Date();
-  const leaseUntil = new Date(now.getTime() + 15 * 60 * 1000).toISOString();
+  const leaseUntil = new Date(now.getTime() + LEASE_DURATION_MS).toISOString();
   const claimToken = crypto.randomUUID();
   const row = await env.QUEUE_DB.prepare(
     `UPDATE analysis_requests
-       SET status = 'processing', updated_at = ?, claim_token = ?, lease_until = ?
+       SET status = 'processing', updated_at = ?, claim_token = ?, lease_until = ?,
+           attempt_count = COALESCE(attempt_count, 0) + 1, failure_stage = NULL
      WHERE request_id = (
        SELECT request_id FROM analysis_requests
         WHERE (status = 'queued' OR (status = 'processing' AND lease_until < ?))
@@ -152,6 +158,23 @@ async function claim(env, origin) {
   return response({ request: { ...publicRequest(row), kif: row.kif, claimToken } }, 200, origin);
 }
 
+async function heartbeat(request, env, requestId, origin) {
+  let input;
+  try { input = await bodyJson(request); } catch { return response({ error: "送信データが不正です" }, 400, origin); }
+  if (!input.claimToken) return response({ error: "claim tokenがありません" }, 400, origin);
+  const now = new Date();
+  const leaseUntil = new Date(now.getTime() + LEASE_DURATION_MS).toISOString();
+  const result = await env.QUEUE_DB.prepare(
+    `UPDATE analysis_requests SET updated_at=?, lease_until=?
+      WHERE request_id=? AND status='processing' AND claim_token=?
+        AND julianday(lease_until)>=julianday('now')`
+  ).bind(now.toISOString(), leaseUntil, requestId, input.claimToken).run();
+  if (Number(result?.meta?.changes || result?.changes || 0) !== 1) {
+    return response({ error: "claim ownershipが一致しません" }, 409, origin);
+  }
+  return response({ requestId, analysisStatus: "processing", leaseUntil }, 200, origin);
+}
+
 async function complete(request, env, requestId, origin) {
   let input;
   try { input = await bodyJson(request); } catch { return response({ error: "送信データが不正です" }, 400, origin); }
@@ -160,9 +183,12 @@ async function complete(request, env, requestId, origin) {
   if (!current) return response({ error: "依頼がありません" }, 404, origin);
   if (!canTransition(current.status, "completed") || current.claim_token !== input.claimToken) return response({ error: "依頼状態が一致しません" }, 409, origin);
   const now = new Date().toISOString();
-  await env.QUEUE_DB.prepare(
-    "UPDATE analysis_requests SET status='completed', updated_at=?, game_id=?, error_message=NULL, claim_token=NULL, lease_until=NULL WHERE request_id=? AND claim_token=?"
+  const result = await env.QUEUE_DB.prepare(
+    "UPDATE analysis_requests SET status='completed', updated_at=?, game_id=?, error_message=NULL, claim_token=NULL, lease_until=NULL WHERE request_id=? AND status='processing' AND claim_token=? AND julianday(lease_until)>=julianday('now')"
   ).bind(now, String(input.gameId).slice(0, 160), requestId, input.claimToken).run();
+  if (Number(result?.meta?.changes || result?.changes || 0) !== 1) {
+    return response({ error: "claim ownershipが一致しません" }, 409, origin);
+  }
   return response(publicRequest(await getRequest(env, requestId)), 200, origin);
 }
 
@@ -172,9 +198,14 @@ async function fail(request, env, requestId, origin) {
   const current = await getRequest(env, requestId);
   if (!current) return response({ error: "依頼がありません" }, 404, origin);
   if (!canTransition(current.status, "failed") || current.claim_token !== input.claimToken) return response({ error: "依頼状態が一致しません" }, 409, origin);
-  await env.QUEUE_DB.prepare(
-    "UPDATE analysis_requests SET status='failed', updated_at=?, error_message=?, claim_token=NULL, lease_until=NULL WHERE request_id=? AND claim_token=?"
-  ).bind(new Date().toISOString(), SAFE_ERROR, requestId, input.claimToken).run();
+  const now = new Date().toISOString();
+  const failureStage = FAILURE_STAGE_PATTERN.test(String(input.stage || "")) ? String(input.stage) : "unknown";
+  const result = await env.QUEUE_DB.prepare(
+    "UPDATE analysis_requests SET status='failed', updated_at=?, error_message=?, claim_token=NULL, lease_until=NULL, failure_stage=?, last_error_at=? WHERE request_id=? AND status='processing' AND claim_token=? AND julianday(lease_until)>=julianday('now')"
+  ).bind(now, SAFE_ERROR, failureStage, now, requestId, input.claimToken).run();
+  if (Number(result?.meta?.changes || result?.changes || 0) !== 1) {
+    return response({ error: "claim ownershipが一致しません" }, 409, origin);
+  }
   return response(publicRequest(await getRequest(env, requestId)), 200, origin);
 }
 
@@ -195,12 +226,12 @@ export default {
     const origin = allowedOrigin(request, env);
     if (origin === null) return response({ error: "許可されていないOriginです" }, 403);
     if (request.method === "OPTIONS") return response({}, 204, origin);
-    const workerRoute = url.pathname === "/api/worker/claim" || /\/api\/requests\/[^/]+\/(?:complete|fail)$/.test(url.pathname);
+    const workerRoute = url.pathname === "/api/worker/claim" || /\/api\/requests\/[^/]+\/(?:complete|fail|heartbeat)$/.test(url.pathname);
     const expectedHash = workerRoute ? env.WORKER_SECRET_HASH : env.SUBMIT_SECRET_HASH;
     if (!await authorized(request, expectedHash)) return response({ error: "認証に失敗しました" }, 401, origin);
     if (request.method === "POST" && url.pathname === "/api/requests") return submit(request, env, origin);
     if (request.method === "POST" && url.pathname === "/api/worker/claim") return claim(env, origin);
-    const match = url.pathname.match(/^\/api\/requests\/([0-9a-f-]+)(?:\/(complete|fail|retry))?$/i);
+    const match = url.pathname.match(/^\/api\/requests\/([0-9a-f-]+)(?:\/(complete|fail|retry|heartbeat))?$/i);
     if (!match) return response({ error: "not found" }, 404, origin);
     const [, requestId, action] = match;
     if (request.method === "GET" && !action) {
@@ -209,6 +240,7 @@ export default {
     }
     if (request.method === "POST" && action === "complete") return complete(request, env, requestId, origin);
     if (request.method === "POST" && action === "fail") return fail(request, env, requestId, origin);
+    if (request.method === "POST" && action === "heartbeat") return heartbeat(request, env, requestId, origin);
     if (request.method === "POST" && action === "retry") return retry(env, requestId, origin);
     return response({ error: "method not allowed" }, 405, origin);
   },
