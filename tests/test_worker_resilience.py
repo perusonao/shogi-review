@@ -22,6 +22,7 @@ from analysis_worker import (  # noqa: E402
     WorkerAlreadyRunning,
     WorkerInstanceLock,
     assert_checkout_recoverable,
+    assert_inbox_empty_before_claim,
     ensure_published,
     positive_job_count,
     process_claim,
@@ -85,6 +86,26 @@ class WorkerResilienceTests(unittest.TestCase):
             self.assertEqual(run_loop(args, client, ("sonao81",)), 1)
         self.assertEqual(called.call_count, 3)
         self.assertEqual(client.claims, [])
+
+    def test_recovery_inbox_blocks_claim_before_queue_mutation(self):
+        client = FakeClient([{"requestId": "must-not-be-claimed"}])
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            inbox = root / "games" / "inbox"
+            inbox.mkdir(parents=True)
+            (inbox / "queue-recovery.kif").write_text("recovery\n", encoding="utf-8")
+            args = argparse.Namespace(root=root, once=True, max_jobs=None, poll_seconds=30)
+            with patch("analysis_worker.refresh_worker_checkout", return_value=("a" * 40, False)):
+                self.assertEqual(run_loop(args, client, ("sonao81",)), 1)
+        self.assertEqual(len(client.claims), 1)
+
+    def test_empty_or_missing_recovery_inbox_allows_claim_gate(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            assert_inbox_empty_before_claim(root)
+            inbox = root / "games" / "inbox"
+            inbox.mkdir(parents=True)
+            assert_inbox_empty_before_claim(root)
 
     def test_worker_lock_rejects_second_instance_and_releases(self):
         with tempfile.TemporaryDirectory() as directory:
