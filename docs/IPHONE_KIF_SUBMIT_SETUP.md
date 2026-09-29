@@ -63,7 +63,23 @@ npx wrangler deploy
 
 旧環境との互換用に `analysis_worker.py --users` と `SHOGI_USER_NAMES` は残しているが、通常のlauncherはUTF-8 JSONを明示して起動する。既存のlocal `worker-config.bat` に `SHOGI_USER_NAMES` が残っていてもlauncherでは使用されない。別ファイルを使う場合だけ、ASCII pathの `SHOGI_USER_NAMES_FILE` を設定する。
 
-まず `start-analysis-worker.bat` を実行してpoll開始を確認する。起動時に最新 `origin/main` から専用のdetached worktree（既定: `%LOCALAPPDATA%\shogi-review-worker`）を作成・更新するため、開発用checkoutが別branchやdirty状態でも解析へ混入しない。保存先を変える場合だけ、`worker-config.bat` に `SHOGI_WORKER_ROOT` を設定する。常駐を自動化する場合は `setup-worker-task.bat` を管理者権限なしで1回実行する。次回以降、Windowsログオン時にworkerが起動する。
+まず `start-analysis-worker.bat --max-jobs 3` でcanaryを実行し、D1・artifact・GitHub Pagesを確認する。`--max-jobs N` は成功・失敗を問わずclaimしたN件で終了する。従来の `--once` は1件だけclaimする契約を維持し、両オプションの同時指定はできない。引数なしの既定動作は従来どおりpollを継続する。
+
+起動時に最新 `origin/main` から専用のdetached worktree（既定: `%LOCALAPPDATA%\shogi-review-worker`）を作成・更新するため、開発用checkoutが別branchやdirty状態でも解析へ混入しない。保存先を変える場合だけ、`worker-config.bat` に `SHOGI_WORKER_ROOT` を設定する。
+
+workerはWindowsのmachine-wide named mutexを第一authorityとして、異なるcheckoutを含む同一PC上の二重起動をclaim前に拒否する。異常終了後はOSがmutexを解放する。`setup-worker-task.bat` が登録するTaskも第二防御として `MultipleInstances=IgnoreNew`、失敗時1分間隔・最大3回再起動、通常のinteractive user / limited権限、実行時間上限なしで構成する。隔離ユーザーからのTask登録はスクリプトが拒否する。3-job canaryと確認が完了するまでTaskを登録しないこと。
+
+queue schemaを既存環境から更新する場合は、Workerコードをdeployする前に次のmigrationを1回だけ適用する。
+
+```powershell
+cd backend\cloudflare
+npx wrangler d1 migrations apply shogi-review-queue --remote
+npx wrangler deploy
+```
+
+このmigrationは既存行へ `attempt_count=0` を補い、nullableな `failure_stage` / `last_error_at` を追加する。KIF・status・game_idは変更しない。claim後は5分leaseを60秒ごとにheartbeatし、tokenまたはstatusが一致しない場合やheartbeat通信が不確実な場合は、古いworkerがcomplete/fail/publishを続けないよう停止する。
+
+Git push拒否、dirty checkout、origin/mainとのahead/divergedを検出した場合はforce push・reset・自動rebaseを行わず停止する。ログのHEAD/origin SHAと、保持されたlocal commit/artifactを人間が確認してから復旧する。
 
 ## 7. iPhone PWAを設定
 

@@ -15,6 +15,8 @@ sys.path.insert(0, str(ROOT / "tools"))
 
 from analysis_worker import (  # noqa: E402
     WorkerError,
+    WorkerInstanceLock,
+    WorkerAlreadyRunning,
     choose_user,
     find_existing_game_id,
     load_user_names,
@@ -34,12 +36,17 @@ class Phase2Tests(unittest.TestCase):
         def __init__(self) -> None:
             self.completed: tuple[str, str, str] | None = None
             self.failed = False
+            self.heartbeats = 0
 
         def complete(self, request_id: str, claim_token: str, game_id: str) -> None:
             self.completed = (request_id, claim_token, game_id)
 
-        def fail(self, _request_id: str, _claim_token: str) -> None:
+        def fail(self, _request_id: str, _claim_token: str, _stage: str) -> None:
             self.failed = True
+
+        def heartbeat(self, _request_id: str, _claim_token: str) -> str:
+            self.heartbeats += 1
+            return "2099-01-01T00:00:00.000Z"
 
     @classmethod
     def setUpClass(cls) -> None:
@@ -133,7 +140,19 @@ class Phase2Tests(unittest.TestCase):
             cwd=ROOT, check=True, capture_output=True, text=True, encoding="utf-8",
         )
         self.assertIn("--once", completed.stdout)
+        self.assertIn("--max-jobs", completed.stdout)
         self.assertIn("--users-file", completed.stdout)
+
+    def test_once_empty_queue_exits_without_polling(self) -> None:
+        from analysis_worker import run_loop
+        import argparse
+        args = argparse.Namespace(root=ROOT, once=True, max_jobs=None, poll_seconds=30)
+        client = self.FakeQueueClient()
+        client.claim = lambda: None
+        with (patch("analysis_worker.refresh_worker_checkout", return_value=("a" * 40, False)),
+              patch("analysis_worker.time.sleep") as sleep):
+            self.assertEqual(run_loop(args, client, ("ぺるそなお",)), 0)
+        sleep.assert_not_called()
 
     def test_windows_launcher_uses_utf8_alias_file_not_legacy_environment(self) -> None:
         launcher = (ROOT / "start-analysis-worker.bat").read_text(encoding="utf-8")
@@ -198,8 +217,9 @@ class Phase2Tests(unittest.TestCase):
             root = Path(directory)
             with (
                 patch("analysis_worker.find_existing_game_id", side_effect=[None, "generated-game"]),
+                patch("analysis_worker.publish_artifacts"),
                 patch("analysis_worker.ensure_published"),
-                patch("analysis_worker.run_checked", return_value=subprocess.CompletedProcess([], 0)) as run_import,
+                patch("analysis_worker.run_guarded", return_value=subprocess.CompletedProcess([], 0)) as run_import,
             ):
                 game_id = process_claim(client, claim, root, ("ぺるそなお", "sonao81"))
         self.assertEqual(game_id, "generated-game")
@@ -229,8 +249,9 @@ class Phase2Tests(unittest.TestCase):
             root = Path(directory)
             with (
                 patch("analysis_worker.find_existing_game_id", side_effect=[None, "legacy-game"]),
+                patch("analysis_worker.publish_artifacts"),
                 patch("analysis_worker.ensure_published"),
-                patch("analysis_worker.run_checked", return_value=subprocess.CompletedProcess([], 0)) as run_import,
+                patch("analysis_worker.run_guarded", return_value=subprocess.CompletedProcess([], 0)) as run_import,
                 self.assertLogs(level="WARNING") as logs,
             ):
                 game_id = process_claim(client, claim, root, ("ぺるそなお", "sonao81"))
@@ -261,7 +282,8 @@ class Phase2Tests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             with (patch("analysis_worker.find_existing_game_id", return_value=None),
-                  patch("analysis_worker.run_checked", return_value=subprocess.CompletedProcess([], 1))):
+                  patch("analysis_worker.run_guarded", return_value=subprocess.CompletedProcess([], 1)),
+                  patch("analysis_worker.assert_checkout_recoverable")):
                 with self.assertRaisesRegex(RuntimeError, "analysis pipeline failed"):
                     process_claim(client, claim, root, ("ぺるそなお",))
             self.assertFalse((root / "data/calibration/pwa-intake-v1.json").exists())
@@ -284,7 +306,8 @@ class Phase2Tests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             with (
                 patch("analysis_worker.find_existing_game_id", return_value=None),
-                patch("analysis_worker.run_checked", return_value=failed),
+                patch("analysis_worker.run_guarded", return_value=failed),
+                patch("analysis_worker.assert_checkout_recoverable"),
                 self.assertLogs(level="ERROR") as logs,
             ):
                 with self.assertRaisesRegex(RuntimeError, "analysis pipeline failed"):

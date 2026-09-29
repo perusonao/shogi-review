@@ -44,7 +44,8 @@ class FakeD1 {
           (candidate.status === "processing" && candidate.lease_until < expiredBefore)))
         .sort((left, right) => left.created_at.localeCompare(right.created_at))[0];
       if (!row) return null;
-      Object.assign(row, { status: "processing", updated_at: updatedAt, claim_token: claimToken, lease_until: leaseUntil });
+      Object.assign(row, { status: "processing", updated_at: updatedAt, claim_token: claimToken,
+        lease_until: leaseUntil, attempt_count: Number(row.attempt_count || 0) + 1, failure_stage: null });
       return this.clone(row);
     }
     throw new Error(`unsupported D1 first(): ${sql}`);
@@ -57,22 +58,38 @@ class FakeD1 {
       if (this.rows.some((row) => row.fingerprint === fingerprint)) throw new Error("UNIQUE constraint failed");
       this.rows.push({ request_id: requestId, fingerprint, created_at: createdAt, updated_at: updatedAt,
         status: "queued", kif: sourceKif, metadata_json: metadataJson, game_id: null,
-        error_message: null, claim_token: null, lease_until: null });
+        error_message: null, claim_token: null, lease_until: null, attempt_count: 0,
+        failure_stage: null, last_error_at: null });
       return { success: true };
     }
     if (sql.startsWith("UPDATE analysis_requests SET status='completed'")) {
       const [updatedAt, gameId, requestId, claimToken] = values;
-      const row = this.rows.find((candidate) => candidate.request_id === requestId && candidate.claim_token === claimToken);
+      assert.match(sql, /julianday\(lease_until\)>=julianday\('now'\)/);
+      const row = this.rows.find((candidate) => candidate.request_id === requestId &&
+        candidate.status === "processing" && candidate.claim_token === claimToken &&
+        Date.parse(candidate.lease_until) >= Date.now());
       if (row) Object.assign(row, { status: "completed", updated_at: updatedAt, game_id: gameId,
         error_message: null, claim_token: null, lease_until: null });
-      return { success: true };
+      return { success: true, meta: { changes: row ? 1 : 0 } };
     }
     if (sql.startsWith("UPDATE analysis_requests SET status='failed'")) {
-      const [updatedAt, message, requestId, claimToken] = values;
-      const row = this.rows.find((candidate) => candidate.request_id === requestId && candidate.claim_token === claimToken);
+      const [updatedAt, message, failureStage, lastErrorAt, requestId, claimToken] = values;
+      assert.match(sql, /julianday\(lease_until\)>=julianday\('now'\)/);
+      const row = this.rows.find((candidate) => candidate.request_id === requestId &&
+        candidate.status === "processing" && candidate.claim_token === claimToken &&
+        Date.parse(candidate.lease_until) >= Date.now());
       if (row) Object.assign(row, { status: "failed", updated_at: updatedAt, error_message: message,
-        claim_token: null, lease_until: null });
-      return { success: true };
+        claim_token: null, lease_until: null, failure_stage: failureStage, last_error_at: lastErrorAt });
+      return { success: true, meta: { changes: row ? 1 : 0 } };
+    }
+    if (sql.startsWith("UPDATE analysis_requests SET updated_at=?")) {
+      const [updatedAt, leaseUntil, requestId, claimToken] = values;
+      assert.match(sql, /julianday\(lease_until\)>=julianday\('now'\)/);
+      const row = this.rows.find((candidate) => candidate.request_id === requestId &&
+        candidate.status === "processing" && candidate.claim_token === claimToken &&
+        Date.parse(candidate.lease_until) >= Date.now());
+      if (row) Object.assign(row, { updated_at: updatedAt, lease_until: leaseUntil });
+      return { success: true, meta: { changes: row ? 1 : 0 } };
     }
     if (sql.startsWith("UPDATE analysis_requests SET status='queued'")) {
       const [updatedAt, requestId] = values;
@@ -129,6 +146,96 @@ test("submit success acknowledges a readable durable KIF and preserves the legac
   assert.equal(fetched.body.analysisStatus, "queued");
   assert.equal(fetched.body.sourceSavedAt, created.sourceSavedAt);
   assert.equal("kif" in fetched.body, false);
+});
+
+test("heartbeat extends only the current processing claim", async () => {
+  const db = new FakeD1();
+  const env = await environment(db);
+  const created = await submitStored(env);
+  const claimed = await call(env, "/api/worker/claim", { secret: workerSecret, body: {} });
+  const originalLease = db.rows[0].lease_until;
+  assert.equal(claimed.body.request.attemptCount, 1);
+
+  const heartbeat = await call(env, `/api/requests/${created.requestId}/heartbeat`, {
+    secret: workerSecret, body: { claimToken: claimed.body.request.claimToken },
+  });
+  assert.equal(heartbeat.response.status, 200);
+  assert.equal(heartbeat.body.analysisStatus, "processing");
+  assert.ok(heartbeat.body.leaseUntil >= originalLease);
+
+  const stale = await call(env, `/api/requests/${created.requestId}/heartbeat`, {
+    secret: workerSecret, body: { claimToken: "stale-token" },
+  });
+  assert.equal(stale.response.status, 409);
+  assert.equal(db.rows[0].claim_token, claimed.body.request.claimToken);
+});
+
+test("heartbeat and completion races have one token-guarded winner", async () => {
+  const db = new FakeD1();
+  const env = await environment(db);
+  const created = await submitStored(env);
+  const claimed = await call(env, "/api/worker/claim", { secret: workerSecret, body: {} });
+  const token = claimed.body.request.claimToken;
+  const [heartbeat, completion] = await Promise.all([
+    call(env, `/api/requests/${created.requestId}/heartbeat`, {
+      secret: workerSecret, body: { claimToken: token },
+    }),
+    call(env, `/api/requests/${created.requestId}/complete`, {
+      secret: workerSecret, body: { claimToken: token, gameId: "race-game" },
+    }),
+  ]);
+  assert.ok([200, 409].includes(heartbeat.response.status));
+  assert.ok([200, 409].includes(completion.response.status));
+  assert.equal(db.rows[0].status, "completed");
+  const after = db.rows[0].lease_until;
+  const stale = await call(env, `/api/requests/${created.requestId}/heartbeat`, {
+    secret: workerSecret, body: { claimToken: token },
+  });
+  assert.equal(stale.response.status, 409);
+  assert.equal(db.rows[0].lease_until, after);
+});
+
+test("heartbeat rejects queued completed and failed requests", async () => {
+  for (const status of ["queued", "completed", "failed"]) {
+    const db = new FakeD1();
+    const env = await environment(db);
+    const created = await submitStored(env);
+    Object.assign(db.rows[0], { status, claim_token: "token" });
+    const result = await call(env, `/api/requests/${created.requestId}/heartbeat`, {
+      secret: workerSecret, body: { claimToken: "token" },
+    });
+    assert.equal(result.response.status, 409, status);
+  }
+});
+
+test("expired lease can be reclaimed and stale owner cannot heartbeat or complete", async () => {
+  const db = new FakeD1();
+  const env = await environment(db);
+  const created = await submitStored(env);
+  const first = await call(env, "/api/worker/claim", { secret: workerSecret, body: {} });
+  db.rows[0].lease_until = "2000-01-01T00:00:00.000Z";
+  const expiredHeartbeat = await call(env, `/api/requests/${created.requestId}/heartbeat`, {
+    secret: workerSecret, body: { claimToken: first.body.request.claimToken },
+  });
+  assert.equal(expiredHeartbeat.response.status, 409);
+  const second = await call(env, "/api/worker/claim", { secret: workerSecret, body: {} });
+  assert.notEqual(first.body.request.claimToken, second.body.request.claimToken);
+  assert.equal(second.body.request.attemptCount, 2);
+  const staleHeartbeat = await call(env, `/api/requests/${created.requestId}/heartbeat`, {
+    secret: workerSecret, body: { claimToken: first.body.request.claimToken },
+  });
+  assert.equal(staleHeartbeat.response.status, 409);
+  const staleComplete = await call(env, `/api/requests/${created.requestId}/complete`, {
+    secret: workerSecret, body: { claimToken: first.body.request.claimToken, gameId: "stale-game" },
+  });
+  assert.equal(staleComplete.response.status, 409);
+  assert.equal(db.rows[0].status, "processing");
+  assert.equal(db.rows[0].game_id, null);
+  const staleFail = await call(env, `/api/requests/${created.requestId}/fail`, {
+    secret: workerSecret, body: { claimToken: first.body.request.claimToken, stage: "old_worker" },
+  });
+  assert.equal(staleFail.response.status, 409);
+  assert.equal(db.rows[0].status, "processing");
 });
 
 for (const stage of ["worker", "engine", "publish"]) {
