@@ -657,6 +657,14 @@ def positive_job_count(value: str) -> int:
     return count
 
 
+def assert_inbox_empty_before_claim(root: Path) -> None:
+    inbox = root / "games" / "inbox"
+    pending = sorted(path.name for path in inbox.glob("*.kif")) if inbox.is_dir() else []
+    if pending:
+        raise FatalWorkerError(
+            f"worker inbox requires recovery before claiming new work; files={pending[:5]}")
+
+
 def run_loop(args: argparse.Namespace, client: QueueClient, users: tuple[str, ...]) -> int:
     limit = 1 if args.once else args.max_jobs
     processed = 0
@@ -669,6 +677,7 @@ def run_loop(args: argparse.Namespace, client: QueueClient, users: tuple[str, ..
             if updated:
                 logging.info("worker checkout advanced; restarting with latest code")
                 os.execv(sys.executable, [sys.executable, *sys.argv])
+            assert_inbox_empty_before_claim(args.root.resolve())
             claim = client.claim()
             if claim:
                 try:
