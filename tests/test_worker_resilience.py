@@ -218,6 +218,19 @@ class WorkerResilienceTests(unittest.TestCase):
         self.assertEqual(client.completed, [])
         self.assertEqual(client.failed, [])
 
+    def test_keyboard_interrupt_terminates_and_reaps_analysis_subprocess(self):
+        class InterruptLease:
+            stopped = False
+            def ensure_owned(self):
+                raise KeyboardInterrupt()
+            def stop_background(self):
+                self.stopped = True
+
+        lease = InterruptLease()
+        with self.assertRaises(KeyboardInterrupt):
+            run_guarded([sys.executable, "-c", "import time; time.sleep(60)"], ROOT, lease)
+        self.assertTrue(lease.stopped)
+
     def test_heartbeat_loss_terminates_and_reaps_analysis_subprocess(self):
         class LostLease:
             checks = 0
@@ -345,7 +358,7 @@ class WorkerResilienceTests(unittest.TestCase):
             subprocess.run(["git", "commit", "-m", "baseline"], cwd=root, check=True, capture_output=True)
             subprocess.run(["git", "remote", "add", "origin", str(origin)], cwd=root, check=True)
             subprocess.run(["git", "push", "-u", "origin", "main"], cwd=root, check=True, capture_output=True)
-            game_id = "20260928_example"
+            game_id = "20260928_日本語相手"
             outputs = {
                 f"games/{game_id}.kif": "kif\n",
                 f"games/{game_id}.json": "{}\n",
@@ -380,8 +393,9 @@ class WorkerResilienceTests(unittest.TestCase):
 
         def run(command, _root, capture=False):
             commands.append(command)
-            if command[:3] == ["git", "status", "--porcelain"]:
-                return subprocess.CompletedProcess(command, 0, "?? games/game.kif\n", "")
+            if (command[:3] == ["git", "-c", "core.quotePath=false"] and
+                    "status" in command and "--porcelain" in command and "-z" in command):
+                return subprocess.CompletedProcess(command, 0, "?? games/game.kif\0", "")
             if command[:3] == ["git", "fetch", "origin"]:
                 return subprocess.CompletedProcess(command, 0, "", "")
             if command == ["git", "rev-parse", "HEAD"]:
