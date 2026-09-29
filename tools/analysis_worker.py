@@ -396,10 +396,7 @@ def run_checked(command: list[str], root: Path, *, capture: bool = False) -> sub
 
 def refresh_worker_checkout(root: Path) -> tuple[str, bool]:
     """Fast-forward the clean detached worker before it claims durable work."""
-    status = run_checked(
-        ["git", "-c", "core.quotePath=false", "status", "--porcelain", "-z", "--untracked-files=all"],
-        root, capture=True,
-    )
+    status = run_checked(["git", "status", "--porcelain", "--untracked-files=all"], root, capture=True)
     if status.returncode != 0:
         raise FatalWorkerError("checkout status failed")
     if status.stdout.strip():
@@ -474,7 +471,10 @@ def assert_checkout_recoverable(root: Path) -> None:
 
 def publish_artifacts(root: Path, request_id: str, game_id: str, lease: ClaimLease) -> None:
     lease.ensure_owned()
-    status = run_checked(["git", "status", "--porcelain", "--untracked-files=all"], root, capture=True)
+    status = run_checked(
+        ["git", "-c", "core.quotePath=false", "status", "--porcelain", "-z", "--untracked-files=all"],
+        root, capture=True,
+    )
     if status.returncode != 0:
         raise FatalWorkerError("generated artifacts checkout status could not be checked")
     relative = {
