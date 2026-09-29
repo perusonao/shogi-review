@@ -307,17 +307,17 @@ def run_guarded(command: list[str], root: Path, lease: ClaimLease) -> subprocess
         env={**os.environ, "PYTHONUTF8": "1"},
         creationflags=creationflags,
     )
-    while process.poll() is None:
-        try:
+    try:
+        while process.poll() is None:
             lease.ensure_owned()
-        except ClaimOwnershipLost:
-            lease.stop_background()
-            terminate_process_tree(process)
-            raise
-        time.sleep(0.25)
-    stdout, stderr = process.communicate()
-    lease.ensure_owned()
-    return subprocess.CompletedProcess(command, process.returncode, stdout, stderr)
+            time.sleep(0.25)
+        stdout, stderr = process.communicate()
+        lease.ensure_owned()
+        return subprocess.CompletedProcess(command, process.returncode, stdout, stderr)
+    except BaseException:
+        lease.stop_background()
+        terminate_process_tree(process)
+        raise
 
 
 def terminate_process_tree(process: subprocess.Popen[str]) -> None:
@@ -396,7 +396,10 @@ def run_checked(command: list[str], root: Path, *, capture: bool = False) -> sub
 
 def refresh_worker_checkout(root: Path) -> tuple[str, bool]:
     """Fast-forward the clean detached worker before it claims durable work."""
-    status = run_checked(["git", "status", "--porcelain", "--untracked-files=all"], root, capture=True)
+    status = run_checked(
+        ["git", "-c", "core.quotePath=false", "status", "--porcelain", "-z", "--untracked-files=all"],
+        root, capture=True,
+    )
     if status.returncode != 0:
         raise FatalWorkerError("checkout status failed")
     if status.stdout.strip():
@@ -482,7 +485,8 @@ def publish_artifacts(root: Path, request_id: str, game_id: str, lease: ClaimLea
         f"analysis/metrics/{game_id}.json",
         "data/calibration/pwa-intake-v1.json",
     }
-    changed = {line[3:].strip('"') for line in status.stdout.splitlines() if len(line) >= 4}
+    records = [record for record in status.stdout.split("\0") if record]
+    changed = {record[3:] for record in records if len(record) >= 4}
     if not changed.issubset(relative):
         raise FatalWorkerError("unexpected files changed during analysis; inspect checkout before publishing")
     if run_checked(["git", "fetch", "origin", "main"], root, capture=True).returncode != 0:
