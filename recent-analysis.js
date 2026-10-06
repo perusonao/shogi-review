@@ -32,7 +32,6 @@
     const byId = new Map();
     for (const record of Array.isArray(records) ? records : []) {
       if (!record || typeof record.id !== "string" || !record.id || !dateValue(record.date)) continue;
-      if (record.analyzed === false || !record.analysis || typeof record.analysis !== "object") continue;
       if (!byId.has(record.id)) byId.set(record.id, record);
     }
     return Array.from(byId.values()).sort(compareGamesNewest).slice(0, windowSize);
@@ -112,7 +111,8 @@
     const phaseRows = { opening: [], middlegame: [], endgame: [] };
 
     for (const record of chronological) {
-      const results = Array.isArray(record.analysis.taskResults) ? record.analysis.taskResults : [];
+      const analysis = record.analysis && typeof record.analysis === "object" ? record.analysis : {};
+      const results = Array.isArray(analysis.taskResults) ? analysis.taskResults : [];
       const seen = new Set();
       for (const result of results) {
         const identity = typeof result?.id === "string" ? result.id : `${result?.taskId || ""}\0${record.id}`;
@@ -120,7 +120,7 @@
         seen.add(identity);
         const row = { record, result };
         rowsByTheme.get(result.theme).push(row);
-        const phase = hasOpportunity(result) ? phaseFor(result.ply, Number(record.analysis.moves || record.moves)) : null;
+        const phase = hasOpportunity(result) ? phaseFor(result.ply, Number(analysis.moves || record.moves)) : null;
         if (phase) phaseRows[phase].push(row);
       }
     }
@@ -178,6 +178,20 @@
       improvements,
       strengths,
       phaseSummary,
+      analysisCoverage: {
+        analyzed: selected.filter((record) => record.analyzed !== false && record.analysis && typeof record.analysis === "object").length,
+        pending: selected.filter((record) => record.analyzed === false || !record.analysis || typeof record.analysis !== "object").length,
+      },
+      basic: selected.reduce((totals, record) => {
+        const text = String(record.result || "");
+        const userSide = String(record.side || "").includes("先手") ? "先手" : String(record.side || "").includes("後手") ? "後手" : null;
+        const winner = text.startsWith("先手") ? "先手" : text.startsWith("後手") ? "後手" : null;
+        if (winner && userSide) totals[winner === userSide ? "wins" : "losses"] += 1;
+        else if (/千日手|持将棋|中断/.test(text)) totals.draws += 1;
+        const moves = Number(record.moves);
+        if (Number.isInteger(moves) && moves > 0) { totals.totalMoves += moves; totals.moveSamples += 1; }
+        return totals;
+      }, { wins: 0, losses: 0, draws: 0, totalMoves: 0, moveSamples: 0 }),
     };
   }
 
@@ -269,6 +283,10 @@ if (typeof document !== "undefined") {
     }
     container.replaceChildren(tabs);
     appendText(container, "p", `対象 ${summary.sampleGames}局（最大${summary.window}局）`, "recentSample");
+    const basic = summary.basic;
+    const avgMoves = basic.moveSamples ? Math.round(basic.totalMoves / basic.moveSamples) : null;
+    appendText(container, "p", `基本傾向（エンジン不要）: ${basic.wins}勝 ${basic.losses}敗 ${basic.draws}分${avgMoves ? `・平均${avgMoves}手` : ""}`, "recentSample");
+    if (summary.analysisCoverage.pending) appendText(container, "p", `詳細分析待ち ${summary.analysisCoverage.pending}局も基本傾向には反映済み`, "recentSample");
     insightSection(container, "繰り返す課題", summary.recurringChallenges, "機械検証済みの×が複数局で確認されていません。");
     insightSection(container, "改善傾向", summary.improvements, "比較できる○/×が不足しています。");
     insightSection(container, "強み", summary.strengths, "複数機会で継続した○がまだ確認されていません。");
@@ -296,17 +314,18 @@ if (typeof document !== "undefined") {
     const container = document.getElementById("recentAnalysis");
     if (!container) return;
     appendText(container.replaceChildren() || container, "p", "最近の対局を集計しています…", "recentLoading");
-    const candidates = (Array.isArray(catalog) ? catalog : []).filter((game) => game?.analyzed && game.analysisData);
+    const candidates = Array.isArray(catalog) ? catalog : [];
     const loaded = await Promise.all(candidates.map(async (game) => {
+      if (!game?.analyzed || !game.analysisData) return game;
       try {
         const response = await fetch(`${game.analysisData}?recent=1`);
-        if (!response.ok) return null;
+        if (!response.ok) return game;
         return { ...game, analysis: await response.json() };
       } catch (_error) {
-        return null;
+        return game;
       }
     }));
-    const records = loaded.filter(Boolean);
+    const records = loaded.filter((game) => game && typeof game.id === "string");
     summaries = window.ShogiRecentAnalysis.buildRecentSummaries(records);
     window.shogiRecentRecords = records;
     window.shogiRecentSummaries = summaries;
