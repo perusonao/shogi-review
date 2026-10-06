@@ -136,3 +136,35 @@ test("PWAは390px、10/30切替、4主要表示、根拠導線を持つ", () => 
     improving: "改善傾向", stable: "横ばい・継続", worsening: "要注意", insufficient_data: "データ不足",
   });
 });
+
+
+test("worker待ち棋譜も基本傾向の母集団に含め、厳密themeとは分離する", () => {
+  const analyzed = game(1, "done");
+  analyzed.result = "後手・user勝利";
+  analyzed.side = "後手";
+  analyzed.moves = 80;
+  analyzed.analysis.taskResults = [result(analyzed.id, "check", "pass")];
+
+  const pending = game(2, "pending", [], { analyzed: false, analysis: null });
+  pending.result = "先手・opponent勝利";
+  pending.side = "後手";
+  pending.moves = 120;
+
+  const summary = recent.aggregateWindow([analyzed, pending], 10);
+  assert.equal(summary.sampleGames, 2);
+  assert.deepEqual(summary.analysisCoverage, { analyzed: 1, pending: 1 });
+  assert.deepEqual(summary.basic, { wins: 1, losses: 1, draws: 0, totalMoves: 200, moveSamples: 2 });
+  assert.equal(summary.themes.find((item) => item.theme === "check").pass, 1);
+});
+
+test("未解析棋譜だけでも最近の傾向が空にならない", () => {
+  const pending = game(3, "pending-only", [], { analyzed: false, analysis: null });
+  pending.result = "後手・user勝利";
+  pending.side = "後手";
+  pending.moves = 74;
+  const summary = recent.aggregateWindow([pending], 10);
+  assert.equal(summary.sampleGames, 1);
+  assert.equal(summary.analysisCoverage.pending, 1);
+  assert.equal(summary.basic.wins, 1);
+  assert.ok(summary.themes.every((theme) => theme.opportunities === 0));
+});
