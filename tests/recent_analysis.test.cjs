@@ -168,3 +168,12 @@ test("未解析棋譜だけでも最近の傾向が空にならない", () => {
   assert.equal(summary.basic.wins, 1);
   assert.ok(summary.themes.every((theme) => theme.opportunities === 0));
 });
+
+
+test("legacy 敗戦はprefix側ユーザーのlossとして数える", () => {
+  const loss = game(4, "legacy-loss", [], { analyzed: false, analysis: null });
+  loss.side = "先手";
+  loss.result = "先手・ぺるそなお 敗戦";
+  const summary = recent.aggregateWindow([loss], 10);
+  assert.deepEqual({ wins: summary.basic.wins, losses: summary.basic.losses }, { wins: 0, losses: 1 });
+});
