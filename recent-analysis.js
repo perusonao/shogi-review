@@ -185,8 +185,9 @@
       basic: selected.reduce((totals, record) => {
         const text = String(record.result || "");
         const userSide = String(record.side || "").includes("先手") ? "先手" : String(record.side || "").includes("後手") ? "後手" : null;
-        const winner = text.startsWith("先手") ? "先手" : text.startsWith("後手") ? "後手" : null;
-        if (winner && userSide) totals[winner === userSide ? "wins" : "losses"] += 1;
+        const prefixSide = text.startsWith("先手") ? "先手" : text.startsWith("後手") ? "後手" : null;
+        if (/敗戦/.test(text) && prefixSide && userSide) totals[prefixSide === userSide ? "losses" : "wins"] += 1;
+        else if (/勝利/.test(text) && prefixSide && userSide) totals[prefixSide === userSide ? "wins" : "losses"] += 1;
         else if (/千日手|持将棋|中断/.test(text)) totals.draws += 1;
         const moves = Number(record.moves);
         if (Number.isInteger(moves) && moves > 0) { totals.totalMoves += moves; totals.moveSamples += 1; }
@@ -331,7 +332,10 @@ if (typeof document !== "undefined") {
     window.shogiRecentSummaries = summaries;
     if (typeof window.refreshReviewCoachingFocus === "function") window.refreshReviewCoachingFocus();
     renderActiveSummary();
-    if (typeof window.renderGrowthDashboard === "function") window.renderGrowthDashboard(records, summaries);
+    if (typeof window.renderGrowthDashboard === "function") {
+      const coachingRecords = records.filter((record) => record.analysis && typeof record.analysis === "object");
+      window.renderGrowthDashboard(coachingRecords, summaries);
+    }
   };
   if (Array.isArray(window.shogiGameCatalog)) window.renderRecentAnalysis(window.shogiGameCatalog);
 }
