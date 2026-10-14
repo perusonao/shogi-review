@@ -332,10 +332,7 @@ if (typeof document !== "undefined") {
     window.shogiRecentSummaries = summaries;
     if (typeof window.refreshReviewCoachingFocus === "function") window.refreshReviewCoachingFocus();
     renderActiveSummary();
-    if (typeof window.renderGrowthDashboard === "function") {
-      const coachingRecords = records.filter((record) => record.analysis && typeof record.analysis === "object");
-      window.renderGrowthDashboard(coachingRecords, summaries);
-    }
+    if (typeof window.renderGrowthDashboard === "function") window.renderGrowthDashboard(records, summaries);
   };
   if (Array.isArray(window.shogiGameCatalog)) window.renderRecentAnalysis(window.shogiGameCatalog);
 }
