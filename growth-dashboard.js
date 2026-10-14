@@ -122,7 +122,8 @@
 
   function buildModel(records, summary, allSummaries = null) {
     const latest = recentRecord(records);
-    const analysis = latest?.analysis && typeof latest.analysis === "object" ? latest.analysis : {};
+    const coachingLatest = recentRecord((Array.isArray(records) ? records : []).filter((record) => record?.analysis && typeof record.analysis === "object"));
+    const analysis = coachingLatest?.analysis && typeof coachingLatest.analysis === "object" ? coachingLatest.analysis : {};
     const currentTasks = Array.isArray(analysis.currentTasks) ? analysis.currentTasks.slice(0, 3) : [];
     return {
       schema: "growth-dashboard-v1",
@@ -130,6 +131,7 @@
       sampleGames: summary?.sampleGames || 0,
       latestGameId: latest?.id || null,
       latestDate: latest?.date || null,
+      coachingGameId: coachingLatest?.id || null,
       currentTasks,
       coachingFocus: coachingApi?.selectCoachingFocus(currentTasks, summary) || null,
       nextGameRoutine: coachingApi?.buildNextGameRoutine(currentTasks) || null,

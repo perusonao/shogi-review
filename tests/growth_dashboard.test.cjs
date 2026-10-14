@@ -221,3 +221,17 @@ test("390px UI、折りたたみ、10/30、evidence navigationを備える", () 
   assert.match(ui, /window\.shogiRecentSummaries/);
   assert.doesNotMatch(ui, /\?growth=1/);
 });
+
+
+test("最新局がworker待ちでもscoreは含め、coachingは最新解析済み局を維持する", () => {
+  const task = { id: "check", title: "王手候補", nextCheck: { theme: "check" } };
+  const done = game(1, "done", [], [task]);
+  done.analysis.taskResults = [result(done.id, "check", "pass")];
+  const pending = { ...game(2, "pending"), analyzed: false, analysis: null, result: "後手・opponent 勝利" };
+  const summary = recent.aggregateWindow([done, pending], 10);
+  const built = dashboard.buildModel([done, pending], summary);
+  assert.equal(built.latestGameId, pending.id);
+  assert.equal(built.coachingGameId, done.id);
+  assert.equal(built.currentTasks[0].id, "check");
+  assert.deepEqual(built.score, { wins: 1, losses: 1, games: 2 });
+});
