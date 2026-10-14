@@ -33,9 +33,9 @@ function loadRequests() {
   try { return JSON.parse(localStorage.getItem(STORAGE.requests) || "[]"); }
   catch { return []; }
 }
-function rememberRequest(requestId, endpoint) {
+function rememberRequest(requestId, endpoint, metadata = null) {
   const requests = loadRequests().filter((item) => item.requestId !== requestId);
-  requests.unshift({ requestId, endpoint, savedAt: new Date().toISOString() });
+  requests.unshift({ requestId, endpoint, savedAt: new Date().toISOString(), metadata });
   localStorage.setItem(STORAGE.requests, JSON.stringify(requests.slice(0, 10)));
 }
 function configured() {
@@ -210,7 +210,9 @@ elements.submitKif.addEventListener("click", async () => {
       method: "POST",
       body: JSON.stringify({ kif: elements.kifInput.value, fingerprint: currentFingerprint, confirmations }),
     });
-    rememberRequest(item.requestId, settings.endpoint);
+    rememberRequest(item.requestId, settings.endpoint, item.metadata || {
+      date: parsedKif.date, sente: parsedKif.sente, gote: parsedKif.gote, moves: parsedKif.moves, result: parsedKif.result,
+    });
     renderQueueStatus(item, settings.endpoint, settings.secret);
     setText(elements.kifValidation, item.duplicate ? "保存済みの同じ原棋譜を表示しています" : "原棋譜を保存しました。解析待ちです");
     const history = rankHistory();
@@ -227,3 +229,25 @@ elements.queueEndpoint.value = localStorage.getItem(STORAGE.endpoint) || "";
 setInterval(pollLatestRequest, POLL_MS);
 document.addEventListener("visibilitychange", () => { if (!document.hidden) pollLatestRequest(); });
 pollLatestRequest();
+
+
+export function pendingCatalogRecords(requests, usernameAliases = ["ぺるそなお", "sonao81"]) {
+  return (Array.isArray(requests) ? requests : []).flatMap((item) => {
+    const metadata = item?.metadata;
+    if (!item?.requestId || !metadata?.date || !metadata?.sente || !metadata?.gote) return [];
+    const aliases = new Set(usernameAliases);
+    const side = aliases.has(metadata.sente) ? "先手" : aliases.has(metadata.gote) ? "後手" : null;
+    if (!side) return [];
+    return [{
+      id: `pending-${item.requestId}`,
+      date: metadata.date,
+      title: `${metadata.sente} vs ${metadata.gote}`,
+      side,
+      result: metadata.result || "",
+      moves: Number(metadata.moves) || 0,
+      analyzed: false,
+      analysis: null,
+      pending: true,
+    }];
+  });
+}
